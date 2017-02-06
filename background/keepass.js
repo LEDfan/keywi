@@ -128,7 +128,9 @@ Keepass.reCheckAssociated = function() {
 
 };
 
-Keepass.getLogins = function (url) {
+Keepass.getLogins = function (url, callback) {
+    console.log("Getlogins for url " + url);
+
 
     var verifiers = Keepass.helpers.getVerifier(Keepass.state.database.key);
 
@@ -155,10 +157,13 @@ Keepass.getLogins = function (url) {
         success: function (resp) {
             if (Keepass.helpers.verifyResponse(resp)) {
                 var rIv = resp.Nonce;
+                var decryptedEntries = [];
                 for (var i = 0; i < resp.Entries.length; i++) {
                     var decryptedEntry = Keepass.helpers.decryptEntry(resp.Entries[i], rIv);
-                    console.log(decryptedEntry);
+                    decryptedEntries.push(decryptedEntry);
+                    console.log(decryptedEntries);
                 }
+                callback(decryptedEntries);
             }
             else {
                 console.log("RetrieveCredentials for " + url + " rejected");

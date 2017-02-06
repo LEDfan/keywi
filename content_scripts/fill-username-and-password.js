@@ -13,7 +13,6 @@ function searchForPasswordInput(userInput) {
         parent = parent.parentElement;
         if (parent.tagName === "BODY" || parent.tagName === "FORM") {
             console.log("No password field found!");
-            alert("No password field found!");
             return null;
         }
 
@@ -27,10 +26,10 @@ function searchForPasswordInput(userInput) {
     }
 }
 
-
-console.log("Fill username and password loaded!");
-var usernameField = document.activeElement;
-console.log("Username:")
-console.log(usernameField)
-var passwordField = searchForPasswordInput(usernameField);
+browser.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+    var usernameField = document.activeElement;
+    var passwordField = searchForPasswordInput(usernameField);
+    usernameField.value = request.username;
+    passwordField.value = request.password;
+});
 

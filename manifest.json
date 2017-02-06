@@ -20,7 +20,8 @@
   "permissions": [
     "http://localhost/",
     "<all_urls>",
-    "contextMenus"
+    "contextMenus",
+    "tabs"
   ],
   "content_scripts": [
   ]
