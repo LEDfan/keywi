@@ -10,6 +10,7 @@ Keepass (working name)
  - Support Keepass, later maybe [Pass](https://www.passwordstore.org/)
  - Minimal amount of libraries (aes, cryptoheplers and reqwest)
  - no automatic form filling, i.e. only when the user wants to. This is very important, because sometimes the credentials are filled in the wrong site (e.g. a DNS spoofing) or it's filled in the register for, sometimes you just don't want to log in etc
+ - no injecting of buttons or icons into forms
 
 ## Alternatives
 ### Passifox
