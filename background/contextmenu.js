@@ -11,6 +11,7 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
             Keepass.getLogins(tab.url, function (entries) {
 
                 browser.tabs.sendMessage(tab.id, {
+                    type: "username-and-password",
                     username: entries[0].Login,
                     password: entries[0].Password
                 });
