@@ -21,8 +21,12 @@
     "http://localhost/",
     "<all_urls>",
     "contextMenus",
-    "tabs"
+    "tabs",
+    "storage"
   ],
   "content_scripts": [
-  ]
+  ],
+  "options_ui": {
+      "page": "options/options.html"
+  }
 }
