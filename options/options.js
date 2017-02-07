@@ -1,14 +1,13 @@
 window.addEventListener("load", function(){
     var inputs = document.querySelectorAll("#options input");
     for (var input of inputs) {
-        storage.local.get(input.name).then(function(val){
-            input.value = val;
+        browser.storage.local.get(input.name).then(function(val){
+            input.value = val[input.name] || "";
         });
-        input.addEventListener("input", function() {
+        input.addEventListener("change", function() {
             var opt = {};
             opt[input.name] = input.value;
-            storage.local.set(opt);
-            console.log(opt.toSource());
+            browser.storage.local.set(opt);
         });
     }
 });

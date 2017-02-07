@@ -145,31 +145,33 @@ Keepass.getLogins = function (url, callback) {
         SubmitUrl: null
     };
 
-    reqwest({
-        url: 'http://localhost:19455', // TODO hard coded path
-        type: 'json',
-        method: 'post',
-        data: JSON.stringify(req),
-        contentType: "application/json",
-        error: function (err) {
+    browser.storage.local.get("keepass-server-url").then(function(pref) {
+        reqwest({
+            url: pref["keepass-server-url"] || 'http://localhost:19455',
+            type: 'json',
+            method: 'post',
+            data: JSON.stringify(req),
+            contentType: "application/json",
+            error: function (err) {
 
-        },
-        success: function (resp) {
-            if (Keepass.helpers.verifyResponse(resp)) {
-                var rIv = resp.Nonce;
-                var decryptedEntries = [];
-                for (var i = 0; i < resp.Entries.length; i++) {
-                    var decryptedEntry = Keepass.helpers.decryptEntry(resp.Entries[i], rIv);
-                    decryptedEntries.push(decryptedEntry);
-                    console.log(decryptedEntries);
+            },
+            success: function (resp) {
+                if (Keepass.helpers.verifyResponse(resp)) {
+                    var rIv = resp.Nonce;
+                    var decryptedEntries = [];
+                    for (var i = 0; i < resp.Entries.length; i++) {
+                        var decryptedEntry = Keepass.helpers.decryptEntry(resp.Entries[i], rIv);
+                        decryptedEntries.push(decryptedEntry);
+                        console.log(decryptedEntries);
+                    }
+                    callback(decryptedEntries);
                 }
-                callback(decryptedEntries);
+                else {
+                    console.log("RetrieveCredentials for " + url + " rejected");
+                }
             }
-            else {
-                console.log("RetrieveCredentials for " + url + " rejected");
-            }
-        }
-    })
+        })
+    });
 };
 
 Keepass.associate = function(callback) {
@@ -185,26 +187,28 @@ Keepass.associate = function(callback) {
         Verifier: verifiers[1]
     };
 
-    reqwest({
-        url: 'http://localhost:19455', // TODO hard coded path
-        type: 'json',
-        method: 'post',
-        data: JSON.stringify(req),
-        contentType: "application/json",
-        error: function (err) {
+    browser.storage.local.get("keepass-server-url").then(function(pref) {
+        reqwest({
+            url: pref["keepass-server-url"] || 'http://localhost:19455',
+            type: 'json',
+            method: 'post',
+            data: JSON.stringify(req),
+            contentType: "application/json",
+            error: function (err) {
 
-        },
-        success: function (resp) {
-            console.log(resp);
-            console.log("Associated key is: " + key);
-            console.log("Id is: " + resp.Id);
-            console.log("Hash is: " + resp.Hash);
-            Keepass.state.database.id = resp.Id;
-            Keepass.state.database.key = key;
-            Keepass.state.database.hash = resp.Hash;
-            Keepass.state.associated = true;
-            callback();
-        }
-    })
+            },
+            success: function (resp) {
+                console.log(resp);
+                console.log("Associated key is: " + key);
+                console.log("Id is: " + resp.Id);
+                console.log("Hash is: " + resp.Hash);
+                Keepass.state.database.id = resp.Id;
+                Keepass.state.database.key = key;
+                Keepass.state.database.hash = resp.Hash;
+                Keepass.state.associated = true;
+                callback();
+            }
+        })
+    });
 };
 
