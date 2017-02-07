@@ -1,27 +1,28 @@
 {
-
   "manifest_version": 2,
   "name": "Keepass",
   "version": "1.0",
-
   "description": "WIP Minimalistic keepass plugin using web Extensions",
   "icons": {
     "48": "icons/beasts-48.png"
   },
-
   "background": {
-  	"scripts": [
-	  "vendor/reqwest.min.js",
+    "scripts": [
+      "vendor/reqwest.min.js",
       "vendor/utf8.js",
       "vendor/aes.js",
       "vendor/cryptoHelpers.js",
       "background/keepass.js",
+      "background/contextmenu.js",
       "background/init.js"
     ]
   },
-
   "permissions": [
-   	"http://localhost/"
+    "http://localhost/",
+    "<all_urls>",
+    "contextMenus",
+    "tabs"
+  ],
+  "content_scripts": [
   ]
-
 }
