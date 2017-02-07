@@ -1,7 +1,5 @@
 function init() {
-    Keepass.associate(function () {
-        Keepass.getLogins("http://keepass.info");
-    });
+    Keepass.associate(function () {});
 }
 
 init();
