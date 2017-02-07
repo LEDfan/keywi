@@ -19,8 +19,5 @@ document.forms[0].onsubmit = function(e) {
         }
     })
     browser.windows.remove(windowId);
-    // browser.runtime.sendMessage({
-    //     type: "user_input_close_window"
-    // });
 };
 
