@@ -31,10 +31,13 @@ function confirmFromBg(msg, callback) {
         });
     });
 
-    browser.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+    browser.runtime.onMessage.addListener(function _func(request, sender, sendResponse) {
         if (request.type === "user_input") {
             // browser.windows.remove(request.data.window_id);
-            callback(request.data.userInput)
+            console.log("Will call callback!");
+            callback(request.data.userInput);
+            browser.runtime.onMessage.removeListener(_func);
+
         }
     });
 }
