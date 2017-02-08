@@ -4,70 +4,88 @@
 
 var Keepass = {};
 
+Keepass._ss = null;
+
 Keepass.settings = {
 };
 
 Keepass.state = {
     associated: false,
-    database: {
-        id: null,
-        key: null, // TODO store not base64'ed key
-        hash: null
-    }
+    // database: {
+        // id: null,
+        // key: null, // TODO store not base64'ed key
+        // hash: null
+    // }
 };
 
 Keepass.helpers = {};
 
+Keepass.helpers.verifyResponse = function (response, key) {
+    let self = this;
+    return new Promise(function(resolve, reject) {
+        if (!response.Success) {
+            Keepass.state.associated = false;
+            reject();
+            return;
+        }
 
-Keepass.helpers.verifyResponse = function (response) {
-    if (!response.Success) {
-        Keepass.state.associated = false;
-        return false;
-    }
+        var iv = response.Nonce;
+        var value = Crypto.decryptAsString(response.Verifier, key, iv);
 
-    var iv = response.Nonce;
-    var value = Crypto.decryptAsString(response.Verifier, Keepass.state.database.key, iv);
+        if (value !== iv) {
+            Keepass.state.associated = false;
+            reject();
+            return;
+        }
 
-    if (value !== iv) {
-        Keepass.state.associated = false;
-        return false;
-    }
+        Keepass._ss.get("database.id").then(function(data) {
+            if (response.Id !== data){
+                Keepass.state.associated = false;
+                reject();
+            }
+        }).then(function() {
+            Keepass._ss.get("database.hash").then(function(data) {
+                if (response.Hash !== data){
+                    Keepass.state.associated = false;
+                    reject();
+                }
+            });
+        });
 
-    if (response.Id !== Keepass.state.database.id) {
-        Keepass.state.associated = false;
-        return false;
-    }
+        resolve();
 
-    if (response.Hash !== Keepass.state.database.hash) {
-        Keepass.state.associated = false;
-        return false;
-    }
-
-    return true;
-
+    });
 };
 
 Keepass.helpers.decryptEntry = function (entry, iv) {
-    var decryptedEntry = {};
-    decryptedEntry.Uuid = Crypto.decryptAsString(entry.Uuid, Keepass.state.database.key, iv);
-    decryptedEntry.Name = UTF8.decode(Crypto.decryptAsString(entry.Name, Keepass.state.database.key, iv));
-    decryptedEntry.Login = UTF8.decode(Crypto.decryptAsString(entry.Login, Keepass.state.database.key, iv));
-    decryptedEntry.Password = UTF8.decode(Crypto.decryptAsString(entry.Password, Keepass.state.database.key, iv));
+    let self = this;
+    return new Promise(function(resolve, reject) {
+        Keepass._ss.get("database.key").then(function(key) {
+            var decryptedEntry = {};
+            decryptedEntry.Uuid = Crypto.decryptAsString(entry.Uuid, key, iv);
+            decryptedEntry.Name = UTF8.decode(Crypto.decryptAsString(entry.Name, key, iv));
+            decryptedEntry.Login = UTF8.decode(Crypto.decryptAsString(entry.Login, key, iv));
+            decryptedEntry.Password = UTF8.decode(Crypto.decryptAsString(entry.Password, key, iv));
 
-    if(entry.StringFields) {
-        for(var i = 0; i < entry.StringFields.length; i++) {
-            decryptedEntry.StringFields[i].Key = UTF8.decode(Crypto.decryptAsString(entry.StringFields[i].Key, Keepass.state.database.key, iv));
-            decryptedEntry.StringFields[i].Value = UTF8.decode(Crypto.decryptAsString(entry.StringFields[i].Value, Keepass.state.database.key, iv));
-        }
-    }
+            if(entry.StringFields) {
+                for(var i = 0; i < entry.StringFields.length; i++) {
+                    decryptedEntry.StringFields[i].Key = UTF8.decode(Crypto.decryptAsString(entry.StringFields[i].Key, key, iv));
+                    decryptedEntry.StringFields[i].Value = UTF8.decode(Crypto.decryptAsString(entry.StringFields[i].Value, key, iv));
+                }
+            }
 
-    return decryptedEntry;
+            resolve(decryptedEntry);
+        });
+    });
+};
+
+Keepass.setSecureStorage = function(ss) {
+    Keepass._ss = ss;
 };
 
 Keepass.isAssociated = function() {
     return Keepass.state.associated;
 };
-
 
 Keepass.reCheckAssociated = function() {
     // TODO
@@ -107,45 +125,55 @@ Keepass.getLogins = function (url, callback) {
         return;
     }
 
-    var verifiers = Crypto.generateVerifier(Keepass.state.database.key);
+    Keepass._ss.get("database.key").then(function(key) {
+        Keepass._ss.get("database.id").then(function(id) {
+            console.log("key, id:");
+            console.log(key);
+            console.log(id);
 
-    var req = {
-        RequestType: "get-logins",
-        SortSelection: true,
-        TriggerUnlock: false,
-        Nonce: verifiers[0],
-        Verifier: verifiers[1],
-        Id: Keepass.state.database.id,
-        Url: Crypto.encrypt(url, Keepass.state.database.key, verifiers[0]),
-        SubmitUrl: null
-    };
+            var verifiers = Crypto.generateVerifier(key);
 
-    browser.storage.local.get("keepass-server-url").then(function(pref) {
-        reqwest({
-            url: pref["keepass-server-url"] || 'http://localhost:19455',
-            type: 'json',
-            method: 'post',
-            data: JSON.stringify(req),
-            contentType: "application/json",
-            error: function (err) {
+            var req = {
+                RequestType: "get-logins",
+                SortSelection: true,
+                TriggerUnlock: false,
+                Nonce: verifiers[0],
+                Verifier: verifiers[1],
+                Id: id,
+                Url: Crypto.encrypt(url, key, verifiers[0]),
+                SubmitUrl: null
+            };
 
-            },
-            success: function (resp) {
-                if (Keepass.helpers.verifyResponse(resp)) {
-                    var rIv = resp.Nonce;
-                    var decryptedEntries = [];
-                    for (var i = 0; i < resp.Entries.length; i++) {
-                        var decryptedEntry = Keepass.helpers.decryptEntry(resp.Entries[i], rIv);
-                        decryptedEntries.push(decryptedEntry);
-                        console.log(decryptedEntries);
+            browser.storage.local.get("keepass-server-url").then(function(pref) {
+                reqwest({
+                    url: pref["keepass-server-url"] || 'http://localhost:19455',
+                    type: 'json',
+                    method: 'post',
+                    data: JSON.stringify(req),
+                    contentType: "application/json",
+                    error: function (err) {
+
+                    },
+                    success: function (resp) {
+                        if (Keepass.helpers.verifyResponse(resp, key)) {
+                            var rIv = resp.Nonce;
+                            var decryptedEntries = [];
+                            for (var i = 0; i < resp.Entries.length; i++) {
+                                Keepass.helpers.decryptEntry(resp.Entries[i], rIv).then(function(decryptedEntry) {
+                                    // decryptedEntries.push(decryptedEntry);
+                                    callback([decryptedEntry]);
+                                    // TODO multiple entires
+                                });
+                                console.log(decryptedEntries);
+                            }
+                        }
+                        else {
+                            console.log("RetrieveCredentials for " + url + " rejected");
+                        }
                     }
-                    callback(decryptedEntries);
-                }
-                else {
-                    console.log("RetrieveCredentials for " + url + " rejected");
-                }
-            }
-        })
+                });
+            });
+        });
     });
 };
 
@@ -161,6 +189,10 @@ Keepass.associate = function(callback) {
         Nonce: verifiers[0],
         Verifier: verifiers[1]
     };
+    let self = this;
+
+    console.log(req);
+    // return;
 
     browser.storage.local.get("keepass-server-url").then(function(pref) {
         reqwest({
@@ -177,9 +209,12 @@ Keepass.associate = function(callback) {
                 console.log("Associated key is: " + key);
                 console.log("Id is: " + resp.Id);
                 console.log("Hash is: " + resp.Hash);
-                Keepass.state.database.id = resp.Id;
-                Keepass.state.database.key = key;
-                Keepass.state.database.hash = resp.Hash;
+                Keepass._ss.set("database.id", resp.Id);
+                Keepass._ss.set("database.key", key);
+                Keepass._ss.set("database.hash", resp.Hash);
+                // Keepass.state.database.id = resp.Id;
+                // Keepass.state.database.key = key;
+                // Keepass.state.database.hash = resp.Hash;
                 Keepass.state.associated = true;
                 callback();
             }

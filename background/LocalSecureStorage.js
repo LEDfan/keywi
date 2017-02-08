@@ -1,4 +1,10 @@
 function LocalSecureStorage() {
+    let self = this;
+    return new Promise(function(resolve, reject) {
+        self._unlockStorage().then(function() {
+           resolve(self);
+        });
+    });
 }
 
 LocalSecureStorage.prototype = Object.create(SecureStorage.prototype);
@@ -42,7 +48,10 @@ LocalSecureStorage.prototype._unlockStorage = function() {
                                     /**
                                      * First verify that the provided key to the LocalSecureStorage is correct.
                                      */
+                                    console.log(verifier);
                                     var checkIvStr = Crypto.decryptAsString(verifier, encryptionKey, iv);
+                                    console.log(iv);
+                                    console.log(checkIvStr);
 
                                     if (checkIvStr !== iv) {
                                         console.log("Error decrypting: key wrong!");
