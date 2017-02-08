@@ -32,7 +32,6 @@ Crypto.generateVerifier = function (inputKey) {
 };
 
 Crypto.deriveKey = function (userKey) {
-    console.log("Deriving key from " + userKey);
     var encoder = new TextEncoder("utf-8");
     var enUserKey = encoder.encode(userKey);
     return window.crypto.subtle.importKey(

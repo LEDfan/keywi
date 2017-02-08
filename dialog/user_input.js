@@ -1,9 +1,7 @@
 browser.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-    console.log(request);
     if (request.type === "user_input_msg") {
-        console.log(request);
         document.getElementById("msg").innerText = request.data.msg;
-        windowId = request.data.window_id;
+        window.windowId = request.data.window_id;
     }
 
 });
@@ -18,6 +16,6 @@ document.forms[0].onsubmit = function(e) {
             userInput: password
         }
     })
-    browser.windows.remove(windowId);
+    browser.windows.remove(window.windowId);
 };
 
