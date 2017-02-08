@@ -87,31 +87,56 @@ Keepass.isAssociated = function() {
     return Keepass.state.associated;
 };
 
+
+
 Keepass.reCheckAssociated = function() {
-    // TODO
-    // reqwest({
-    //     url: 'http://localhost:19455', // TODO hard coded path
-    //     type: 'json',
-    //     method: 'post',
-    //     data: JSON.stringify({"RequestType":"test-associate","TriggerUnlock":false}),
-    //     contentType: "application/json",
-    //     error: function (err) {
-    //
-    //     },
-    //     success: function (resp) {
-    //         console.log(resp)
-    //         if (!resp.Success) {
-    //             console.log("Not associated!");
-    //             // {
-    //             //     "RequestType":"associate",
-    //             //     "Key":"CRyXRbH9vBkdPrkdm52S3bTG2rGtnYuyJttk/mlJ15g=", // Base64 encoded 256 bit key
-    //             //     "Nonce":"epIt2nuAZbHt5JgEsxolWg==",
-    //             //     "Verifier":"Lj+3N58jkjoxS2zNRmTpeQ4g065OlFfJsHNQWYaOJto="
-    //             // }
-    //
-    //         }
-    //     }
-    // })
+
+   return new Promise(function(resolve, reject) {
+       Keepass._ss.get("database.key").then(function(key) {
+           Keepass._ss.get("database.id").then(function(id) {
+               // var rawKey = cryptoHelpers.generateSharedKey(Crypto.keySize * 2);
+               // var key = btoa(cryptoHelpers.convertByteArrayToString(rawKey));
+               var verifiers = Crypto.generateVerifier(key);
+
+               var req = {
+                   RequestType: "test-associate",
+                   Key: key,
+                   Nonce: verifiers[0],
+                   Verifier: verifiers[1],
+                   Id: id
+               };
+
+
+               // TODO
+               reqwest({
+                   url: 'http://localhost:19455', // TODO hard coded path
+                   type: 'json',
+                   method: 'post',
+                   data: JSON.stringify(req),
+                   contentType: "application/json",
+                   error: function(err) {
+
+                   },
+                   success: function(resp) {
+                       // console.log(resp)
+                       if (resp.Success) {
+                           Keepass.state.associated = true;
+                       }
+                       resolve(resp.Success);
+                       //     console.log("Not associated!");
+                           // {
+                           //     "RequestType":"associate",
+                           //     "Key":"CRyXRbH9vBkdPrkdm52S3bTG2rGtnYuyJttk/mlJ15g=", // Base64 encoded 256 bit key
+                           //     "Nonce":"epIt2nuAZbHt5JgEsxolWg==",
+                           //     "Verifier":"Lj+3N58jkjoxS2zNRmTpeQ4g065OlFfJsHNQWYaOJto="
+                           // }
+
+                       // }
+                   }
+               });
+           });
+       });
+   });
 
 };
 

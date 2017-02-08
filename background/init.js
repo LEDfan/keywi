@@ -3,8 +3,14 @@ function init() {
     new LocalSecureStorage().then(function(ss) {
         Keepass.setSecureStorage(ss);
         console.log(ss);
-        Keepass.associate(function() {
-            console.log("Associated!");
+        Keepass.reCheckAssociated().then(function(associated) {
+            if (!associated) {
+                Keepass.associate(function() {
+                    console.log("Associated! 1");
+                });
+            } else {
+                console.log("Associated! 2");
+            }
         });
     });
     // Keepass.reCheckAssociated().then(function(associated) {
