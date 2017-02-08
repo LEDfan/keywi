@@ -131,6 +131,12 @@ Keepass.reCheckAssociated = function() {
 Keepass.getLogins = function (url, callback) {
     console.log("Getlogins for url " + url);
 
+    if (!Keepass.state.associated) {
+        Keepass.associate(function() {
+            Keepass.getLogins(url, callback);
+        });
+        return;
+    }
 
     var verifiers = Keepass.helpers.getVerifier(Keepass.state.database.key);
 
@@ -212,3 +218,8 @@ Keepass.associate = function(callback) {
     });
 };
 
+browser.storage.onChanged.addListener(function(changes, areaName) {
+    if (changes.hasOwnProperty("keepass-server-url")) {
+        Keepass.state.associated = false;
+    }
+})
