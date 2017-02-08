@@ -52,8 +52,8 @@ Crypto.deriveKey = function (userKey) {
             {
                 "name": "PBKDF2",
                 salt:  new TextEncoder("utf-8").encode("salt"), // TODO verify security
-                iterations: 1000,
-                hash: {name: "SHA-1"}, //can be "SHA-1", "SHA-256", "SHA-384", or "SHA-512"
+                iterations: 5000,
+                hash: {name: "SHA-512"}, //can be "SHA-1", "SHA-256", "SHA-384", or "SHA-512"
             },
             key, //your key from generateKey or importKey
             { //the key type you want to create based on the derived bits
