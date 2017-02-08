@@ -5,6 +5,8 @@ function init() {
         console.log("Stored abc")
         ss.get("test", function (data) {
             console.log("Fetched " + data);
+        }, function () {
+            console.log("Couldn't fetch data with key test...");
         });
     });
 
