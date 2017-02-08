@@ -12,7 +12,11 @@
       "vendor/utf8.js",
       "vendor/aes.js",
       "vendor/cryptoHelpers.js",
+      "background/prompt.js",
+      "background/Crypto.js",
       "background/keepass.js",
+      "background/securestorage.js",
+      "background/LocalSecureStorage.js",
       "background/contextmenu.js",
       "background/init.js"
     ]

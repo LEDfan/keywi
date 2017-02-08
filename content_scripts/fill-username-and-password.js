@@ -89,13 +89,15 @@ function showMessage(id, msg) {
 }
 
 browser.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-    var usernameField = document.activeElement;
-    usernameField.value = request.username;
-    var passwordField = searchForPasswordInput(usernameField);
-    if (passwordField === null) {
-        showMessage("no-password", "No password field found, only filling username.");
-    } else {
-        passwordField.value = request.password;
+    if (request.type == "username-and-password") {
+        var usernameField = document.activeElement;
+        usernameField.value = request.username;
+        var passwordField = searchForPasswordInput(usernameField);
+        if (passwordField === null) {
+            showMessage("no-password", "No password field found, only filling username.");
+        } else {
+            passwordField.value = request.password;
+        }
     }
 });
 

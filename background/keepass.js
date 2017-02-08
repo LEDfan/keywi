@@ -5,7 +5,6 @@
 var Keepass = {};
 
 Keepass.settings = {
-    keySize: 8
 };
 
 Keepass.state = {
@@ -19,41 +18,6 @@ Keepass.state = {
 
 Keepass.helpers = {};
 
-Keepass.helpers.getVerifier = function(inputKey) {
-    var iv = cryptoHelpers.generateSharedKey(Keepass.settings.keySize);
-    var nonce = btoa(cryptoHelpers.convertByteArrayToString(iv));
-
-    var verifier = Keepass.helpers.encrypt(nonce, inputKey, nonce);
-
-    return [nonce, verifier];
-};
-
-Keepass.helpers.encrypt = function (input, key, iv) {
-    return btoa(cryptoHelpers.convertByteArrayToString(
-        slowAES.encrypt(
-            cryptoHelpers.convertStringToByteArray(input),
-            slowAES.modeOfOperation.CBC,
-            cryptoHelpers.convertStringToByteArray(atob(key)),
-            cryptoHelpers.convertStringToByteArray(atob(iv)
-            )
-        )));
-};
-
-
-Keepass.helpers.decryptAsString = function(input, iv) {
-    var output = slowAES.decrypt(
-        cryptoHelpers.convertStringToByteArray(atob(input)),
-        slowAES.modeOfOperation.CBC,
-        cryptoHelpers.convertStringToByteArray(atob(Keepass.state.database.key)),
-        cryptoHelpers.convertStringToByteArray(atob(iv))
-    );
-    return cryptoHelpers.convertByteArrayToString(output);
-};
-
-Keepass.isAssociated = function() {
-    return Keepass.state.associated;
-};
-
 
 Keepass.helpers.verifyResponse = function (response) {
     if (!response.Success) {
@@ -62,7 +26,7 @@ Keepass.helpers.verifyResponse = function (response) {
     }
 
     var iv = response.Nonce;
-    var value = Keepass.helpers.decryptAsString(response.Verifier, iv);
+    var value = Crypto.decryptAsString(response.Verifier, Keepass.state.database.key, iv);
 
     if (value !== iv) {
         Keepass.state.associated = false;
@@ -85,20 +49,25 @@ Keepass.helpers.verifyResponse = function (response) {
 
 Keepass.helpers.decryptEntry = function (entry, iv) {
     var decryptedEntry = {};
-    decryptedEntry.Uuid = Keepass.helpers.decryptAsString(entry.Uuid, iv);
-    decryptedEntry.Name = UTF8.decode(Keepass.helpers.decryptAsString(entry.Name, iv));
-    decryptedEntry.Login = UTF8.decode(Keepass.helpers.decryptAsString(entry.Login, iv));
-    decryptedEntry.Password = UTF8.decode(Keepass.helpers.decryptAsString(entry.Password, iv));
+    decryptedEntry.Uuid = Crypto.decryptAsString(entry.Uuid, Keepass.state.database.key, iv);
+    decryptedEntry.Name = UTF8.decode(Crypto.decryptAsString(entry.Name, Keepass.state.database.key, iv));
+    decryptedEntry.Login = UTF8.decode(Crypto.decryptAsString(entry.Login, Keepass.state.database.key, iv));
+    decryptedEntry.Password = UTF8.decode(Crypto.decryptAsString(entry.Password, Keepass.state.database.key, iv));
 
     if(entry.StringFields) {
         for(var i = 0; i < entry.StringFields.length; i++) {
-            decryptedEntry.StringFields[i].Key = UTF8.decode(Keepass.helpers.decryptAsString(entry.StringFields[i].Key, iv));
-            decryptedEntry.StringFields[i].Value = UTF8.decode(Keepass.helpers.decryptAsString(entry.StringFields[i].Value, iv));
+            decryptedEntry.StringFields[i].Key = UTF8.decode(Crypto.decryptAsString(entry.StringFields[i].Key, Keepass.state.database.key, iv));
+            decryptedEntry.StringFields[i].Value = UTF8.decode(Crypto.decryptAsString(entry.StringFields[i].Value, Keepass.state.database.key, iv));
         }
     }
 
     return decryptedEntry;
 };
+
+Keepass.isAssociated = function() {
+    return Keepass.state.associated;
+};
+
 
 Keepass.reCheckAssociated = function() {
     // TODO
@@ -138,7 +107,7 @@ Keepass.getLogins = function (url, callback) {
         return;
     }
 
-    var verifiers = Keepass.helpers.getVerifier(Keepass.state.database.key);
+    var verifiers = Crypto.generateVerifier(Keepass.state.database.key);
 
     var req = {
         RequestType: "get-logins",
@@ -147,7 +116,7 @@ Keepass.getLogins = function (url, callback) {
         Nonce: verifiers[0],
         Verifier: verifiers[1],
         Id: Keepass.state.database.id,
-        Url: Keepass.helpers.encrypt(url, Keepass.state.database.key, verifiers[0]),
+        Url: Crypto.encrypt(url, Keepass.state.database.key, verifiers[0]),
         SubmitUrl: null
     };
 
@@ -182,9 +151,9 @@ Keepass.getLogins = function (url, callback) {
 
 Keepass.associate = function(callback) {
 
-    var rawKey = cryptoHelpers.generateSharedKey(Keepass.settings.keySize * 2);
+    var rawKey = cryptoHelpers.generateSharedKey(Crypto.keySize * 2);
     var key = btoa(cryptoHelpers.convertByteArrayToString(rawKey));
-    var verifiers = Keepass.helpers.getVerifier(key);
+    var verifiers = Crypto.generateVerifier(key);
 
     var req = {
         RequestType: "associate",
