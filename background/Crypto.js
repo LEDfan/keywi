@@ -37,7 +37,7 @@ Crypto._getSalt = function (overwritesalt) {
             let newSalt = new Uint8Array(100);
             window.crypto.getRandomValues(newSalt);
             console.log(newSalt);
-            browser.storage.local.set({"crypto_salt": JSON.stringify(newSalt)}).then(function () {
+            browser.storage.local.set({"crypto_salt": JSON.stringify(Array.from(newSalt))}).then(function () {
                 // make sure it's stored, we don't want to work with a not-stored salt
                 resolve(newSalt);
             });
@@ -47,7 +47,7 @@ Crypto._getSalt = function (overwritesalt) {
         } else {
             browser.storage.local.get("crypto_salt").then(function (data) {
                 if (Object.keys(data).length !== 0) {
-                    resolve(new ArrayBuffer(JSON.parse(data["crypto_salt"])));
+                    resolve(new Uint8Array(JSON.parse(data.crypto_salt)));
                 } else {
                     _newSalt();
                 }
