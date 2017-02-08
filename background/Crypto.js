@@ -5,7 +5,7 @@ Crypto.keySize = 8;
 Crypto.encrypt = function (input, key, iv) {
     return btoa(cryptoHelpers.convertByteArrayToString(
         slowAES.encrypt(
-            cryptoHelpers.convertStringToByteArray(atob(input)),
+            cryptoHelpers.convertStringToByteArray(input),
             slowAES.modeOfOperation.CBC,
             cryptoHelpers.convertStringToByteArray(atob(key)),
             cryptoHelpers.convertStringToByteArray(atob(iv)
@@ -20,7 +20,7 @@ Crypto.decryptAsString = function (input, key, iv) {
         cryptoHelpers.convertStringToByteArray(atob(key)),
         cryptoHelpers.convertStringToByteArray(atob(iv))
     );
-    return btoa(cryptoHelpers.convertByteArrayToString(output));
+    return cryptoHelpers.convertByteArrayToString(output);
 };
 
 Crypto.generateVerifier = function (inputKey) {
