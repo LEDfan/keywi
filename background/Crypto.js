@@ -31,30 +31,37 @@ Crypto.generateVerifier = function (inputKey) {
     return [nonce, verifier];
 };
 
-Crypto._getSalt = function () {
+Crypto._getSalt = function (overwritesalt) {
     return new Promise(function (resolve, reject) {
-        browser.storage.local.get("crypto_salt").then(function (data) {
-            if (Object.keys(data).length !== 0) {
-                resolve(JSON.parse(data["crypto_salt"]));
-            } else {
-                let newSalt = new Uint8Array(100);
-                window.crypto.getRandomValues(newSalt);
-                browser.storage.local.set({"crypto_salt":  JSON.stringify(newSalt)}).then(function () {
-                    // make sure it's stored, we don't want to work with a not-stored salt
-                    resolve(newSalt);
-                });
-            }
-        }).catch(function(error) {
-            reject(error);
-        });
+        function _newSalt() {
+            let newSalt = new Uint8Array(100);
+            window.crypto.getRandomValues(newSalt);
+            console.log(newSalt);
+            browser.storage.local.set({"crypto_salt": JSON.stringify(newSalt)}).then(function () {
+                // make sure it's stored, we don't want to work with a not-stored salt
+                resolve(newSalt);
+            });
+        }
+        if (overwritesalt) {
+            _newSalt();
+        } else {
+            browser.storage.local.get("crypto_salt").then(function (data) {
+                if (Object.keys(data).length !== 0) {
+                    resolve(new ArrayBuffer(JSON.parse(data["crypto_salt"])));
+                } else {
+                    _newSalt();
+                }
+            }).catch(function (error) {
+                reject(error);
+            });
+        }
     });
 };
 
-Crypto.deriveKey = function (userKey) {
+Crypto.deriveKey = function (userKey, overwriteSalt = false) {
     var encoder = new TextEncoder("utf-8");
     var enUserKey = encoder.encode(userKey);
-    return Crypto._getSalt().then(function (salt) {
-        console.log(salt);
+    return Crypto._getSalt(overwriteSalt).then(function (salt) {
         return window.crypto.subtle.importKey(
             "raw", //only "raw" is allowed
             enUserKey,
@@ -70,7 +77,6 @@ Crypto.deriveKey = function (userKey) {
                 return window.crypto.subtle.deriveKey(
                     {
                         "name": "PBKDF2",
-                        // salt:  new TextEncoder("utf-8").encode("salt"), // TODO verify security
                         salt: salt,
                         iterations: Math.max(5000, Number.parseInt(storageResponse["password-hash-rounds"]) || 0),
                         hash: {name: "SHA-512"}, //can be "SHA-1", "SHA-256", "SHA-384", or "SHA-512"

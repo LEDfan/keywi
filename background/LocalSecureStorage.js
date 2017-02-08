@@ -10,11 +10,12 @@ LocalSecureStorage.prototype._hasEncryptionKey = function() {
     /**
      * We store some dummy data in the LocalSecureStorage to make the user already provided an encryption key.
      */
+    let self = this;
     return new Promise(function(resolve, reject) {
-        this.has("local_secure_storage_encryption_key_test").then(function () {
+        self.has("local_secure_storage_encryption_key_test").then(function () {
            resolve();
-        }).catch(function () {
-           reject();
+        }).catch(function (error) {
+           reject(error);
         });
     });
 };
@@ -45,12 +46,12 @@ LocalSecureStorage.prototype._unlockStorage = function() {
 
                                     if (checkIvStr !== iv) {
                                         console.log("Error decrypting: key wrong!");
-                                        onError("Wrong decryption key provided by user!");
+                                        reject("Wrong decryption key provided by user!");
                                         return;
                                     }
 
                                     LocalSecureStorage.prototype._encryptionkey = encryptionKey;
-                                    onSuccess();
+                                    resolve();
                                 });
                             }).catch(function(err){
                                 console.error(err);
@@ -58,14 +59,13 @@ LocalSecureStorage.prototype._unlockStorage = function() {
                             });
                         });
                 })
-                .catch(function () {
+                .catch(function (error) {
                     // we don't have an encryption key, create one, and store dummy data with it
                     promptFromBg("Fill in a new password for the secure storage.. (TODO)")
-                        .then(function (userKey) {
-                            Crypto.deriveKey(userKey).then(function (encryptionKey) {
+                        .then(function(userKey) {
+                            Crypto.deriveKey(userKey, true).then(function (encryptionKey) {
                                 var verifiers = Crypto.generateVerifier(encryptionKey);
 
-                                // console.log(verifiers);
                                 var data = {};
                                 data["local_secure_storage_encryption_key_test"] = {
                                     nonce: verifiers[0],
@@ -90,9 +90,9 @@ LocalSecureStorage.prototype.has = function(key) {
     return new Promise(function (resolve, reject) {
         browser.storage.local.get(key, function (data) {
             if (Object.keys(data).length === 0) {
-                resolve();
+                reject("No such key!");
             } else {
-                reject();
+                resolve();
             }
         });
     });
