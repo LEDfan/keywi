@@ -23,28 +23,16 @@ LocalSecureStorage.prototype._unlockStorage = function (onSuccess, onError) {
             // we have an encryption key, ask the user to input this, and verify that this is the correct key and store it for later user
             confirmFromBg("Fill in the existing password for the secure storage.. (TODO)", function (userKey) {
                 Crypto.deriveKey(userKey).then(function (encryptionKey) {
-                    // console.log("Using exisiting " + new TextDecoder("utf-8").decode(encryptionKey));
-                    // encryptionKey = btoa(new TextDecoder("utf-8").decode(encryptionKey));
-                    // encryptionKey = cryptoHelpers.convertByteArrayToString(encryptionKey);
-                    var u8 = new Uint8Array(encryptionKey);
-                    encryptionKey = btoa(String.fromCharCode.apply(null, u8));
-                    // console.log("Decryption: ");
-                    // console.log(encryptionKey);
                     browser.storage.local.get("local_secure_storage_encryption_key_test").then(function (data) {
                         var actualData = data["local_secure_storage_encryption_key_test"];
                         var iv = actualData.nonce;
                         var verifier = actualData.verifier;
-
-                        // console.log(iv);
-                        // console.log(verifier);
 
                         /**
                          * First verify that the provided key to the LocalSecureStorage is correct.
                          */
                         var checkIvStr = Crypto.decryptAsString(verifier, encryptionKey, iv);
 
-                        // console.log(iv);
-                        // console.log(checkIvStr);
                         if (checkIvStr !== iv) {
                             console.log("Error decrypting: key wrong!");
                             onError("Wrong decryption key provided by user!");
@@ -56,7 +44,6 @@ LocalSecureStorage.prototype._unlockStorage = function (onSuccess, onError) {
                     });
                 }).catch(function(err){
                     console.error(err);
-                    // alert(err);
                 });
             });
         }, function () {
@@ -64,19 +51,6 @@ LocalSecureStorage.prototype._unlockStorage = function (onSuccess, onError) {
             confirmFromBg("Fill in a new password for the secure storage.. (TODO)", function (userKey) {
                 console.log("User key " + userKey);
                 Crypto.deriveKey(userKey).then(function (encryptionKey) {
-                    // console.log("Using new " + new TextDecoder("utf-8").decode(encryptionKey));
-                    // encryptionKey = btoa(new TextDecoder("utf-8").decode(encryptionKey));
-                    // var u8 = new Uint8Array(encryptionKey);
-                    // var b64encoded = btoa(String.fromCharCode.apply(null, u8));
-                    var u8 = new Uint8Array(encryptionKey);
-                    encryptionKey = btoa(String.fromCharCode.apply(null, u8));
-                    // console.log("Encryption: ");
-                    // console.log(encryptionKey);
-                    // console.log("Decryption: ");
-                    // console.log(b64encoded);
-                    // encryptionKey =  btoa(cryptoHelpers.convertByteArrayToString(encryptionKey));
-                    // console.log("Encryption: ");
-                    // console.log(encryptionKey);
                     var verifiers = Crypto.generateVerifier(encryptionKey);
 
                     // console.log(verifiers);
@@ -92,7 +66,6 @@ LocalSecureStorage.prototype._unlockStorage = function (onSuccess, onError) {
                     onSuccess();
                 }).catch(function(err){
                     console.error(err);
-                    // alert(err);
                 });
             });
         });

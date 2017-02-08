@@ -67,6 +67,9 @@ Crypto.deriveKey = function (userKey) {
     }).then(function (derivedKey) {
         console.log(derivedKey);
         return window.crypto.subtle.exportKey("raw", derivedKey);
+    }).then(function (encryptionKey) {
+        var u8 = new Uint8Array(encryptionKey);
+        return btoa(String.fromCharCode.apply(null, u8));
     })
     .catch(function(err){
         console.error(err);
