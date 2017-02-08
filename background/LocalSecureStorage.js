@@ -1,7 +1,8 @@
 function LocalSecureStorage() {
 }
 
-LocalSecureStorage.prototype = new SecureStorage();
+LocalSecureStorage.prototype = Object.create(SecureStorage.prototype);
+LocalSecureStorage.prototype.constructor = LocalSecureStorage;
 
 LocalSecureStorage.prototype._encryptionkey = null;
 
@@ -20,43 +21,79 @@ LocalSecureStorage.prototype._unlockStorage = function (onSuccess, onError) {
         // check if the user has ever provided an encryption key
         this._hasEncryptionKey(function () {
             // we have an encryption key, ask the user to input this, and verify that this is the correct key and store it for later user
-            confirmFromBg("Fill in the existing password for the secure storage.. (TODO)", function (encryptionKey) {
-                browser.storage.local.get("local_secure_storage_encryption_key_test").then(function (data) {
-                    var actualData = data["local_secure_storage_encryption_key_test"];
-                    var iv = actualData.nonce;
-                    var verifier = actualData.verifier;
+            confirmFromBg("Fill in the existing password for the secure storage.. (TODO)", function (userKey) {
+                Crypto.deriveKey(userKey).then(function (encryptionKey) {
+                    // console.log("Using exisiting " + new TextDecoder("utf-8").decode(encryptionKey));
+                    // encryptionKey = btoa(new TextDecoder("utf-8").decode(encryptionKey));
+                    // encryptionKey = cryptoHelpers.convertByteArrayToString(encryptionKey);
+                    var u8 = new Uint8Array(encryptionKey);
+                    encryptionKey = btoa(String.fromCharCode.apply(null, u8));
+                    // console.log("Decryption: ");
+                    // console.log(encryptionKey);
+                    browser.storage.local.get("local_secure_storage_encryption_key_test").then(function (data) {
+                        var actualData = data["local_secure_storage_encryption_key_test"];
+                        var iv = actualData.nonce;
+                        var verifier = actualData.verifier;
 
-                    /**
-                     * First verify that the provided key to the LocalSecureStorage is correct.
-                     */
-                    var checkIvStr = Crypto.decryptAsString(verifier, encryptionKey, iv);
+                        // console.log(iv);
+                        // console.log(verifier);
 
-                    if (checkIvStr !== iv) {
-                        console.log("Error decrypting: key wrong!");
-                        onError("Wrong decryption key provided by user!");
-                        return;
-                    }
+                        /**
+                         * First verify that the provided key to the LocalSecureStorage is correct.
+                         */
+                        var checkIvStr = Crypto.decryptAsString(verifier, encryptionKey, iv);
 
-                    LocalSecureStorage.prototype._encryptionkey = encryptionKey;
-                    onSuccess();
+                        // console.log(iv);
+                        // console.log(checkIvStr);
+                        if (checkIvStr !== iv) {
+                            console.log("Error decrypting: key wrong!");
+                            onError("Wrong decryption key provided by user!");
+                            return;
+                        }
+
+                        LocalSecureStorage.prototype._encryptionkey = encryptionKey;
+                        onSuccess();
+                    });
+                }).catch(function(err){
+                    console.error(err);
+                    // alert(err);
                 });
-
             });
         }, function () {
             // we don't have an encryption key, create one, and store dummy data with it
-            confirmFromBg("Fill in a new password for the secure storage.. (TODO)", function (encryptionKey) {
-                var verifiers = Crypto.generateVerifier(encryptionKey);
+            confirmFromBg("Fill in a new password for the secure storage.. (TODO)", function (userKey) {
+                console.log("User key " + userKey);
+                Crypto.deriveKey(userKey).then(function (encryptionKey) {
+                    // console.log("Using new " + new TextDecoder("utf-8").decode(encryptionKey));
+                    // encryptionKey = btoa(new TextDecoder("utf-8").decode(encryptionKey));
+                    // var u8 = new Uint8Array(encryptionKey);
+                    // var b64encoded = btoa(String.fromCharCode.apply(null, u8));
+                    var u8 = new Uint8Array(encryptionKey);
+                    encryptionKey = btoa(String.fromCharCode.apply(null, u8));
+                    // console.log("Encryption: ");
+                    // console.log(encryptionKey);
+                    // console.log("Decryption: ");
+                    // console.log(b64encoded);
+                    // encryptionKey =  btoa(cryptoHelpers.convertByteArrayToString(encryptionKey));
+                    // console.log("Encryption: ");
+                    // console.log(encryptionKey);
+                    var verifiers = Crypto.generateVerifier(encryptionKey);
 
-                var data = {};
-                data["local_secure_storage_encryption_key_test"] = {
-                    nonce: verifiers[0],
-                    verifier: verifiers[1]
-                };
+                    // console.log(verifiers);
+                    var data = {};
+                    data["local_secure_storage_encryption_key_test"] = {
+                        nonce: verifiers[0],
+                        verifier: verifiers[1]
+                    };
 
-                browser.storage.local.set(data);
+                    browser.storage.local.set(data);
 
-                LocalSecureStorage.prototype._encryptionkey = encryptionKey;
-                onSuccess();
+                    LocalSecureStorage.prototype._encryptionkey = encryptionKey;
+                    onSuccess();
+                }).catch(function(err){
+                    console.error(err);
+                    // alert(err);
+                });
             });
         });
     }
