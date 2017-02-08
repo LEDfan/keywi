@@ -5,7 +5,7 @@
 var Keepass = {};
 
 Keepass.settings = {
-  keySize: 8
+    keySize: 8
 };
 
 Keepass.state = {
