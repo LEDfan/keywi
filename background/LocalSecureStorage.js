@@ -29,14 +29,7 @@ LocalSecureStorage.prototype._unlockStorage = function (onSuccess, onError) {
                     /**
                      * First verify that the provided key to the LocalSecureStorage is correct.
                      */
-                    var checkIv = slowAES.decrypt(
-                        cryptoHelpers.convertStringToByteArray(atob(verifier)),
-                        slowAES.modeOfOperation.CBC,
-                        cryptoHelpers.convertStringToByteArray(atob(encryptionKey)),
-                        cryptoHelpers.convertStringToByteArray(atob(iv))
-                    );
-
-                    var checkIvStr = cryptoHelpers.convertByteArrayToString(checkIv);
+                    var checkIvStr = Crypto.decryptAsString(verifier, encryptionKey, iv);
 
                     if (checkIvStr !== iv) {
                         console.log("Error decrypting: key wrong!");
@@ -52,11 +45,10 @@ LocalSecureStorage.prototype._unlockStorage = function (onSuccess, onError) {
         }, function () {
             // we don't have an encryption key, create one, and store dummy data with it
             confirmFromBg("Fill in a new password for the secure storage.. (TODO)", function (encryptionKey) {
-                var verifiers = Keepass.helpers.getVerifier(encryptionKey);
+                var verifiers = Crypto.generateVerifier(encryptionKey);
 
                 var data = {};
                 data["local_secure_storage_encryption_key_test"] = {
-                    // data: Keepass.helpers.encrypt("DUMMY_DATA", encryptionKey, verifiers[0]),
                     nonce: verifiers[0],
                     verifier: verifiers[1]
                 };
@@ -84,11 +76,11 @@ LocalSecureStorage.prototype.has = function(key, onHas, onNotHas) {
 LocalSecureStorage.prototype.set = function(key, value, done) {
     this._unlockStorage(function () {
         SecureStorage.prototype._setCache(key, value);
-        var verifiers = Keepass.helpers.getVerifier(LocalSecureStorage.prototype._encryptionkey);
+        var verifiers = Crypto.generateVerifier(LocalSecureStorage.prototype._encryptionkey);
 
         var data = {};
         data[key] = {
-            data: Keepass.helpers.encrypt(value, LocalSecureStorage.prototype._encryptionkey, verifiers[0]),
+            data: Crypto.encrypt(value, LocalSecureStorage.prototype._encryptionkey, verifiers[0]),
             nonce: verifiers[0],
             verifier: verifiers[1]
         };
@@ -114,14 +106,7 @@ LocalSecureStorage.prototype.get = function (key, onSuccess, onError) {
                 /**
                  * First verify that the data is encrypted with the key stored in this._encryptionKey.
                  */
-                var checkIv = slowAES.decrypt(
-                    cryptoHelpers.convertStringToByteArray(atob(verifier)),
-                    slowAES.modeOfOperation.CBC,
-                    cryptoHelpers.convertStringToByteArray(atob(LocalSecureStorage.prototype._encryptionkey)),
-                    cryptoHelpers.convertStringToByteArray(atob(iv))
-                );
-
-                var checkIvStr = cryptoHelpers.convertByteArrayToString(checkIv);
+                var checkIvStr = Crypto.decryptAsString(verifier, LocalSecureStorage.prototype._encryptionkey, iv);
 
                 if (checkIvStr !== iv) {
                     console.log("Error decrypting: key wrong!");
@@ -132,14 +117,7 @@ LocalSecureStorage.prototype.get = function (key, onSuccess, onError) {
                 /**
                  * Decrypt the data.
                  */
-                var decryptedData = slowAES.decrypt(
-                    cryptoHelpers.convertStringToByteArray(atob(actualData.data)),
-                    slowAES.modeOfOperation.CBC,
-                    cryptoHelpers.convertStringToByteArray(atob(LocalSecureStorage.prototype._encryptionkey)),
-                    cryptoHelpers.convertStringToByteArray(atob(iv))
-                );
-
-                var decryptedDataStr = cryptoHelpers.convertByteArrayToString(decryptedData);
+                var decryptedDataStr = Crypto.decryptAsString(actualData.data, LocalSecureStorage.prototype._encryptionkey, iv);
 
                 onSuccess(decryptedDataStr);
             });

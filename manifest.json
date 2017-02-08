@@ -13,6 +13,7 @@
       "vendor/aes.js",
       "vendor/cryptoHelpers.js",
       "background/confirm.js",
+      "background/Crypto.js",
       "background/keepass.js",
       "background/securestorage.js",
       "background/LocalSecureStorage.js",
