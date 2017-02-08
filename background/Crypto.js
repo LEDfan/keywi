@@ -44,9 +44,6 @@ Crypto.deriveKey = function (userKey) {
         ["deriveKey"] //can be any combination of "deriveKey" and "deriveBits"
     ).then(function(key){
         //returns a key object
-        console.log(key);
-        console.log("DONE!");
-
         return browser.storage.local.get("password-hash-rounds").then(function(storageResponse) {
             console.log(Math.max(5000, Number.parseInt(storageResponse["password-hash-rounds"]) || 0));
             return window.crypto.subtle.deriveKey(
@@ -66,7 +63,6 @@ Crypto.deriveKey = function (userKey) {
                 ["encrypt", "decrypt"] //limited to the options in that algorithm's importKey
             );
         }).then(function (derivedKey) {
-            console.log(derivedKey);
             return window.crypto.subtle.exportKey("raw", derivedKey);
         }).then(function (encryptionKey) {
             var u8 = new Uint8Array(encryptionKey);
