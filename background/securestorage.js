@@ -2,6 +2,14 @@ function SecureStorage() {
 }
 
 SecureStorage.prototype.cache = {};
+
+SecureStorage.prototype._hasCache = function (key) {
+    if (typeof this.cache[key] === 'undefined') {
+        return false;
+    }
+    return true;
+};
+
 SecureStorage.prototype._setCache = function (key, value) {
     this.cache[key] = value;
 };

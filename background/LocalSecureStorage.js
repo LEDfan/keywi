@@ -102,48 +102,52 @@ LocalSecureStorage.prototype.set = function(key, value, done) {
 };
 
 LocalSecureStorage.prototype.get = function (key, onSuccess, onError) {
-    this._unlockStorage(function () {
-        browser.storage.local.get(key).then(function(data) {
-            var actualData = data[key];
-            var iv = actualData.nonce;
-            var verifier = actualData.verifier;
+    if (SecureStorage.prototype._hasCache(key)) {
+        onSuccess(SecureStorage.prototype._getCache(key));
+    } else {
+        this._unlockStorage(function () {
+            browser.storage.local.get(key).then(function (data) {
+                var actualData = data[key];
+                var iv = actualData.nonce;
+                var verifier = actualData.verifier;
 
-            /**
-             * First verify that the data is encrypted with the key stored in this._encryptionKey.
-             */
-            var checkIv = slowAES.decrypt(
-                cryptoHelpers.convertStringToByteArray(atob(verifier)),
-                slowAES.modeOfOperation.CBC,
-                cryptoHelpers.convertStringToByteArray(atob(LocalSecureStorage.prototype._encryptionkey)),
-                cryptoHelpers.convertStringToByteArray(atob(iv))
-            );
+                /**
+                 * First verify that the data is encrypted with the key stored in this._encryptionKey.
+                 */
+                var checkIv = slowAES.decrypt(
+                    cryptoHelpers.convertStringToByteArray(atob(verifier)),
+                    slowAES.modeOfOperation.CBC,
+                    cryptoHelpers.convertStringToByteArray(atob(LocalSecureStorage.prototype._encryptionkey)),
+                    cryptoHelpers.convertStringToByteArray(atob(iv))
+                );
 
-            var checkIvStr = cryptoHelpers.convertByteArrayToString(checkIv);
+                var checkIvStr = cryptoHelpers.convertByteArrayToString(checkIv);
 
-            if (checkIvStr !== iv) {
-                console.log("Error decrypting: key wrong!");
-                onError();
-                return;
-            }
+                if (checkIvStr !== iv) {
+                    console.log("Error decrypting: key wrong!");
+                    onError();
+                    return;
+                }
 
-            /**
-             * Decrypt the data.
-             */
-            var decryptedData = slowAES.decrypt(
-                cryptoHelpers.convertStringToByteArray(atob(actualData.data)),
-                slowAES.modeOfOperation.CBC,
-                cryptoHelpers.convertStringToByteArray(atob(LocalSecureStorage.prototype._encryptionkey)),
-                cryptoHelpers.convertStringToByteArray(atob(iv))
-            );
+                /**
+                 * Decrypt the data.
+                 */
+                var decryptedData = slowAES.decrypt(
+                    cryptoHelpers.convertStringToByteArray(atob(actualData.data)),
+                    slowAES.modeOfOperation.CBC,
+                    cryptoHelpers.convertStringToByteArray(atob(LocalSecureStorage.prototype._encryptionkey)),
+                    cryptoHelpers.convertStringToByteArray(atob(iv))
+                );
 
-            var decryptedDataStr = cryptoHelpers.convertByteArrayToString(decryptedData);
+                var decryptedDataStr = cryptoHelpers.convertByteArrayToString(decryptedData);
 
-            onSuccess(decryptedDataStr);
+                onSuccess(decryptedDataStr);
+            });
+
+        }, function () {
+            // TODO
         });
-
-    }, function () {
-
-    });
+    }
 };
 
 LocalSecureStorage.prototype.delete = function (key) {
