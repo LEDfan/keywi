@@ -35,52 +35,52 @@ function searchForPasswordInput(userInput) {
  */
 function showMessage(id, msg) {
     document.body.insertAdjacentHTML('afterbegin', `
-<style>
-.keepass_title {
+        <style>
+            .keepass_title {
 
-}
+            }
 
-.keepass_msg_text {
+            .keepass_msg_text {
 
-}
+            }
 
-.keepass_message-container {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    width: 300px;
-    height: 100px;
-    background-color: #FFFFFF;
-    z-index: 1000;
-    
-    border: 1px solid #636363;
-    border-radius: 4px;
-    box-shadow: 0 1px 1px rgba(0,0,0,.05);
-}
+            .keepass_message-container {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                width: 300px;
+                height: 100px;
+                background-color: #FFFFFF;
+                z-index: 1000;
 
-.keepass_message-heading {
-    color: #333;
-    background-color: #ddd;
-    padding: 10px 15px;
-    border-top-left-radius: 3px;
-    border-top-right-radius: 3px;
-    border-bottom: 1px solid #636363;
-}
+                border: 1px solid #636363;
+                border-radius: 4px;
+                box-shadow: 0 1px 1px rgba(0,0,0,.05);
+            }
 
-.keepass_message-body {
-    padding: 15px;
-}
+            .keepass_message-heading {
+                color: #333;
+                background-color: #ddd;
+                padding: 10px 15px;
+                border-top-left-radius: 3px;
+                border-top-right-radius: 3px;
+                border-bottom: 1px solid #636363;
+            }
 
-</style>
-<div id="keepass_msg_` + id + `" class="keepass_message-container">
-    <div class="keepass_message-heading">
-        <span class="keepass_title">Keepass</span>
-    </div>
-    <div class="keepass_message-body">
-        <p class="keepass_msg_text">` + msg  + `</p>
-    </div>
-</div>
-`);
+            .keepass_message-body {
+                padding: 15px;
+            }
+
+            </style>
+            <div id="keepass_msg_` + id + `" class="keepass_message-container">
+            <div class="keepass_message-heading">
+            <span class="keepass_title">Keepass</span>
+            </div>
+            <div class="keepass_message-body">
+            <p class="keepass_msg_text">` + msg  + `</p>
+            </div>
+            </div>
+            `);
 
     var element = document.getElementById("keepass_msg_" + id);
     setInterval(function () {
