@@ -13,13 +13,13 @@ Keepass (working name)
  - no injecting of buttons or icons into forms
 
 ## Alternatives
-### Passifox
+### [Passifox](https://github.com/pfn/passifox)
  - some forms can't be filled (e.g. openmediavault has some problems with it)
  - doesn't uses web extensions, thus not compatible with Electrolysis
  - automatic form filling
 
  
-### Passifox
+### [Keefox](http://keefox.org/)
  - doesn't uses web extensions, thus not compatible with Electrolysis
  - very feature rich, almost a password manager on it's own
  - automatic form filling
