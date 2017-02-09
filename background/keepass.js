@@ -11,11 +11,6 @@ Keepass.settings = {
 
 Keepass.state = {
     associated: false,
-    // database: {
-        // id: null,
-        // key: null, // TODO store not base64'ed key
-        // hash: null
-    // }
 };
 
 Keepass.helpers = {};
@@ -207,9 +202,6 @@ Keepass.associate = function(callback) {
     };
     let self = this;
 
-    console.log(req);
-    // return;
-
     browser.storage.local.get("keepass-server-url").then(function(pref) {
         reqwest({
             url: pref["keepass-server-url"] || 'http://localhost:19455',
@@ -225,21 +217,31 @@ Keepass.associate = function(callback) {
                 console.log("Associated key is: " + key);
                 console.log("Id is: " + resp.Id);
                 console.log("Hash is: " + resp.Hash);
-                Keepass._ss.set("database.id", resp.Id);
-                Keepass._ss.set("database.key", key);
-                Keepass._ss.set("database.hash", resp.Hash);
-                // Keepass.state.database.id = resp.Id;
-                // Keepass.state.database.key = key;
-                // Keepass.state.database.hash = resp.Hash;
-                Keepass.state.associated = true;
-                callback();
+                Keepass._ss.set("database.id", resp.Id).then(function() {
+                    return Keepass._ss.set("database.key", key);
+                }).then(function() {
+                    return Keepass._ss.set("database.hash", resp.Hash);
+                }).then(function() {
+                    Keepass.state.associated = true;
+                    callback();
+                })
             }
         })
     });
 };
 
 browser.storage.onChanged.addListener(function(changes, areaName) {
+    console.log(changes);
     if (changes.hasOwnProperty("keepass-server-url")) {
         Keepass.state.associated = false;
     }
-})
+    if (changes.hasOwnProperty("password-hash-rounds")) {
+        Keepass._ss.reencrypt();
+    }
+});
+
+browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+    if (request.type === "re-encrypt_local_secure_storage") {
+        Keepass._ss.reencrypt();
+    }
+});

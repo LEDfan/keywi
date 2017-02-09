@@ -6,7 +6,7 @@
         <title>Options for Keepass</title>
     </head>
     <body>
-        <form id="options">
+        <div id="options">
             <fieldset>
                 <label for="keepass-server-url">KeepassHTTP url:</label>
                 <input id="keepass-server-url" type="url" name="keepass-server-url" placeholder="http://localhost:19455">
@@ -15,7 +15,9 @@
                 <label for="password-hash-rounds">Number of hashing rounds for key generation (advanced): </label>
                 <input id="password-hash-rounds" type="number" name="password-hash-rounds" placeholder="5000" min="5000">
             </fieldset>
-        </form>
+            <button id="btn-re-encrypt" >Re-encrypt the Secure Storage.</button>
+    </div>
         <script src="options.js"></script>
+        <script src="../vendor/debounce.js"></script>
     </body>
 </html>
