@@ -19,6 +19,7 @@
       "background/securestorage.js",
       "background/LocalSecureStorage.js",
       "background/contextmenu.js",
+      "background/commands.js",
       "background/init.js"
     ]
   },
@@ -33,5 +34,13 @@
   ],
   "options_ui": {
     "page": "options/options.html"
+  },
+  "commands": {
+    "fill-form": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+F"
+      },
+      "description": "Fill a username/password field on the current page"
+    }
   }
 }
