@@ -10,7 +10,7 @@ function LocalSecureStorage() {
 LocalSecureStorage.prototype = Object.create(SecureStorage.prototype);
 LocalSecureStorage.prototype.constructor = LocalSecureStorage;
 LocalSecureStorage.prototype._prefix = "local_secure_storage__";
-LocalSecureStorage.prototype._dummyValueKey = LocalSecureStorage.prototype._prefix + "encryption_key_test";
+LocalSecureStorage.prototype._dummyValueKey = "encryption_key_test";
 
 LocalSecureStorage.prototype._encryptionkey = null;
 
@@ -42,8 +42,8 @@ LocalSecureStorage.prototype._unlockStorage = function() {
                     promptFromBg("Fill in the existing password for the secure storage.. (TODO)")
                         .then(function (userKey) {
                             Crypto.deriveKey(userKey).then(function (encryptionKey) {
-                                browser.storage.local.get(LocalSecureStorage.prototype._dummyValueKey).then(function (data) {
-                                    var actualData = data[LocalSecureStorage.prototype._dummyValueKey];
+                                browser.storage.local.get(LocalSecureStorage.prototype._prefix + LocalSecureStorage.prototype._dummyValueKey).then(function (data) {
+                                    var actualData = data[LocalSecureStorage.prototype._prefix + LocalSecureStorage.prototype._dummyValueKey];
                                     var iv = actualData.nonce;
                                     var verifier = actualData.verifier;
 
@@ -78,7 +78,7 @@ LocalSecureStorage.prototype._unlockStorage = function() {
                                 var verifiers = Crypto.generateVerifier(encryptionKey);
 
                                 var data = {};
-                                data[LocalSecureStorage.prototype._dummyValueKey] = {
+                                data[LocalSecureStorage.prototype._prefix + LocalSecureStorage.prototype._dummyValueKey] = {
                                     nonce: verifiers[0],
                                     verifier: verifiers[1]
                                 };
