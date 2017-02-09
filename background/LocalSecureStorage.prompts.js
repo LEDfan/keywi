@@ -66,25 +66,20 @@ LocalSecureStorage.prompts.unlock = function (verifyFunc) {
                 };
                 browser.runtime.onMessage.addListener(function _func(request, sender, sendResponse) {
                     if (request.type === "ss_unlock_user_input") {
-                        console.log("Submitted!")
+                        /**
+                         * Call the verifyfunction, this function will verify if the provided password/userKey is correct.
+                         * If it's correct the first callback will be called, if it isn't correct the second callback will be called.
+                         */
                         verifyFunc(request.data.password, function(key) {
-                            // called when the key is correct
+                            // we're done here, cleanup and remove the window
                             browser.runtime.onMessage.removeListener(_func);
                             browser.tabs.onRemoved.removeListener(onRemoved);
                             browser.windows.remove(newWindow.id);
                             resolve(key);
                         }, function(reason) {
-                            // called when the key is wrong
+                            // show an alert to the user
                             browser.tabs.sendMessage(tab.id, {type: "ss_unlock_reject", msg: reason});
                         });
-                        // resolve({"userKey": request.data.password,
-                        //     "accept": function(){
-                        //         the client accepts the userkey
-                            // }, "reject": function(msg) {
-                            //     the client rejects the userkey
-                                // browser.tabs.sendMessage(tab.id, {type: "ss_unlock_reject", msg: msg});
-                            //
-                            // }});
                     }
                 });
                 browser.tabs.onRemoved.addListener(onRemoved);
