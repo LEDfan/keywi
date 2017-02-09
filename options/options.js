@@ -11,3 +11,7 @@ window.addEventListener("load", function(){
         });
     }
 });
+
+document.getElementById("btn-re-encrypt").addEventListener("click", function(){
+    browser.runtime.sendMessage({"type": "re-encrypt_local_secure_storage"});
+});

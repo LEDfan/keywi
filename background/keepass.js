@@ -239,3 +239,9 @@ browser.storage.onChanged.addListener(function(changes, areaName) {
         Keepass._ss.reencrypt();
     }
 });
+
+browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+    if (request.type === "re-encrypt_local_secure_storage") {
+        Keepass._ss.reencrypt();
+    }
+});
