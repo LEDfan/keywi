@@ -66,6 +66,50 @@ LocalSecureStorage.prototype._setupNewPassword = function() {
     });
 };
 
+LocalSecureStorage.prototype._unlockExistingPassword = function() {
+    return new Promise(function(resolve, reject) {
+        LocalSecureStorage.prompts.unlock(function(userKey, accept, reject) {
+            Crypto.deriveKey(userKey).then(function (encryptionKey) {
+                browser.storage.local.get(LocalSecureStorage.prototype._prefix + LocalSecureStorage.prototype._dummyValueKey).then(function (data) {
+                    // console.log(userKey);
+                    // console.log(acceptPrompt);
+                    // console.log(rejectPrompt);
+                    var actualData = data[LocalSecureStorage.prototype._prefix + LocalSecureStorage.prototype._dummyValueKey];
+                    var iv = actualData.nonce;
+                    var verifier = actualData.verifier;
+
+                    /**
+                     * First verify that the provided key to the LocalSecureStorage is correct.
+                     */
+                    console.log(verifier);
+                    var checkIvStr = Crypto.decryptAsString(verifier, encryptionKey, iv);
+                    console.log(iv);
+                    console.log(checkIvStr);
+
+                    if (checkIvStr !== iv) {
+                        console.log("Error decrypting: key wrong!");
+                        // unlock.reject("The unlock key is wrong!");
+                        reject("Wrong  key provided by user!");
+                    } else {
+                        accept(encryptionKey);
+                    }
+
+
+                    // unlock.accept();
+                    // resolve();
+                });
+            });
+        }).then(function(encryptionKey) {
+            LocalSecureStorage.prototype._encryptionkey = encryptionKey;
+            console.log("========++++++++");
+            resolve();
+        }).catch(function(err){
+            console.error(err);
+            reject(err);
+        });
+    });
+};
+
 LocalSecureStorage.prototype._unlockStorage = function() {
     let self = this;
     return new Promise(function (resolve, reject) {
@@ -77,36 +121,12 @@ LocalSecureStorage.prototype._unlockStorage = function() {
             self._hasEncryptionKey()
                 .then(function(){
                     // we have an encryption key, ask the user to input this, and verify that this is the correct key and store it for later user
-                    LocalSecureStorage.prompts.unlock()
-                        .then(function (userKey) {
-                            Crypto.deriveKey(userKey).then(function (encryptionKey) {
-                                browser.storage.local.get(LocalSecureStorage.prototype._prefix + LocalSecureStorage.prototype._dummyValueKey).then(function (data) {
-                                    var actualData = data[LocalSecureStorage.prototype._prefix + LocalSecureStorage.prototype._dummyValueKey];
-                                    var iv = actualData.nonce;
-                                    var verifier = actualData.verifier;
-
-                                    /**
-                                     * First verify that the provided key to the LocalSecureStorage is correct.
-                                     */
-                                    console.log(verifier);
-                                    var checkIvStr = Crypto.decryptAsString(verifier, encryptionKey, iv);
-                                    console.log(iv);
-                                    console.log(checkIvStr);
-
-                                    if (checkIvStr !== iv) {
-                                        console.log("Error decrypting: key wrong!");
-                                        reject("Wrong decryption key provided by user!");
-                                        return;
-                                    }
-
-                                    LocalSecureStorage.prototype._encryptionkey = encryptionKey;
-                                    resolve();
-                                });
-                            });
-                        }).catch(function(err){
-                            console.error(err);
-                            reject(err);
-                        });
+                    self._unlockExistingPassword().then(function() {
+                        resolve();
+                    }).catch(function(err){
+                        console.error(err);
+                        reject(err);
+                    });
                 })
                 .catch(function (error) {
                     // we don't have an encryption key, create one, and store dummy data with it

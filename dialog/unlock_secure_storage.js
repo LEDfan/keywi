@@ -10,3 +10,9 @@ document.forms[0].onsubmit = function(e) {
         // browser.windows.remove(window.windowId);
 };
 
+// browser.tabs.sendMessage(tab.id, {type: "ss_unlock_wrong_key", msg: msg});
+browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+    if (request.type === "ss_unlock_reject") {
+        alert(request.msg);
+    }
+});

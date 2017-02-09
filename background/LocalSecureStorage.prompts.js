@@ -40,7 +40,7 @@ LocalSecureStorage.prompts.setupNewPassword = function () {
     });
 };
 
-LocalSecureStorage.prompts.unlock = function () {
+LocalSecureStorage.prompts.unlock = function (verifyFunc) {
     return new Promise(function (resolve, reject) {
         browser.tabs.create({
             url: browser.extension.getURL('dialog/unlock_secure_storage.html'),
@@ -66,10 +66,25 @@ LocalSecureStorage.prompts.unlock = function () {
                 };
                 browser.runtime.onMessage.addListener(function _func(request, sender, sendResponse) {
                     if (request.type === "ss_unlock_user_input") {
-                        resolve(request.data.password);
-                        browser.runtime.onMessage.removeListener(_func);
-                        browser.tabs.onRemoved.removeListener(onRemoved);
-                        browser.windows.remove(newWindow.id);
+                        console.log("Submitted!")
+                        verifyFunc(request.data.password, function(key) {
+                            // called when the key is correct
+                            browser.runtime.onMessage.removeListener(_func);
+                            browser.tabs.onRemoved.removeListener(onRemoved);
+                            browser.windows.remove(newWindow.id);
+                            resolve(key);
+                        }, function(reason) {
+                            // called when the key is wrong
+                            browser.tabs.sendMessage(tab.id, {type: "ss_unlock_reject", msg: reason});
+                        });
+                        // resolve({"userKey": request.data.password,
+                        //     "accept": function(){
+                        //         the client accepts the userkey
+                            // }, "reject": function(msg) {
+                            //     the client rejects the userkey
+                                // browser.tabs.sendMessage(tab.id, {type: "ss_unlock_reject", msg: msg});
+                            //
+                            // }});
                     }
                 });
                 browser.tabs.onRemoved.addListener(onRemoved);
