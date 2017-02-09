@@ -87,15 +87,10 @@ Keepass.isAssociated = function() {
     return Keepass.state.associated;
 };
 
-
-
 Keepass.reCheckAssociated = function() {
-
    return new Promise(function(resolve, reject) {
        Keepass._ss.get("database.key").then(function(key) {
            Keepass._ss.get("database.id").then(function(id) {
-               // var rawKey = cryptoHelpers.generateSharedKey(Crypto.keySize * 2);
-               // var key = btoa(cryptoHelpers.convertByteArrayToString(rawKey));
                var verifiers = Crypto.generateVerifier(key);
 
                var req = {
@@ -106,8 +101,6 @@ Keepass.reCheckAssociated = function() {
                    Id: id
                };
 
-
-               // TODO
                reqwest({
                    url: 'http://localhost:19455', // TODO hard coded path
                    type: 'json',
@@ -118,23 +111,21 @@ Keepass.reCheckAssociated = function() {
 
                    },
                    success: function(resp) {
-                       // console.log(resp)
                        if (resp.Success) {
                            Keepass.state.associated = true;
+                       } else {
+                           Keepass.state.associated = false;
                        }
                        resolve(resp.Success);
-                       //     console.log("Not associated!");
-                           // {
-                           //     "RequestType":"associate",
-                           //     "Key":"CRyXRbH9vBkdPrkdm52S3bTG2rGtnYuyJttk/mlJ15g=", // Base64 encoded 256 bit key
-                           //     "Nonce":"epIt2nuAZbHt5JgEsxolWg==",
-                           //     "Verifier":"Lj+3N58jkjoxS2zNRmTpeQ4g065OlFfJsHNQWYaOJto="
-                           // }
-
-                       // }
                    }
                });
+           }).catch(function() {
+               Keepass.state.associated = false;
+               resolve(false);
            });
+       }).catch(function() {
+           Keepass.state.associated = false;
+           resolve(false);
        });
    });
 

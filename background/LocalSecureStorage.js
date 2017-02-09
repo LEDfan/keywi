@@ -139,27 +139,31 @@ LocalSecureStorage.prototype.get = function (key) {
         } else {
             self._unlockStorage().then(function() {
                 browser.storage.local.get(key).then(function (data) {
-                    var actualData = data[key];
-                    var iv = actualData.nonce;
-                    var verifier = actualData.verifier;
+                    if (Object.keys(data).length === 0) {
+                        reject("Not found (" + key + ")");
+                    } else {
+                        var actualData = data[key];
+                        var iv = actualData.nonce;
+                        var verifier = actualData.verifier;
 
-                    /**
-                     * First verify that the data is encrypted with the key stored in this._encryptionKey.
-                     */
-                    var checkIvStr = Crypto.decryptAsString(verifier, LocalSecureStorage.prototype._encryptionkey, iv);
+                        /**
+                         * First verify that the data is encrypted with the key stored in this._encryptionKey.
+                         */
+                        var checkIvStr = Crypto.decryptAsString(verifier, LocalSecureStorage.prototype._encryptionkey, iv);
 
-                    if (checkIvStr !== iv) {
-                        console.log("Error decrypting: key wrong!");
-                        reject("Error decrypting: key wrong!");
-                        return;
+                        if (checkIvStr !== iv) {
+                            console.log("Error decrypting: key wrong!");
+                            reject("Error decrypting: key wrong!");
+                            return;
+                        }
+
+                        /**
+                         * Decrypt the data.
+                         */
+                        var decryptedDataStr = Crypto.decryptAsString(actualData.data, LocalSecureStorage.prototype._encryptionkey, iv);
+
+                        resolve(decryptedDataStr);
                     }
-
-                    /**
-                     * Decrypt the data.
-                     */
-                    var decryptedDataStr = Crypto.decryptAsString(actualData.data, LocalSecureStorage.prototype._encryptionkey, iv);
-
-                    resolve(decryptedDataStr);
                 });
 
             }).catch(function (err) {
