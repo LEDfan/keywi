@@ -7,9 +7,11 @@ function promptFromBg(msg) {
             // After the tab has been created, open a window to inject the tab
             browser.windows.create({
                 tabId: tab.id,
-                type: 'popup',
+                type: 'panel',
+                width: 400,
+                height: 600
             }).then(function (newWindow) {
-                browser.runtime.sendMessage({type: "user_input_msg", data: {msg: msg, window_id: newWindow.id}});
+                browser.tabs.sendMessage(tab.id, {type: "user_input_msg", data: {msg: msg, window_id: newWindow.id}});
             });
         });
 
