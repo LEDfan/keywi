@@ -11,11 +11,6 @@ Keepass.settings = {
 
 Keepass.state = {
     associated: false,
-    // database: {
-        // id: null,
-        // key: null, // TODO store not base64'ed key
-        // hash: null
-    // }
 };
 
 Keepass.helpers = {};
@@ -207,9 +202,6 @@ Keepass.associate = function(callback) {
     };
     let self = this;
 
-    console.log(req);
-    // return;
-
     browser.storage.local.get("keepass-server-url").then(function(pref) {
         reqwest({
             url: pref["keepass-server-url"] || 'http://localhost:19455',
@@ -244,7 +236,6 @@ browser.storage.onChanged.addListener(function(changes, areaName) {
         Keepass.state.associated = false;
     }
     if (changes.hasOwnProperty("password-hash-rounds")) {
-        Keepass.state.associated = false;
-        Keepass._ss.invalidateKey();
+        Keepass._ss.reencrypt();
     }
 });

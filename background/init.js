@@ -19,5 +19,5 @@ function init() {
     // });
 }
 
-// setTimeout(init, 1000);
-init();
+setTimeout(init, 1000);
+// init();
