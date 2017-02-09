@@ -28,7 +28,8 @@
     "<all_urls>",
     "contextMenus",
     "tabs",
-    "storage"
+    "storage",
+    "notifications"
   ],
   "content_scripts": [
   ],
