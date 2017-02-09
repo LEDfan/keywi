@@ -9,6 +9,8 @@ function LocalSecureStorage() {
 
 LocalSecureStorage.prototype = Object.create(SecureStorage.prototype);
 LocalSecureStorage.prototype.constructor = LocalSecureStorage;
+LocalSecureStorage.prototype._prefix = "local_secure_storage__";
+LocalSecureStorage.prototype._dummyValueKey = LocalSecureStorage.prototype._prefix + "encryption_key_test";
 
 LocalSecureStorage.prototype._encryptionkey = null;
 
@@ -18,7 +20,7 @@ LocalSecureStorage.prototype._hasEncryptionKey = function() {
      */
     let self = this;
     return new Promise(function(resolve, reject) {
-        self.has("local_secure_storage_encryption_key_test").then(function () {
+        self.has(LocalSecureStorage.prototype._dummyValueKey).then(function () {
            resolve();
         }).catch(function (error) {
            reject(error);
@@ -40,8 +42,8 @@ LocalSecureStorage.prototype._unlockStorage = function() {
                     promptFromBg("Fill in the existing password for the secure storage.. (TODO)")
                         .then(function (userKey) {
                             Crypto.deriveKey(userKey).then(function (encryptionKey) {
-                                browser.storage.local.get("local_secure_storage_encryption_key_test").then(function (data) {
-                                    var actualData = data["local_secure_storage_encryption_key_test"];
+                                browser.storage.local.get(LocalSecureStorage.prototype._dummyValueKey).then(function (data) {
+                                    var actualData = data[LocalSecureStorage.prototype._dummyValueKey];
                                     var iv = actualData.nonce;
                                     var verifier = actualData.verifier;
 
@@ -76,7 +78,7 @@ LocalSecureStorage.prototype._unlockStorage = function() {
                                 var verifiers = Crypto.generateVerifier(encryptionKey);
 
                                 var data = {};
-                                data["local_secure_storage_encryption_key_test"] = {
+                                data[LocalSecureStorage.prototype._dummyValueKey] = {
                                     nonce: verifiers[0],
                                     verifier: verifiers[1]
                                 };
@@ -97,7 +99,7 @@ LocalSecureStorage.prototype._unlockStorage = function() {
 
 LocalSecureStorage.prototype.has = function(key) {
     return new Promise(function (resolve, reject) {
-        browser.storage.local.get(key, function (data) {
+        browser.storage.local.get(LocalSecureStorage.prototype._prefix + key, function (data) {
             if (Object.keys(data).length === 0) {
                 reject("No such key!");
             } else {
@@ -115,7 +117,7 @@ LocalSecureStorage.prototype.set = function(key, value) {
             var verifiers = Crypto.generateVerifier(LocalSecureStorage.prototype._encryptionkey);
 
             var data = {};
-            data[key] = {
+            data[LocalSecureStorage.prototype._prefix + key] = {
                 data: Crypto.encrypt(value, LocalSecureStorage.prototype._encryptionkey, verifiers[0]),
                 nonce: verifiers[0],
                 verifier: verifiers[1]
@@ -138,11 +140,11 @@ LocalSecureStorage.prototype.get = function (key) {
             resolve(SecureStorage.prototype._getCache(key));
         } else {
             self._unlockStorage().then(function() {
-                browser.storage.local.get(key).then(function (data) {
+                browser.storage.local.get(LocalSecureStorage.prototype._prefix + key).then(function (data) {
                     if (Object.keys(data).length === 0) {
                         reject("Not found (" + key + ")");
                     } else {
-                        var actualData = data[key];
+                        var actualData = data[LocalSecureStorage.prototype._prefix + key];
                         var iv = actualData.nonce;
                         var verifier = actualData.verifier;
 
@@ -177,3 +179,30 @@ LocalSecureStorage.prototype.get = function (key) {
 LocalSecureStorage.prototype.delete = function (key) {
 
 };
+
+LocalSecureStorage.prototype.clear = function () {
+    let self = this;
+    browser.storage.local.get().then(function(data) {
+        console.log(data)
+        Object.keys(data).forEach(function(key) {
+            let prefixLength = LocalSecureStorage.prototype._prefix.length;
+            if (key.substr(0, prefixLength) === LocalSecureStorage.prototype._prefix) {
+                let userKey  = key.substr(prefixLength, key.length - prefixLength);
+                self._removeCache(userKey);
+
+                console.log(key.substr(prefixLength, key.length - prefixLength));
+                browser.storage.local.remove(key);
+            }
+
+        });
+
+    });
+
+};
+
+LocalSecureStorage.prototype.invalidateKey = function() {
+    LocalSecureStorage.prototype._encryptionkey = null;
+    this.clear();
+
+};
+

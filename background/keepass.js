@@ -225,21 +225,26 @@ Keepass.associate = function(callback) {
                 console.log("Associated key is: " + key);
                 console.log("Id is: " + resp.Id);
                 console.log("Hash is: " + resp.Hash);
-                Keepass._ss.set("database.id", resp.Id);
-                Keepass._ss.set("database.key", key);
-                Keepass._ss.set("database.hash", resp.Hash);
-                // Keepass.state.database.id = resp.Id;
-                // Keepass.state.database.key = key;
-                // Keepass.state.database.hash = resp.Hash;
-                Keepass.state.associated = true;
-                callback();
+                Keepass._ss.set("database.id", resp.Id).then(function() {
+                    return Keepass._ss.set("database.key", key);
+                }).then(function() {
+                    return Keepass._ss.set("database.hash", resp.Hash);
+                }).then(function() {
+                    Keepass.state.associated = true;
+                    callback();
+                })
             }
         })
     });
 };
 
 browser.storage.onChanged.addListener(function(changes, areaName) {
+    console.log(changes);
     if (changes.hasOwnProperty("keepass-server-url")) {
         Keepass.state.associated = false;
     }
-})
+    if (changes.hasOwnProperty("password-hash-rounds")) {
+        Keepass.state.associated = false;
+        Keepass._ss.invalidateKey();
+    }
+});

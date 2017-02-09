@@ -18,10 +18,15 @@ SecureStorage.prototype._getCache = function (key) {
     return this.cache[key];
 };
 
+SecureStorage.prototype._removeCache = function (key) {
+    delete this.cache[key];
+};
+
 SecureStorage.prototype.set = function (key, value, cache = true) {};
 SecureStorage.prototype.has = function (key) {};
 SecureStorage.prototype.get = function (key, cache = true) {};
 SecureStorage.prototype.delete = function (key) {};
+SecureStorage.prototype.clear = function () {};
 SecureStorage.prototype.constructor = SecureStorage;
 
 
