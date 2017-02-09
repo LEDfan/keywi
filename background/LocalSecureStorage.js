@@ -43,7 +43,7 @@ LocalSecureStorage.prototype._hasEncryptionKey = function() {
  */
 LocalSecureStorage.prototype._setupNewPassword = function() {
     return new Promise(function(resolve, reject) {
-        promptFromBg("Fill in a new password for the secure storage.. (TODO)")
+        LocalSecureStorage.prompts.setupNewPassword()
             .then(function(userKey) {
                 Crypto.deriveKey(userKey, true).then(function (encryptionKey) {
                     var verifiers = Crypto.generateVerifier(encryptionKey);
@@ -77,7 +77,7 @@ LocalSecureStorage.prototype._unlockStorage = function() {
             self._hasEncryptionKey()
                 .then(function(){
                     // we have an encryption key, ask the user to input this, and verify that this is the correct key and store it for later user
-                    promptFromBg("Fill in the existing password for the secure storage.. (TODO)")
+                    LocalSecureStorage.prompts.unlock()
                         .then(function (userKey) {
                             Crypto.deriveKey(userKey).then(function (encryptionKey) {
                                 browser.storage.local.get(LocalSecureStorage.prototype._prefix + LocalSecureStorage.prototype._dummyValueKey).then(function (data) {

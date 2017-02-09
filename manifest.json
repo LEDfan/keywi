@@ -18,6 +18,7 @@
       "background/keepass.js",
       "background/securestorage.js",
       "background/LocalSecureStorage.js",
+      "background/LocalSecureStorage.prompts.js",
       "background/contextmenu.js",
       "background/init.js"
     ]

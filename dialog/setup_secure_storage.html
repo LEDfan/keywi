@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+            <title>Dialog test</title>
+            <link rel="stylesheet" type="text/css" href="user_input.css">
+        </head>
+    <body>
+        <header>
+            <h1 id="msg">
+                Setup the secure storage
+            </h1>
+        </header>
+        <div id="container">
+            <p>
+                {Keepass} uses a password for securely storing the information needed to connect to the Keepass database.<br>
+                Fill in a secure password, this is a different password then the one used to unlock the Keepass database.
+            </p>
+            <form>
+                <input id="pass1" type="password" placeholder="Password" autofocus>
+                <input id="pass2" type="password" placeholder="Same password">
+                <input id="submit" type="submit" value="Save">
+            </form>
+        </div>
+
+        <footer>
+            <p>Keepass</p>
+        </footer>
+
+
+        <script src="setup_secure_storage.js"></script>
+    </body>
+</html>
