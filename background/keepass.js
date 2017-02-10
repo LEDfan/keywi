@@ -192,6 +192,17 @@ Keepass.getLogins = function (url, callback) {
     });
 };
 
+Keepass.deassociate = function() {
+    return Keepass._ss.delete("database.id").then(function() {
+        return Keepass._ss.delete("database.key");
+    }).then(function() {
+        return Keepass._ss.delete("database.hash");
+    }).then(function() {
+        Keepass._encryptionkey = null;
+        Keepass.state.associated = false;
+    });
+};
+
 Keepass.associate = function(callback) {
 
     if (!Keepass._ss.ready()) {
@@ -200,7 +211,7 @@ Keepass.associate = function(callback) {
         // If it was done the other way around, then if setting up the secure storage would fail
         // the association request would still be done, but the result couldn't be saved
         Keepass._ss.reInitialize().then(function() {
-           Keepass.associate(callback);
+            Keepass.associate(callback);
         });
         return;
     }
@@ -265,5 +276,29 @@ browser.storage.onChanged.addListener(function(changes, areaName) {
 browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     if (request.type === "re-encrypt_local_secure_storage") {
         Keepass._ss.reencrypt();
+    } else if (request.type === "re-associate_keepass") {
+        Keepass.deassociate().then(function() {
+
+            Keepass.associate(function() {
+                sendResponse("done");
+            });
+        });
+        return true;
+    } else if (request.type === "options_user_info") {
+        let hash = null;
+        let id = null;
+        Keepass._ss.get("database.hash").then(function(data) {
+            hash = data;
+            Keepass._ss.get("database.id").then(function(data) {
+                id = data;
+                sendResponse({
+                    "Secure storage unlocked" : Keepass._ss.ready(),
+                    "Keepass database associated" : Keepass.ready(),
+                    "Keepass database hash" : hash,
+                    "Keepass database id" : id
+                });
+            });
+        });
+        return true; // http://stackoverflow.com/a/40773823
     }
 });

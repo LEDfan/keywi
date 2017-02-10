@@ -240,7 +240,8 @@ LocalSecureStorage.prototype._decrypt = function (data) {
 };
 
 LocalSecureStorage.prototype.delete = function (key) {
-    browser.storage.local.remove(LocalSecureStorage.prototype._prefix + key);
+    this._removeCache(key);
+    return browser.storage.local.remove(LocalSecureStorage.prototype._prefix + key);
 };
 
 /**
