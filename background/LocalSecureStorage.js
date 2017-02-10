@@ -23,6 +23,15 @@ LocalSecureStorage.prototype.ready = function() {
 };
 
 /**
+ * @brief re-initialize the Local Secure Storage. This can be used to unlock the storage when the e.g. the user canceled the popup.
+ */
+LocalSecureStorage.prototype.reInitialize = function() {
+    return this._unlockStorage();
+};
+
+
+
+/**
  * @brief Checks if the SecureStorage already has an encryption key.
  * @returns {Promise}
  * @private

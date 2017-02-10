@@ -194,6 +194,17 @@ Keepass.getLogins = function (url, callback) {
 
 Keepass.associate = function(callback) {
 
+    if (!Keepass._ss.ready()) {
+        // if the secure storage isn't ready yet, first re initialize it
+        // before associating the keepass database
+        // If it was done the other way around, then if setting up the secure storage would fail
+        // the association request would still be done, but the result couldn't be saved
+        Keepass._ss.reInitialize().then(function() {
+           Keepass.associate(callback);
+        });
+        return;
+    }
+
     var rawKey = cryptoHelpers.generateSharedKey(Crypto.keySize * 2);
     var key = btoa(cryptoHelpers.convertByteArrayToString(rawKey));
     var verifiers = Crypto.generateVerifier(key);
