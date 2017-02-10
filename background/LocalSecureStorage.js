@@ -212,6 +212,7 @@ LocalSecureStorage.prototype.get = function (key) {
 
 /**
  * @brief Decrypts and verifies a data object using the LocalSecureStorage.prototype._encryptionKey as key.
+ * @pre assumes the database is unlocked!
  * @param data, object must have the data, nonce and verifier values. Data is the encrypted data,
  * nonce is a one-time used random value and verifier is the encrypted nonce.
  */
@@ -250,29 +251,41 @@ LocalSecureStorage.prototype.delete = function (key) {
 LocalSecureStorage.prototype.reencrypt = function() {
     var self = this;
     browser.storage.local.get().then(function(data) {
-        // first fetch all old data and decrypt it
-        let dataToSave = {};
+        self._unlockStorage().then(function() {
+            // first fetch all old data and decrypt it
+            let dataToSave = {};
 
-        let prefixLength = LocalSecureStorage.prototype._prefix.length;
+            let prefixLength = LocalSecureStorage.prototype._prefix.length;
 
-        for (const key of Object.keys(data)) {
-            if (key.substr(0, prefixLength) === LocalSecureStorage.prototype._prefix) {
-                // only re-encrypt encrypted keys
-                // and do not ree-ncrypt the dummy value
-                let userKey = key.substr(prefixLength, key.length - prefixLength);
-                if (userKey !== LocalSecureStorage.prototype._dummyValueKey) {
-                    dataToSave[userKey] = self._decrypt(data[key]);
-                    self.delete(userKey); // remove from the Secure Storage
+            for (const key of Object.keys(data)) {
+                if (key.substr(0, prefixLength) === LocalSecureStorage.prototype._prefix) {
+                    // only re-encrypt encrypted keys
+                    // and do not ree-ncrypt the dummy value
+                    let userKey = key.substr(prefixLength, key.length - prefixLength);
+                    console.log(userKey);
+                    if (userKey !== LocalSecureStorage.prototype._dummyValueKey) {
+                        dataToSave[userKey] = self._decrypt(data[key]);
+                        self.delete(userKey); // remove from the Secure Storage
+                    }
                 }
             }
-        }
 
-        self._setupNewPassword().then(function(newEncryptionKey) {
-            // ask the user to enter a new password and setup the database to use it
-            for (const ikey of Object.keys(dataToSave)) {
-                let idata = dataToSave[ikey];
-                self.set(ikey, idata); // will automatically use the new key
-            }
+            setTimeout(function() {
+                /// we have to wait a bit Firefox doesn't like if we open too many windows in a short time (too many = 2)
+                self._setupNewPassword().then(function() {
+                    // ask the user to enter a new password and setup the database to use it
+                    for (const ikey of Object.keys(dataToSave)) {
+                        let idata = dataToSave[ikey];
+                        self.set(ikey, idata); // will automatically use the new key
+                    }
+                }).catch(function(err) {
+                    console.log(err);
+                    // TODO
+                });
+            }, 1000);
+        }).catch(function(err) {
+            console.log(err);
+            // TODO
         });
 
     });
