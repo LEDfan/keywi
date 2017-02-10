@@ -10,8 +10,41 @@ window.addEventListener("DOMContentLoaded", function(){
             browser.storage.local.set(opt);
         }, 1000));
     }
+
+    readAndUpdateUserInfo()
+
     document.getElementById("btn-re-encrypt").addEventListener("click", function(){
         browser.runtime.sendMessage({"type": "re-encrypt_local_secure_storage"});
     });
+
+    document.getElementById("btn-re-associate").addEventListener("click", function(){
+        if (window.userInfoData !== null) {
+            // when the secure storage is locked we can't show the id.
+            alert("To complete disconnect keepass, you will have to remove the key with id \"" + window.userInfoData["Keepass database id"] + "\" in Keepass!");
+        }
+        browser.runtime.sendMessage({"type": "re-associate_keepass"}).then(function(data) {
+            readAndUpdateUserInfo();
+        });
+    });
 });
 
+window.userInfoData = null;
+
+function readAndUpdateUserInfo() {
+    browser.runtime.sendMessage({
+        "type": "options_user_info"
+    }).then(function(data) {
+        window.userInfoData = data;
+        let table = document.getElementById("user_info");
+        const length = table.rows.length;
+        for (let i = 0; i < length; i++) {
+            table.deleteRow(0);
+        }
+        for (let key of Object.keys(data)) {
+            var row = table.insertRow(table.rows.length);
+            row.insertCell(0).innerText = key;
+            row.insertCell(1).innerText = data[key];
+        }
+    });
+
+}

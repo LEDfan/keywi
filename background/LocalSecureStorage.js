@@ -3,6 +3,9 @@ function LocalSecureStorage() {
     return new Promise(function(resolve, reject) {
         self._unlockStorage().then(function() {
            resolve(self);
+        }).catch(function(err) {
+           console.log(err);
+           reject(self);
         });
     });
 }
@@ -13,6 +16,20 @@ LocalSecureStorage.prototype._prefix = "local_secure_storage__";
 LocalSecureStorage.prototype._dummyValueKey = "encryption_key_test";
 
 LocalSecureStorage.prototype._encryptionkey = null;
+
+
+LocalSecureStorage.prototype.ready = function() {
+    return LocalSecureStorage.prototype._encryptionkey !== null;
+};
+
+/**
+ * @brief re-initialize the Local Secure Storage. This can be used to unlock the storage when the e.g. the user canceled the popup.
+ */
+LocalSecureStorage.prototype.reInitialize = function() {
+    return this._unlockStorage();
+};
+
+
 
 /**
  * @brief Checks if the SecureStorage already has an encryption key.
@@ -43,7 +60,7 @@ LocalSecureStorage.prototype._hasEncryptionKey = function() {
  */
 LocalSecureStorage.prototype._setupNewPassword = function() {
     return new Promise(function(resolve, reject) {
-        promptFromBg("Fill in a new password for the secure storage.. (TODO)")
+        LocalSecureStorage.prompts.setupNewPassword()
             .then(function(userKey) {
                 Crypto.deriveKey(userKey, true).then(function (encryptionKey) {
                     var verifiers = Crypto.generateVerifier(encryptionKey);
@@ -62,7 +79,43 @@ LocalSecureStorage.prototype._setupNewPassword = function() {
                     console.error(err);
                     reject(err);
                 });
+            }).catch(function(err){
+                console.error(err);
+                reject(err);
             });
+    });
+};
+
+LocalSecureStorage.prototype._unlockExistingPassword = function() {
+    return new Promise(function(resolve, reject) {
+        LocalSecureStorage.prompts.unlock(function(userKey, accept, reject) {
+            // This function works as a verifier which can be called by the unlock() prompt to verify the correctness of the key
+            Crypto.deriveKey(userKey).then(function (encryptionKey) {
+                browser.storage.local.get(LocalSecureStorage.prototype._prefix + LocalSecureStorage.prototype._dummyValueKey).then(function (data) {
+                    var actualData = data[LocalSecureStorage.prototype._prefix + LocalSecureStorage.prototype._dummyValueKey];
+                    var iv = actualData.nonce;
+                    var verifier = actualData.verifier;
+
+                    /**
+                     * First verify that the provided key to the LocalSecureStorage is correct.
+                     */
+                    var checkIvStr = Crypto.decryptAsString(verifier, encryptionKey, iv);
+
+                    if (checkIvStr !== iv) {
+                        console.log("Error decrypting: key wrong!");
+                        reject("Wrong  key provided by user!");
+                    } else {
+                        accept(encryptionKey);
+                    }
+                });
+            });
+        }).then(function(encryptionKey) {
+            // the prompts.unlock will resolve the Promise when it's done cleaning up the prompt
+            LocalSecureStorage.prototype._encryptionkey = encryptionKey;
+            resolve();
+        }).catch(function(err){
+            reject(err);
+        });
     });
 };
 
@@ -77,36 +130,12 @@ LocalSecureStorage.prototype._unlockStorage = function() {
             self._hasEncryptionKey()
                 .then(function(){
                     // we have an encryption key, ask the user to input this, and verify that this is the correct key and store it for later user
-                    promptFromBg("Fill in the existing password for the secure storage.. (TODO)")
-                        .then(function (userKey) {
-                            Crypto.deriveKey(userKey).then(function (encryptionKey) {
-                                browser.storage.local.get(LocalSecureStorage.prototype._prefix + LocalSecureStorage.prototype._dummyValueKey).then(function (data) {
-                                    var actualData = data[LocalSecureStorage.prototype._prefix + LocalSecureStorage.prototype._dummyValueKey];
-                                    var iv = actualData.nonce;
-                                    var verifier = actualData.verifier;
-
-                                    /**
-                                     * First verify that the provided key to the LocalSecureStorage is correct.
-                                     */
-                                    console.log(verifier);
-                                    var checkIvStr = Crypto.decryptAsString(verifier, encryptionKey, iv);
-                                    console.log(iv);
-                                    console.log(checkIvStr);
-
-                                    if (checkIvStr !== iv) {
-                                        console.log("Error decrypting: key wrong!");
-                                        reject("Wrong decryption key provided by user!");
-                                        return;
-                                    }
-
-                                    LocalSecureStorage.prototype._encryptionkey = encryptionKey;
-                                    resolve();
-                                });
-                            });
-                        }).catch(function(err){
-                            console.error(err);
-                            reject(err);
-                        });
+                    self._unlockExistingPassword().then(function() {
+                        resolve();
+                    }).catch(function(err){
+                        console.error(err);
+                        reject(err);
+                    });
                 })
                 .catch(function (error) {
                     // we don't have an encryption key, create one, and store dummy data with it
@@ -183,6 +212,7 @@ LocalSecureStorage.prototype.get = function (key) {
 
 /**
  * @brief Decrypts and verifies a data object using the LocalSecureStorage.prototype._encryptionKey as key.
+ * @pre assumes the database is unlocked!
  * @param data, object must have the data, nonce and verifier values. Data is the encrypted data,
  * nonce is a one-time used random value and verifier is the encrypted nonce.
  */
@@ -210,7 +240,8 @@ LocalSecureStorage.prototype._decrypt = function (data) {
 };
 
 LocalSecureStorage.prototype.delete = function (key) {
-    browser.storage.local.remove(LocalSecureStorage.prototype._prefix + key);
+    this._removeCache(key);
+    return browser.storage.local.remove(LocalSecureStorage.prototype._prefix + key);
 };
 
 /**
@@ -221,29 +252,41 @@ LocalSecureStorage.prototype.delete = function (key) {
 LocalSecureStorage.prototype.reencrypt = function() {
     var self = this;
     browser.storage.local.get().then(function(data) {
-        // first fetch all old data and decrypt it
-        let dataToSave = {};
+        self._unlockStorage().then(function() {
+            // first fetch all old data and decrypt it
+            let dataToSave = {};
 
-        let prefixLength = LocalSecureStorage.prototype._prefix.length;
+            let prefixLength = LocalSecureStorage.prototype._prefix.length;
 
-        for (const key of Object.keys(data)) {
-            if (key.substr(0, prefixLength) === LocalSecureStorage.prototype._prefix) {
-                // only re-encrypt encrypted keys
-                // and do not ree-ncrypt the dummy value
-                let userKey = key.substr(prefixLength, key.length - prefixLength);
-                if (userKey !== LocalSecureStorage.prototype._dummyValueKey) {
-                    dataToSave[userKey] = self._decrypt(data[key]);
-                    self.delete(userKey); // remove from the Secure Storage
+            for (const key of Object.keys(data)) {
+                if (key.substr(0, prefixLength) === LocalSecureStorage.prototype._prefix) {
+                    // only re-encrypt encrypted keys
+                    // and do not ree-ncrypt the dummy value
+                    let userKey = key.substr(prefixLength, key.length - prefixLength);
+                    console.log(userKey);
+                    if (userKey !== LocalSecureStorage.prototype._dummyValueKey) {
+                        dataToSave[userKey] = self._decrypt(data[key]);
+                        self.delete(userKey); // remove from the Secure Storage
+                    }
                 }
             }
-        }
 
-        self._setupNewPassword().then(function(newEncryptionKey) {
-            // ask the user to enter a new password and setup the database to use it
-            for (const ikey of Object.keys(dataToSave)) {
-                let idata = dataToSave[ikey];
-                self.set(ikey, idata); // will automatically use the new key
-            }
+            setTimeout(function() {
+                /// we have to wait a bit Firefox doesn't like if we open too many windows in a short time (too many = 2)
+                self._setupNewPassword().then(function() {
+                    // ask the user to enter a new password and setup the database to use it
+                    for (const ikey of Object.keys(dataToSave)) {
+                        let idata = dataToSave[ikey];
+                        self.set(ikey, idata); // will automatically use the new key
+                    }
+                }).catch(function(err) {
+                    console.log(err);
+                    // TODO
+                });
+            }, 1000);
+        }).catch(function(err) {
+            console.log(err);
+            // TODO
         });
 
     });

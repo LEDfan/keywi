@@ -6,6 +6,13 @@
         <title>Options for Keepass</title>
     </head>
     <body>
+        The following information is know about your connection with Keepass:
+        <table id="user_info">
+            <tr>
+                <th>Key</th>
+                <th>Value</th>
+            </tr>
+        </table>
         <div id="options">
             <fieldset>
                 <label for="keepass-server-url">KeepassHTTP url:</label>
@@ -15,8 +22,9 @@
                 <label for="password-hash-rounds">Number of hashing rounds for key generation (advanced): </label>
                 <input id="password-hash-rounds" type="number" name="password-hash-rounds" placeholder="5000" min="5000">
             </fieldset>
-            <button id="btn-re-encrypt" >Re-encrypt the Secure Storage.</button>
-    </div>
+            <button id="btn-re-encrypt" >Re-encrypt the Secure Storage</button>
+            <button id="btn-re-associate" >Re-associate with keepass</button>
+        </div>
         <script src="options.js"></script>
         <script src="../vendor/debounce.js"></script>
     </body>

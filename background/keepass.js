@@ -74,13 +74,17 @@ Keepass.helpers.decryptEntry = function (entry, iv) {
     });
 };
 
+Keepass.ready = function() {
+    return Keepass.state.associated && Keepass._ss.ready();
+};
+
 Keepass.setSecureStorage = function(ss) {
     Keepass._ss = ss;
 };
 
-Keepass.isAssociated = function() {
-    return Keepass.state.associated;
-};
+// Keepass.isAssociated = function() {
+//     return Keepass.state.associated;
+// };
 
 Keepass.reCheckAssociated = function() {
    return new Promise(function(resolve, reject) {
@@ -129,7 +133,7 @@ Keepass.reCheckAssociated = function() {
 Keepass.getLogins = function (url, callback) {
     console.log("Getlogins for url " + url);
 
-    if (!Keepass.state.associated) {
+    if (!this.ready()) {
         Keepass.associate(function() {
             Keepass.getLogins(url, callback);
         });
@@ -188,45 +192,74 @@ Keepass.getLogins = function (url, callback) {
     });
 };
 
+Keepass.deassociate = function() {
+    return Keepass._ss.delete("database.id").then(function() {
+        return Keepass._ss.delete("database.key");
+    }).then(function() {
+        return Keepass._ss.delete("database.hash");
+    }).then(function() {
+        Keepass._encryptionkey = null;
+        Keepass.state.associated = false;
+    });
+};
+
 Keepass.associate = function(callback) {
 
-    var rawKey = cryptoHelpers.generateSharedKey(Crypto.keySize * 2);
-    var key = btoa(cryptoHelpers.convertByteArrayToString(rawKey));
-    var verifiers = Crypto.generateVerifier(key);
+    if (!Keepass._ss.ready()) {
+        // if the secure storage isn't ready yet, first re initialize it
+        // before associating the keepass database
+        // If it was done the other way around, then if setting up the secure storage would fail
+        // the association request would still be done, but the result couldn't be saved
+        Keepass._ss.reInitialize().then(function() {
+            Keepass.associate(callback);
+        });
+        return;
+    }
 
-    var req = {
-        RequestType: "associate",
-        Key: key,
-        Nonce: verifiers[0],
-        Verifier: verifiers[1]
-    };
-    let self = this;
+    // test if we are already associated and it's working
+    this.reCheckAssociated().then(function(associated) {
+        if (associated) {
+            callback();
+        } else {
+            var rawKey = cryptoHelpers.generateSharedKey(Crypto.keySize * 2);
+            var key = btoa(cryptoHelpers.convertByteArrayToString(rawKey));
+            var verifiers = Crypto.generateVerifier(key);
 
-    browser.storage.local.get("keepass-server-url").then(function(pref) {
-        reqwest({
-            url: pref["keepass-server-url"] || 'http://localhost:19455',
-            type: 'json',
-            method: 'post',
-            data: JSON.stringify(req),
-            contentType: "application/json",
-            error: function (err) {
+            var req = {
+                RequestType: "associate",
+                Key: key,
+                Nonce: verifiers[0],
+                Verifier: verifiers[1]
+            };
+            let self = this;
 
-            },
-            success: function (resp) {
-                console.log(resp);
-                console.log("Associated key is: " + key);
-                console.log("Id is: " + resp.Id);
-                console.log("Hash is: " + resp.Hash);
-                Keepass._ss.set("database.id", resp.Id).then(function() {
-                    return Keepass._ss.set("database.key", key);
-                }).then(function() {
-                    return Keepass._ss.set("database.hash", resp.Hash);
-                }).then(function() {
-                    Keepass.state.associated = true;
-                    callback();
-                })
-            }
-        })
+            browser.storage.local.get("keepass-server-url").then(function(pref) {
+                reqwest({
+                    url: pref["keepass-server-url"] || 'http://localhost:19455',
+                    type: 'json',
+                    method: 'post',
+                    data: JSON.stringify(req),
+                    contentType: "application/json",
+                    error: function(err) {
+
+                    },
+                    success: function(resp) {
+                        console.log(resp);
+                        console.log("Associated key is: " + key);
+                        console.log("Id is: " + resp.Id);
+                        console.log("Hash is: " + resp.Hash);
+                        Keepass._ss.set("database.id", resp.Id).then(function() {
+                            return Keepass._ss.set("database.key", key);
+                        }).then(function() {
+                            return Keepass._ss.set("database.hash", resp.Hash);
+                        }).then(function() {
+                            Keepass.state.associated = true;
+                            callback();
+                        })
+                    }
+                });
+            });
+        }
     });
 };
 
@@ -243,5 +276,29 @@ browser.storage.onChanged.addListener(function(changes, areaName) {
 browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     if (request.type === "re-encrypt_local_secure_storage") {
         Keepass._ss.reencrypt();
+    } else if (request.type === "re-associate_keepass") {
+        Keepass.deassociate().then(function() {
+
+            Keepass.associate(function() {
+                sendResponse("done");
+            });
+        });
+        return true;
+    } else if (request.type === "options_user_info") {
+        let hash = null;
+        let id = null;
+        Keepass._ss.get("database.hash").then(function(data) {
+            hash = data;
+            Keepass._ss.get("database.id").then(function(data) {
+                id = data;
+                sendResponse({
+                    "Secure storage unlocked" : Keepass._ss.ready(),
+                    "Keepass database associated" : Keepass.ready(),
+                    "Keepass database hash" : hash,
+                    "Keepass database id" : id
+                });
+            });
+        });
+        return true; // http://stackoverflow.com/a/40773823
     }
 });
