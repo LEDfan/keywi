@@ -74,13 +74,17 @@ Keepass.helpers.decryptEntry = function (entry, iv) {
     });
 };
 
+Keepass.ready = function() {
+    return Keepass.state.associated && Keepass._ss.ready();
+};
+
 Keepass.setSecureStorage = function(ss) {
     Keepass._ss = ss;
 };
 
-Keepass.isAssociated = function() {
-    return Keepass.state.associated;
-};
+// Keepass.isAssociated = function() {
+//     return Keepass.state.associated;
+// };
 
 Keepass.reCheckAssociated = function() {
    return new Promise(function(resolve, reject) {

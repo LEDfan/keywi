@@ -3,6 +3,9 @@ function LocalSecureStorage() {
     return new Promise(function(resolve, reject) {
         self._unlockStorage().then(function() {
            resolve(self);
+        }).catch(function(err) {
+           console.log(err);
+           reject(self);
         });
     });
 }
@@ -13,6 +16,11 @@ LocalSecureStorage.prototype._prefix = "local_secure_storage__";
 LocalSecureStorage.prototype._dummyValueKey = "encryption_key_test";
 
 LocalSecureStorage.prototype._encryptionkey = null;
+
+
+LocalSecureStorage.prototype.ready = function() {
+    return LocalSecureStorage.prototype._encryptionkey !== null;
+};
 
 /**
  * @brief Checks if the SecureStorage already has an encryption key.
@@ -62,6 +70,9 @@ LocalSecureStorage.prototype._setupNewPassword = function() {
                     console.error(err);
                     reject(err);
                 });
+            }).catch(function(err){
+                console.error(err);
+                reject(err);
             });
     });
 };

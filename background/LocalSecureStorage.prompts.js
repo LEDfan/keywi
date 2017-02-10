@@ -22,6 +22,7 @@ LocalSecureStorage.prompts.setupNewPassword = function () {
                             "title": "{Keepass}",
                             "message": "Secure Storage Setup was canceled, {Keepass} cannot work without. You can re-setup it from the settings."
                         });
+                        reject("Aborted!");
                     }
                 };
 
@@ -31,6 +32,11 @@ LocalSecureStorage.prompts.setupNewPassword = function () {
                         browser.runtime.onMessage.removeListener(_func);
                         browser.tabs.onRemoved.removeListener(onRemoved);
                         browser.windows.remove(newWindow.id);
+                    } else if (request.type === "ss_setup_password_cancel") {
+                        browser.runtime.onMessage.removeListener(_func);
+                        browser.tabs.onRemoved.removeListener(onRemoved);
+                        browser.windows.remove(newWindow.id);
+                        onRemoved(tab.id);
                     }
                 });
                 browser.tabs.onRemoved.addListener(onRemoved);
@@ -62,6 +68,7 @@ LocalSecureStorage.prompts.unlock = function (verifyFunc) {
                             "title": "{Keepass}",
                             "message": "Secure Storage unlock was canceled, {Keepass} cannot work without."
                         });
+                        reject("Aborted!");
                     }
                 };
                 browser.runtime.onMessage.addListener(function _func(request, sender, sendResponse) {
@@ -80,6 +87,11 @@ LocalSecureStorage.prompts.unlock = function (verifyFunc) {
                             // show an alert to the user
                             browser.tabs.sendMessage(tab.id, {type: "ss_unlock_reject", msg: reason});
                         });
+                    } else if (request.type === "ss_unlock_cancel") {
+                        browser.runtime.onMessage.removeListener(_func);
+                        browser.tabs.onRemoved.removeListener(onRemoved);
+                        browser.windows.remove(newWindow.id);
+                        onRemoved(tab.id);
                     }
                 });
                 browser.tabs.onRemoved.addListener(onRemoved);
