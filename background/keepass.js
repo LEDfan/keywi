@@ -19,7 +19,6 @@ Keepass.helpers.verifyResponse = function (response, key) {
     let self = this;
     return new Promise(function(resolve, reject) {
         if (!response.Success) {
-            Keepass.state.associated = false;
             reject();
             return;
         }
@@ -107,7 +106,7 @@ Keepass.reCheckAssociated = function() {
                    data: JSON.stringify(req),
                    contentType: "application/json",
                    error: function(err) {
-
+                        // TODO resolve(false)
                    },
                    success: function(resp) {
                        if (resp.Success) {
@@ -170,7 +169,7 @@ Keepass.getLogins = function (url, callback) {
 
                     },
                     success: function (resp) {
-                        if (Keepass.helpers.verifyResponse(resp, key)) {
+                        Keepass.helpers.verifyResponse(resp, key).then(function() {
                             var rIv = resp.Nonce;
                             var decryptedEntries = [];
                             for (var i = 0; i < resp.Entries.length; i++) {
@@ -181,10 +180,9 @@ Keepass.getLogins = function (url, callback) {
                                 });
                                 console.log(decryptedEntries);
                             }
-                        }
-                        else {
+                        }).catch(function(resp) {
                             console.log("RetrieveCredentials for " + url + " rejected");
-                        }
+                        });
                     }
                 });
             });
@@ -279,11 +277,13 @@ browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
             sendResponse();
         });
         return true;
-    } else if (request.type === "re-associate_keepass") {
-        Keepass.deassociate().then(function() {
-            Keepass.associate(function() {
-                sendResponse("done");
-            });
+    } else if (request.type === "reset") {
+        Keepass._ss.clear().then(function() {
+            return Keepass._ss.reencrypt();
+        // }).then(function() {
+        //     Keepass.associate(function() {
+                sendResponse();
+            // });
         });
         return true;
     } else if (request.type === "options_user_info") {

@@ -19,12 +19,12 @@ window.addEventListener("DOMContentLoaded", function(){
         });
     });
 
-    document.getElementById("btn-re-associate").addEventListener("click", function(){
+    document.getElementById("btn-reset").addEventListener("click", function(){
         if (window.userInfoData !== null) {
             // when the secure storage is locked we can't show the id.
-            alert("To complete disconnect keepass, you will have to remove the key with id \"" + window.userInfoData["Keepass database id"] + "\" in Keepass!");
+            alert("To completely disconnect keepass, you will have to remove the key with id \"" + window.userInfoData["Keepass database id"] + "\" in Keepass!");
         }
-        browser.runtime.sendMessage({"type": "re-associate_keepass"}).then(function(data) {
+        browser.runtime.sendMessage({"type": "reset"}).then(function(data) {
             readAndUpdateUserInfo();
         });
     });
