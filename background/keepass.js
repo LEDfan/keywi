@@ -133,7 +133,7 @@ Keepass.reCheckAssociated = function() {
 Keepass.getLogins = function (url, callback) {
     console.log("Getlogins for url " + url);
 
-    if (!Keepass.state.associated) {
+    if (!this.ready()) {
         Keepass.associate(function() {
             Keepass.getLogins(url, callback);
         });
@@ -205,43 +205,50 @@ Keepass.associate = function(callback) {
         return;
     }
 
-    var rawKey = cryptoHelpers.generateSharedKey(Crypto.keySize * 2);
-    var key = btoa(cryptoHelpers.convertByteArrayToString(rawKey));
-    var verifiers = Crypto.generateVerifier(key);
+    // test if we are already associated and it's working
+    this.reCheckAssociated().then(function(associated) {
+        if (associated) {
+            callback();
+        } else {
+            var rawKey = cryptoHelpers.generateSharedKey(Crypto.keySize * 2);
+            var key = btoa(cryptoHelpers.convertByteArrayToString(rawKey));
+            var verifiers = Crypto.generateVerifier(key);
 
-    var req = {
-        RequestType: "associate",
-        Key: key,
-        Nonce: verifiers[0],
-        Verifier: verifiers[1]
-    };
-    let self = this;
+            var req = {
+                RequestType: "associate",
+                Key: key,
+                Nonce: verifiers[0],
+                Verifier: verifiers[1]
+            };
+            let self = this;
 
-    browser.storage.local.get("keepass-server-url").then(function(pref) {
-        reqwest({
-            url: pref["keepass-server-url"] || 'http://localhost:19455',
-            type: 'json',
-            method: 'post',
-            data: JSON.stringify(req),
-            contentType: "application/json",
-            error: function (err) {
+            browser.storage.local.get("keepass-server-url").then(function(pref) {
+                reqwest({
+                    url: pref["keepass-server-url"] || 'http://localhost:19455',
+                    type: 'json',
+                    method: 'post',
+                    data: JSON.stringify(req),
+                    contentType: "application/json",
+                    error: function(err) {
 
-            },
-            success: function (resp) {
-                console.log(resp);
-                console.log("Associated key is: " + key);
-                console.log("Id is: " + resp.Id);
-                console.log("Hash is: " + resp.Hash);
-                Keepass._ss.set("database.id", resp.Id).then(function() {
-                    return Keepass._ss.set("database.key", key);
-                }).then(function() {
-                    return Keepass._ss.set("database.hash", resp.Hash);
-                }).then(function() {
-                    Keepass.state.associated = true;
-                    callback();
-                })
-            }
-        })
+                    },
+                    success: function(resp) {
+                        console.log(resp);
+                        console.log("Associated key is: " + key);
+                        console.log("Id is: " + resp.Id);
+                        console.log("Hash is: " + resp.Hash);
+                        Keepass._ss.set("database.id", resp.Id).then(function() {
+                            return Keepass._ss.set("database.key", key);
+                        }).then(function() {
+                            return Keepass._ss.set("database.hash", resp.Hash);
+                        }).then(function() {
+                            Keepass.state.associated = true;
+                            callback();
+                        })
+                    }
+                });
+            });
+        }
     });
 };
 
