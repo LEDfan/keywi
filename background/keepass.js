@@ -279,11 +279,11 @@ browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         return true;
     } else if (request.type === "reset") {
         Keepass._ss.clear().then(function() {
-            return Keepass._ss.reencrypt();
-        // }).then(function() {
-        //     Keepass.associate(function() {
+            return Keepass._ss.reInitialize();
+        }).then(function() {
+            Keepass.associate(function() {
                 sendResponse();
-            // });
+            });
         });
         return true;
     } else if (request.type === "options_user_info") {
