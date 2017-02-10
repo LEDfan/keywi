@@ -275,10 +275,12 @@ browser.storage.onChanged.addListener(function(changes, areaName) {
 
 browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     if (request.type === "re-encrypt_local_secure_storage") {
-        Keepass._ss.reencrypt();
+        Keepass._ss.reencrypt(function() {
+            sendResponse();
+        });
+        return true;
     } else if (request.type === "re-associate_keepass") {
         Keepass.deassociate().then(function() {
-
             Keepass.associate(function() {
                 sendResponse("done");
             });
@@ -287,18 +289,30 @@ browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     } else if (request.type === "options_user_info") {
         let hash = null;
         let id = null;
-        Keepass._ss.get("database.hash").then(function(data) {
-            hash = data;
-            Keepass._ss.get("database.id").then(function(data) {
-                id = data;
+        if (Keepass.ready()) {
+            Keepass._ss.get("database.hash").then(function(data) {
+                hash = data;
+                Keepass._ss.get("database.id").then(function(data) {
+                    id = data;
+                    sendResponse({
+                        "Secure storage unlocked": Keepass._ss.ready(),
+                        "Keepass database associated": Keepass.ready(),
+                        "Keepass database hash": hash,
+                        "Keepass database id": id
+                    });
+                });
+            }).catch(function() {
                 sendResponse({
-                    "Secure storage unlocked" : Keepass._ss.ready(),
-                    "Keepass database associated" : Keepass.ready(),
-                    "Keepass database hash" : hash,
-                    "Keepass database id" : id
+                    "Secure storage unlocked": Keepass._ss.ready(),
+                    "Keepass database associated": Keepass.ready(),
                 });
             });
-        });
+        } else {
+            sendResponse({
+                "Secure storage unlocked": Keepass._ss.ready(),
+                "Keepass database associated": Keepass.ready(),
+            });
+        }
         return true; // http://stackoverflow.com/a/40773823
     }
 });

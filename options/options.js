@@ -14,7 +14,9 @@ window.addEventListener("DOMContentLoaded", function(){
     readAndUpdateUserInfo()
 
     document.getElementById("btn-re-encrypt").addEventListener("click", function(){
-        browser.runtime.sendMessage({"type": "re-encrypt_local_secure_storage"});
+        browser.runtime.sendMessage({"type": "re-encrypt_local_secure_storage"}).then(function() {
+            readAndUpdateUserInfo();
+        });
     });
 
     document.getElementById("btn-re-associate").addEventListener("click", function(){

@@ -248,8 +248,9 @@ LocalSecureStorage.prototype.delete = function (key) {
  * @brief re-encrypts the SecureStorage by asking the user for a new password.
  *  - This will automatically generate a new salt.
  *  - This can be used when you have changed the e.g. hashing rounds count
+ *  @todo use promises (currently this is not done because of the setTimeOut)
  */
-LocalSecureStorage.prototype.reencrypt = function() {
+LocalSecureStorage.prototype.reencrypt = function(callback) {
     var self = this;
     browser.storage.local.get().then(function(data) {
         self._unlockStorage().then(function() {
@@ -257,6 +258,12 @@ LocalSecureStorage.prototype.reencrypt = function() {
             let dataToSave = {};
 
             let prefixLength = LocalSecureStorage.prototype._prefix.length;
+            /**
+             * Keep track if we have were associated before, if so and we reach the encrypt code, it should be associated again.
+             * If we don't reach the encrypt code i.e. the user canceled something, we are not associated.
+             * @type {boolean}
+             */
+            let originalAssociated = Keepass.state.associated;
 
             for (const key of Object.keys(data)) {
                 if (key.substr(0, prefixLength) === LocalSecureStorage.prototype._prefix) {
@@ -268,24 +275,30 @@ LocalSecureStorage.prototype.reencrypt = function() {
                         dataToSave[userKey] = self._decrypt(data[key]);
                         self.delete(userKey); // remove from the Secure Storage
                     }
+                    Keepass.state.associated = false;
                 }
             }
 
             setTimeout(function() {
                 /// we have to wait a bit Firefox doesn't like if we open too many windows in a short time (too many = 2)
+                LocalSecureStorage.prototype._encryptionkey = null;
                 self._setupNewPassword().then(function() {
                     // ask the user to enter a new password and setup the database to use it
                     for (const ikey of Object.keys(dataToSave)) {
                         let idata = dataToSave[ikey];
                         self.set(ikey, idata); // will automatically use the new key
                     }
+                    Keepass.state.associated = originalAssociated;
+                    callback();
                 }).catch(function(err) {
                     console.log(err);
                     // TODO
+                    callback();
                 });
             }, 1000);
         }).catch(function(err) {
             console.log(err);
+            callback();
             // TODO
         });
 
