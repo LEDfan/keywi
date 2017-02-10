@@ -11,14 +11,19 @@
             </h1>
         </header>
         <div id="container">
-            <p>
-                {Keepass} uses a password for securely storing the information needed to connect to the Keepass database.<br>
-                This password is now needed to unlock the Secure Storage.
-            </p>
-            <form>
-                <input id="pass" type="password" placeholder="Password" autofocus>
-                <input id="submit" type="submit" value="Save">
-            </form>
+            <div id="text">
+                <p>
+                    {Keepass} uses a password for securely storing the information needed to connect to the Keepass database.<br>
+                    This password is now needed to unlock the Secure Storage.
+                </p>
+            </div>
+            <div id="form">
+                <form>
+                    <input id="pass" type="password" placeholder="Password" autofocus>
+                    <input id="submit" type="submit" value="Save">
+                    <button id="cancel">Cancel</button>
+                </form>
+            </div>
         </div>
 
         <footer>

@@ -15,3 +15,9 @@ document.forms[0].onsubmit = function(e) {
     }
 };
 
+document.getElementById("cancel").onclick = function() {
+    browser.runtime.sendMessage({
+        type: "ss_setup_password_cancel",
+        data: {}
+    });
+};

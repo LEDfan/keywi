@@ -16,3 +16,10 @@ browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         alert(request.msg);
     }
 });
+
+document.getElementById("cancel").onclick = function() {
+    browser.runtime.sendMessage({
+        type: "ss_unlock_cancel",
+        data: {}
+    });
+};
