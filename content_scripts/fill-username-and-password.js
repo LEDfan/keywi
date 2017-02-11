@@ -11,10 +11,6 @@ function searchForPasswordInput(userInput) {
     let parent = userInput;
     while (true) {
         parent = parent.parentElement;
-        if (parent.tagName === "BODY" || parent.tagName === "FORM") {
-            console.log("No password field found!");
-            return null;
-        }
 
         let passwordField = parent.querySelector("input[type='password']");
         console.log(passwordField);
@@ -22,6 +18,11 @@ function searchForPasswordInput(userInput) {
             console.log("Found password field:");
             console.log(passwordField);
             return passwordField;
+        }
+
+        if (parent.tagName === "BODY" || parent.tagName === "FORM") {
+            console.log("No password field found!");
+            return null;
         }
     }
 }
