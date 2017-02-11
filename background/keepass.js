@@ -98,11 +98,13 @@ Keepass.prompts._selectCredentials = function(possibleCredentials) {
                 browser.tabs.onUpdated.addListener(function _updateFunc(tabId, changeInfo, tabInfo) {
                     if (tabId === tab.id) {
                         if (tabInfo.status === "complete") {
-                            browser.tabs.sendMessage(tab.id, {
-                                type: "select_mul_pass_data",
-                                data: {possibleCredentials: possibleCredentials}
-                            });
-                            browser.tabs.onUpdated.removeListener(_updateFunc);
+                            setTimeout(function() {
+                                browser.tabs.sendMessage(tab.id, {
+                                    type: "select_mul_pass_data",
+                                    data: {possibleCredentials: possibleCredentials}
+                                });
+                                browser.tabs.onUpdated.removeListener(_updateFunc);
+                            }, 300);
                         }
                     }
                 });
