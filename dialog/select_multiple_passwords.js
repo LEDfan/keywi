@@ -1,36 +1,36 @@
 browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     console.log(request);
     if (request.type === "select_mul_pass_data") {
-        let passwordsField = document.getElementById("passwords");
         const length = request.data.possibleCredentials.length;
+        let html = "";
+
         for (let i = 0; i < length; i++) {
-            passwordsField.options.add(new Option(request.data.possibleCredentials[i].Login, i, false, false));
+            html += generateButtonRow(i, request.data.possibleCredentials[i].Name, request.data.possibleCredentials[i].Login);
+        }
+
+        document.getElementById("passwords").innerHTML = html;
+        let els = document.getElementsByClassName("password-choose-btn");
+
+        for (let el of els) {
+            el.addEventListener("click", function() {
+                browser.runtime.sendMessage({
+                    type: "select_mul_pass_user_input",
+                    data: {
+                        selected: this.dataset.index
+                    }
+                });
+            }, false);
         }
     }
 });
 
-let submit = function() {
-    let passwordsField = document.getElementById("passwords");
-    let selected = passwordsField.selectedIndex;
-    if (selected === -1) {
-        alert("Please select a credential");
-    } else {
-        browser.runtime.sendMessage({
-            type: "select_mul_pass_user_input",
-            data: {
-                selected: selected
-            }
-        });
-    }
-}
-
-document.forms[0].onsubmit = function(e) {
-    e.preventDefault(); // Prevent submission
-    submit();
-};
-
-document.getElementById('passwords').ondblclick = function(){
-    submit();
+let generateButtonRow =  function(index, name, login) {
+    return `
+    <div class="password-container">
+            <button data-index="${index}" class="password-choose-btn">${login} (${name})</button>
+         </div>
+    </div>
+`;
 };
 
 document.getElementById("cancel").onclick = function() {
