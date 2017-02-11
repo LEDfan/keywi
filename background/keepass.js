@@ -169,6 +169,7 @@ Keepass.getLogins = function (url, callback) {
                         browser.notifications.create({
                             type: "basic",
                             message: "Cannot connect to your Keepass database, is it running and unlocked?",
+                            iconUrl: browser.extension.getURL("icons/keepass-96.png"),
                             title: "{Keepass}"
                         });
                     },
@@ -186,10 +187,11 @@ Keepass.getLogins = function (url, callback) {
                             }
                         }).catch(function(resp) {
                             console.log("RetrieveCredentials for " + url + " rejected");
-                          
+
                             browser.notifications.create({
                                 type: "basic",
                                 message: "Problem getting logins from your Keepass database, have you associated with this database?",
+                                iconUrl: browser.extension.getURL("icons/keepass-96.png"),
                                 title: "{Keepass}"
                             });
                         });
@@ -252,6 +254,7 @@ Keepass.associate = function(callback) {
                         browser.notifications.create({
                             type: "basic",
                             message: "Cannot connect to your Keepass database, is it running and unlocked?",
+                            iconUrl: browser.extension.getURL("icons/keepass-96.png"),
                             title: "{Keepass}"
                         });
                     },
