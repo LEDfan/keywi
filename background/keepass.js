@@ -240,7 +240,6 @@ Keepass.getLogins = function (url, callback) {
                                     return Keepass.helpers.decryptEntry(resp.Entries[i], rIv).then(function(decryptedEntry) {
                                         // callback([decryptedEntry]);
                                         decryptedEntries.push(decryptedEntry);
-                                        console.log(decryptedEntry);
                                     });
                                 });
                             }
