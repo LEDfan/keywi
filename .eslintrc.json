@@ -1,0 +1,35 @@
+{
+    "env": {
+        "browser": true,
+        "es6": true,
+		"webextensions": true
+    },
+    "extends": "eslint:all",
+    "parserOptions": {
+        "sourceType": "module"
+    },
+    "rules": {
+        "indent": [
+            "error",
+            4
+        ],
+        "linebreak-style": [
+            "error",
+            "unix"
+        ],
+        "quotes": [
+            "error",
+            "double"
+        ],
+        "semi": [
+            "error",
+            "always"
+        ]
+    },
+	"globals" : {
+		"cryptoHelpers": true,
+		"slowAES": true,
+		"reqwest": true,
+		"UTF8": true
+	}
+}
