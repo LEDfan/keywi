@@ -17,10 +17,10 @@ LocalSecureStorage.prompts.setupNewPassword = function () {
                     if (tabId == tab.id) {
                         console.log("Setup storage was aborted!");
                         browser.notifications.create("secure-storage-cancelled", {
-                            "type": "basic",
-                            "iconUrl": browser.extension.getURL("icons/keepass-96.png"),
-                            "title": "{Keepass}",
-                            "message": "Secure Storage Setup was canceled, {Keepass} cannot work without. You can re-setup it from the settings."
+                            type: "basic",
+                            iconUrl: browser.extension.getURL("icons/keepass-96.png"),
+                            title: "{Keepass}",
+                            message: "Secure Storage Setup was canceled, {Keepass} cannot work without. You can re-setup it from the settings."
                         });
                         reject("Aborted!");
                     }
@@ -63,10 +63,10 @@ LocalSecureStorage.prompts.unlock = function (verifyFunc) {
                     if (tabId == tab.id) {
                         console.log("Unlock Secure storage was aborted!");
                         browser.notifications.create("secure-storage-cancelled", {
-                            "type": "basic",
-                            "iconUrl": browser.extension.getURL("icons/keepass-96.png"),
-                            "title": "{Keepass}",
-                            "message": "Secure Storage unlock was canceled, {Keepass} cannot work without."
+                            type: "basic",
+                            iconUrl: browser.extension.getURL("icons/keepass-96.png"),
+                            title: "{Keepass}",
+                            message: "Secure Storage unlock was canceled, {Keepass} cannot work without."
                         });
                         reject("Aborted!");
                     }
