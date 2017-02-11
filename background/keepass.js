@@ -73,6 +73,61 @@ Keepass.helpers.decryptEntry = function (entry, iv) {
     });
 };
 
+Keepass.prompts = {};
+
+Keepass.prompts._selectCredentials = function(possibleCredentials) {
+    return new Promise(function(resolve, reject) {
+        browser.tabs.create({
+            url: browser.extension.getURL('dialog/select_multiple_passwords.html'),
+            active: false
+        }, function (tab) {
+            // After the tab has been created, open a window to inject the tab
+            browser.windows.create({
+                tabId: tab.id,
+                type: 'panel',
+                width: 400,
+                height: 600
+            }).then(function(newWindow) {
+                let onRemoved = function(tabId, removeInfo) {
+                    if (tabId == tab.id) {
+                        console.log("Select multiple passwords canceled");
+                        reject("Aborted!");
+                    }
+                };
+
+                browser.tabs.onUpdated.addListener(function _updateFunc(tabId, changeInfo, tabInfo) {
+                    if (tabId === tab.id) {
+                        if (tabInfo.status === "complete") {
+                            browser.tabs.sendMessage(tab.id, {
+                                type: "select_mul_pass_data",
+                                data: {possibleCredentials: possibleCredentials}
+                            });
+                            browser.tabs.onUpdated.removeListener(_updateFunc);
+                        }
+                    }
+                });
+                browser.runtime.onMessage.addListener(function _func(request, sender, sendResponse) {
+                    if (request.type === "select_mul_pass_user_input") {
+                        let selCred = possibleCredentials[request.data.selected];
+                        browser.runtime.onMessage.removeListener(_func);
+                        browser.tabs.onRemoved.removeListener(onRemoved);
+                        browser.windows.remove(newWindow.id);
+                        resolve(selCred);
+                    } else if (request.type === "select_mul_pass_cancel") {
+                        browser.runtime.onMessage.removeListener(_func);
+                        browser.tabs.onRemoved.removeListener(onRemoved);
+                        browser.windows.remove(newWindow.id);
+                        onRemoved(tab.id);
+                        reject();
+                    }
+                });
+                browser.tabs.onRemoved.addListener(onRemoved);
+            });
+        });
+
+    });
+};
+
 Keepass.ready = function() {
     return Keepass.state.associated && Keepass._ss.ready();
 };
@@ -139,6 +194,8 @@ Keepass.getLogins = function (url, callback) {
         return;
     }
 
+    let self = this;
+
     Keepass._ss.get("database.key").then(function(key) {
         Keepass._ss.get("database.id").then(function(id) {
             console.log("key, id:");
@@ -175,16 +232,38 @@ Keepass.getLogins = function (url, callback) {
                     },
                     success: function (resp) {
                         Keepass.helpers.verifyResponse(resp, key).then(function() {
-                            var rIv = resp.Nonce;
-                            var decryptedEntries = [];
-                            for (var i = 0; i < resp.Entries.length; i++) {
-                                Keepass.helpers.decryptEntry(resp.Entries[i], rIv).then(function(decryptedEntry) {
-                                    // decryptedEntries.push(decryptedEntry);
-                                    callback([decryptedEntry]);
-                                    // TODO multiple entires
+                            let rIv = resp.Nonce;
+                            let decryptedEntries = [];
+                            let promiseChain = Promise.resolve();
+                            for (let i = 0; i < resp.Entries.length; i++) {
+                                promiseChain = promiseChain.then(function() {
+                                    return Keepass.helpers.decryptEntry(resp.Entries[i], rIv).then(function(decryptedEntry) {
+                                        // callback([decryptedEntry]);
+                                        decryptedEntries.push(decryptedEntry);
+                                        console.log(decryptedEntry);
+                                    });
                                 });
-                                console.log(decryptedEntries);
                             }
+                            promiseChain.then(function() {
+                                // decrypted all entries
+                                if (decryptedEntries.length === 0) {
+                                    browser.notifications.create({
+                                        type: "basic",
+                                        message: "No passwords found",
+                                        iconUrl: browser.extension.getURL("icons/keepass-96.png"),
+                                        title: "{Keepass}"
+                                    }); // TODO replace by injected message
+                                } else if (decryptedEntries.length === 1) {
+                                    callback(decryptedEntries[0]);
+                                } else {
+                                    self.prompts._selectCredentials(decryptedEntries).then(function(selectedCredential) {
+                                        callback(selectedCredential);
+                                    });
+
+                                }
+                            });
+
+
                         }).catch(function(resp) {
                             console.log("RetrieveCredentials for " + url + " rejected");
 
