@@ -244,6 +244,32 @@ LocalSecureStorage.prototype.delete = function (key) {
     return browser.storage.local.remove(LocalSecureStorage.prototype._prefix + key);
 };
 
+LocalSecureStorage.prototype.clear = function() {
+    let self = this;
+    return browser.storage.local.get().then(function(data) {
+
+        let prefixLength = LocalSecureStorage.prototype._prefix.length;
+
+        let promiseChain = Promise.resolve();
+
+        for (const key of Object.keys(data)) {
+            if (key.substr(0, prefixLength) === LocalSecureStorage.prototype._prefix) {
+                promiseChain = promiseChain.then(function() {
+                    let userKey = key.substr(prefixLength, key.length - prefixLength);
+                    console.log(userKey);
+                    return self.delete(userKey)
+                });
+            }
+        }
+
+        LocalSecureStorage.prototype._encryptionkey = null;
+        Keepass.state.associated = false;
+
+        return promiseChain;
+
+    });
+};
+
 /**
  * @brief re-encrypts the SecureStorage by asking the user for a new password.
  *  - This will automatically generate a new salt.
