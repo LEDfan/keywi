@@ -16,7 +16,7 @@ LocalSecureStorage.prompts.setupNewPassword = function () {
                 let onRemoved = function(tabId, removeInfo) {
                     if (tabId == tab.id) {
                         console.log("Setup storage was aborted!");
-                        browser.notifications.create({
+                        browser.notifications.create("secure-storage-setup-cancelled", {
                             "type": "basic",
                             "iconUrl": browser.extension.getURL("icons/keepass-96.png"),
                             "title": "{Keepass}",
@@ -99,3 +99,9 @@ LocalSecureStorage.prompts.unlock = function (verifyFunc) {
         });
     });
 };
+
+browser.notifications.onClicked.addListener((notificationId) => {
+    if (notificationId == "secure-storage-setup-cancelled") {
+        browser.runtime.openOptionsPage();
+    }
+});
