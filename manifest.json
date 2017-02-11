@@ -43,5 +43,11 @@
       },
       "description": "Fill a username/password field on the current page"
     }
+  },
+  "applications": {
+    "gecko": {
+      "id": "keepass@local.local",
+      "strict_min_version": "42.0"
+    }
   }
 }
