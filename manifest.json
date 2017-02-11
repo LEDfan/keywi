@@ -13,7 +13,6 @@
       "vendor/aes.js",
       "vendor/cryptoHelpers.js",
       "vendor/debounce.js",
-      "background/prompt.js",
       "background/Crypto.js",
       "background/keepass.js",
       "background/securestorage.js",

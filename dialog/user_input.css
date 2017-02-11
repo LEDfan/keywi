@@ -48,7 +48,7 @@ footer p {
 }
 
 #pass, #pass1, #pass2, #submit, #cancel {
-    width: 350px;
+    width: 340px;
     padding: 5px;
     margin: 5px;
     box-sizing: border-box;
@@ -64,6 +64,7 @@ footer p {
     background-color: #5cb85c;
     border: 1px solid transparent;
     border-radius: 4px;
+    cursor:pointer;
 }
 
 #cancel {
@@ -76,4 +77,8 @@ footer p {
 #text, #form {
     height: 185px;
     box-sizing: border-box;
+}
+
+button {
+    cursor:pointer;
 }
