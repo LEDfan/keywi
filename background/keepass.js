@@ -257,17 +257,27 @@ Keepass.associate = function(callback) {
                     },
                     success: function(resp) {
                         console.log(resp);
-                        console.log("Associated key is: " + key);
-                        console.log("Id is: " + resp.Id);
-                        console.log("Hash is: " + resp.Hash);
-                        Keepass._ss.set("database.id", resp.Id).then(function() {
-                            return Keepass._ss.set("database.key", key);
-                        }).then(function() {
-                            return Keepass._ss.set("database.hash", resp.Hash);
-                        }).then(function() {
-                            Keepass.state.associated = true;
-                            callback();
-                        })
+                        if (resp.Success) {
+                            console.log(resp);
+                            console.log("Associated key is: " + key);
+                            console.log("Id is: " + resp.Id);
+                            console.log("Hash is: " + resp.Hash);
+                            Keepass._ss.set("database.id", resp.Id).then(function() {
+                                return Keepass._ss.set("database.key", key);
+                            }).then(function() {
+                                return Keepass._ss.set("database.hash", resp.Hash);
+                            }).then(function() {
+                                Keepass.state.associated = true;
+                                callback();
+                            })
+                        } else {
+                            browser.notifications.create({
+                                type: "basic",
+                                message: "Something went wrong during association.",
+                                iconUrl: browser.extension.getURL("icons/keepass-96.png"),
+                                title: "{Keepass}"
+                            });
+                        }
                     }
                 });
             });
