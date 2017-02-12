@@ -57,6 +57,7 @@ browser.runtime.onMessage.addListener(function _func(request, sender, sendRespon
             passwordField.value = request.password;
             passwordField.dispatchEvent(event);
         }
+        browser.runtime.onMessage.removeListener(_func);
     }
 });
 
