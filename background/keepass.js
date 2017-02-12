@@ -156,23 +156,25 @@ Keepass.reCheckAssociated = function() {
                    Id: id
                };
 
-               reqwest({
-                   url: 'http://localhost:19455', // TODO hard coded path
-                   type: 'json',
-                   method: 'post',
-                   data: JSON.stringify(req),
-                   contentType: "application/json",
-                   error: function(err) {
-                        // TODO resolve(false)
-                   },
-                   success: function(resp) {
-                       if (resp.Success) {
-                           Keepass.state.associated = true;
-                       } else {
-                           Keepass.state.associated = false;
+               browser.storage.local.get("keepass-server-url").then(function(pref) {
+                   reqwest({
+                       url: pref["keepass-server-url"] || 'http://localhost:19455',
+                       type: 'json',
+                       method: 'post',
+                       data: JSON.stringify(req),
+                       contentType: "application/json",
+                       error: function(err) {
+                            // TODO resolve(false)
+                       },
+                       success: function(resp) {
+                           if (resp.Success) {
+                               Keepass.state.associated = true;
+                           } else {
+                               Keepass.state.associated = false;
+                           }
+                           resolve(resp.Success);
                        }
-                       resolve(resp.Success);
-                   }
+                   });
                });
            }).catch(function() {
                Keepass.state.associated = false;

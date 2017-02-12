@@ -5,8 +5,17 @@ function init() {
         console.log("Initialized the Secure Storage, associating with keepass now.");
         Keepass.reCheckAssociated().then(function(associated) {
             if (!associated) {
-                Keepass.associate(function() {
-                    console.log("Associated! 1");
+                Keepass._ss.has("database.key").then(function(key) {
+                    browser.notifications.create({
+                        type: "basic",
+                        message: "{Keepass} is already associated with a database, but another database is open.",
+                        iconUrl: browser.extension.getURL("icons/keepass-96.png"),
+                        title: "{Keepass}"
+                    });
+                }).catch(function() {
+                    Keepass.associate(function() {
+                        console.log("Associated! 1");
+                    });
                 });
             } else {
                 console.log("Associated! 2");
