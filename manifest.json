@@ -32,6 +32,11 @@
     "notifications"
   ],
   "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content_scripts/fix-contentEditable.js"],
+      "run_at" : "document_end"
+    }
   ],
   "options_ui": {
     "page": "options/options.html"
