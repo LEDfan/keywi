@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Keepass",
-  "version": "1.0",
+  "version": "0.1.0-beta1",
   "description": "WIP Minimalistic keepass plugin using web Extensions",
   "icons": {
     "48": "icons/beasts-48.png"
@@ -60,12 +60,6 @@
         "default": "Ctrl+Shift+D"
       },
       "description": "Fill your password in the currently active field"
-    }
-  },
-  "applications": {
-    "gecko": {
-      "id": "keepass@local.local",
-      "strict_min_version": "42.0"
     }
   }
 }
