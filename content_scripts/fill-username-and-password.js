@@ -29,14 +29,10 @@ function searchForPasswordInput(userInput) {
 
 browser.runtime.onMessage.addListener(function _func(request, sender, sendResponse) {
     if (request.type == "username-and-password") {
+        if (document.activeElement.tagName != "INPUT") //Only useful for input elements
+            return ;
+
         let usernameField = document.activeElement;
-        if (usernameField.tagName === "IFRAME") {
-            /**
-             * We ignore this request. Since this content script is loaded into all the frames of this page, the
-             * script injected in the iframe containing the username field will fill in the username and password.
-             */
-            return;
-        }
         usernameField.value = request.username;
 
         /**
@@ -56,6 +52,21 @@ browser.runtime.onMessage.addListener(function _func(request, sender, sendRespon
         } else {
             passwordField.value = request.password;
             passwordField.dispatchEvent(event);
+        }
+    } else if (request.type == "username") {
+        if (document.activeElement.tagName != "INPUT") //Only useful for input elements
+            return ;
+        document.activeElement.value = request.username;
+    } else if (request.type == "password") {
+        if (document.activeElement.tagName != "INPUT") //Only useful for input elements
+            return ;
+
+        if (document.activeElement.tagName != "INPUT" || document.activeElement.type != "password") {
+            if (confirm("This is not a password field. Are you sure you want to fill your password?")) {
+                document.activeElement.value = request.password;
+            }
+        } else {
+            document.activeElement.value = request.password;
         }
     }
 });

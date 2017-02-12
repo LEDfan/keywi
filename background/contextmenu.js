@@ -3,6 +3,24 @@ browser.contextMenus.create({
     title: "Fill username and password",
     contexts: ["editable"]
 });
+browser.contextMenus.create({
+    id: "username",
+    title: "Fill username",
+    contexts: ["editable"]
+});
+browser.runtime.getBrowserInfo().then((info) => {
+    var ctx;
+    if (Number.parseInt(info.version.split(".")[0]) >= 53) {
+        ctx = "password";
+    } else {
+        ctx = "editable";
+    }
+    browser.contextMenus.create({
+        id: "password",
+        title: "Fill password",
+        contexts: [ctx]
+    });
+});
 
 activeGetLogins = [];
 
@@ -18,18 +36,23 @@ browser.runtime.onMessage.addListener((request, sender, sendresponse) => {
 });
 
 browser.contextMenus.onClicked.addListener((info, tab) => {
-    if (info.menuItemId == "username-and-password") {
-        if (activeGetLogins.indexOf(tab.id) === -1) {
-            // prevent from simultaneous filling in the credentials
-            activeGetLogins.push(tab.id);
-            Keepass.getLogins(tab.url, function(entry) {
-                browser.tabs.sendMessage(tab.id, {
-                    type: "username-and-password",
-                    username: entry.Login,
-                    password: entry.Password
-                });
-                activeGetLogins.splice(activeGetLogins.indexOf(tab.id), 1);
+    var type;
+    console.log(info.toSource());
+    if (info.menuItemId == "username-and-password" || info.menuItemId == "username" || info.menuItemId == "password") {
+        type = info.menuItemId;
+    } else {
+        return;
+    }
+    if (activeGetLogins.indexOf(tab.id) === -1) {
+        // prevent from simultaneous filling in the credentials
+        activeGetLogins.push(tab.id);
+        Keepass.getLogins(tab.url, function(entry) {
+            browser.tabs.sendMessage(tab.id, {
+                type: type,
+                username: entry.Login,
+                password: entry.Password
             });
-        }
+            activeGetLogins.splice(activeGetLogins.indexOf(tab.id), 1);
+        });
     }
 });
