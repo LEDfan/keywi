@@ -93,11 +93,24 @@ browser.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     if (request.type == "username-and-password") {
         var usernameField = document.activeElement;
         usernameField.value = request.username;
+
+        /**
+         * Some website use a custom made placeholder using <label>'s. This placeholder is removed by JS when the user
+         * enters something in the input field. However since we change the value of the input field using JS this event
+         * isn't triggered. Therefore we simulate a key press.
+         * See e.g. dropbox.com
+         */
+        let event = new KeyboardEvent("keydown", {
+            key: "ArrowLeft",
+        });
+        usernameField.dispatchEvent(event);
+
         var passwordField = searchForPasswordInput(usernameField);
         if (passwordField === null) {
             showMessage("no-password", "No password field found, only filling username.");
         } else {
             passwordField.value = request.password;
+            passwordField.dispatchEvent(event);
         }
     }
 });
