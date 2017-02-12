@@ -77,29 +77,32 @@ Keepass.prompts = {};
 
 Keepass.prompts._selectCredentials = function(possibleCredentials) {
     return new Promise(function(resolve, reject) {
-        browser.tabs.create({
-            url: browser.extension.getURL('dialog/select_multiple_passwords.html'),
-            active: false
-        }, function (tab) {
-            // After the tab has been created, open a window to inject the tab
-            browser.windows.create({
-                tabId: tab.id,
-                type: 'panel',
-                width: 400,
-                height: 600
-            }).then(function(newWindow) {
-                let onRemoved = function(tabId, removeInfo) {
-                    if (tabId == tab.id) {
-                        console.log("Select multiple passwords canceled");
-                        reject("Aborted!");
-                    }
-                };
+        const url = browser.extension.getURL('dialog/select_multiple_passwords.html');
+        browser.windows.create({
+            // tabId: tab.id,
+            type: 'panel',
+            width: 400,
+            height: 600,
+            incognito: false,
+            url: url
+        }).then(function(newWindow) {
+            const openedWindowId = newWindow.id;
+            let onRemoved = function(removedWindowId) {
+                if (openedWindowId === removedWindowId) {
+                    console.log("Select multiple passwords canceled");
+                    reject("Aborted!");
+                }
+            };
+
+            browser.tabs.query({windowId: openedWindowId}).then(function(tabs) {
+                const openedTabId = tabs[0].id;
 
                 browser.tabs.onUpdated.addListener(function _updateFunc(tabId, changeInfo, tabInfo) {
-                    if (tabId === tab.id) {
+                    if (tabId === openedTabId) {
+                        console.log(tabInfo);
                         if (tabInfo.status === "complete") {
                             setTimeout(function() {
-                                browser.tabs.sendMessage(tab.id, {
+                                browser.tabs.sendMessage(openedTabId, {
                                     type: "select_mul_pass_data",
                                     data: {possibleCredentials: possibleCredentials}
                                 });
@@ -112,21 +115,20 @@ Keepass.prompts._selectCredentials = function(possibleCredentials) {
                     if (request.type === "select_mul_pass_user_input") {
                         let selCred = possibleCredentials[request.data.selected];
                         browser.runtime.onMessage.removeListener(_func);
-                        browser.tabs.onRemoved.removeListener(onRemoved);
+                        browser.windows.onRemoved.removeListener(onRemoved);
                         browser.windows.remove(newWindow.id);
                         resolve(selCred);
                     } else if (request.type === "select_mul_pass_cancel") {
                         browser.runtime.onMessage.removeListener(_func);
-                        browser.tabs.onRemoved.removeListener(onRemoved);
+                        browser.windows.onRemoved.removeListener(onRemoved);
                         browser.windows.remove(newWindow.id);
-                        onRemoved(tab.id);
+                        onRemoved(openedWindowId);
                         reject();
                     }
                 });
-                browser.tabs.onRemoved.addListener(onRemoved);
+                browser.windows.onRemoved.addListener(onRemoved);
             });
         });
-
     });
 };
 
