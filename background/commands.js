@@ -2,9 +2,9 @@ browser.commands.onCommand.addListener((cmd) => {
     var type;
     if (cmd === "fill-form") {
         type = "username-and-password";
-    } else if (cmd == "fill-username") {
+    } else if (cmd === "fill-username") {
         type = "username";
-    } else if (cmd == "fill-password") {
+    } else if (cmd === "fill-password") {
         type = "password";
     } else {
         return;

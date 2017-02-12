@@ -28,8 +28,8 @@ function searchForPasswordInput(userInput) {
 }
 
 browser.runtime.onMessage.addListener(function _func(request, sender, sendResponse) {
-    if (request.type == "username-and-password") {
-        if (document.activeElement.tagName != "INPUT") //Only useful for input elements
+    if (request.type === "username-and-password") {
+        if (document.activeElement.tagName !== "INPUT") //Only useful for input elements
             return ;
 
         let usernameField = document.activeElement;
@@ -53,15 +53,24 @@ browser.runtime.onMessage.addListener(function _func(request, sender, sendRespon
             passwordField.value = request.password;
             passwordField.dispatchEvent(event);
         }
-    } else if (request.type == "username") {
-        if (document.activeElement.tagName != "INPUT") //Only useful for input elements
+    } else if (request.type === "username") {
+        if (document.activeElement.tagName !== "INPUT") //Only useful for input elements
             return ;
+        let event = new KeyboardEvent("keydown", {
+            key: "ArrowLeft",
+        });
+        usernameField.dispatchEvent(event);
         document.activeElement.value = request.username;
-    } else if (request.type == "password") {
-        if (document.activeElement.tagName != "INPUT") //Only useful for input elements
+    } else if (request.type === "password") {
+        if (document.activeElement.tagName !== "INPUT") //Only useful for input elements
             return ;
 
-        if (document.activeElement.tagName != "INPUT" || document.activeElement.type != "password") {
+        let event = new KeyboardEvent("keydown", {
+            key: "ArrowLeft",
+        });
+        usernameField.dispatchEvent(event);
+
+        if (document.activeElement.type !== "password") {
             if (confirm("This is not a password field. Are you sure you want to fill your password?")) {
                 document.activeElement.value = request.password;
             }

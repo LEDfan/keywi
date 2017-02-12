@@ -37,8 +37,7 @@ browser.runtime.onMessage.addListener((request, sender, sendresponse) => {
 
 browser.contextMenus.onClicked.addListener((info, tab) => {
     var type;
-    console.log(info.toSource());
-    if (info.menuItemId == "username-and-password" || info.menuItemId == "username" || info.menuItemId == "password") {
+    if (info.menuItemId === "username-and-password" || info.menuItemId === "username" || info.menuItemId === "password") {
         type = info.menuItemId;
     } else {
         return;
