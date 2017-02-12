@@ -53,7 +53,13 @@
       "suggested_key": {
         "default": "Ctrl+Shift+F"
       },
-      "description": "Fill a username/password field on the current page"
+      "description": "Fill the username/password field from the currently active field"
+    },
+    "fill-password": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+D"
+      },
+      "description": "Fill your password in the currently active field"
     }
   },
   "applications": {

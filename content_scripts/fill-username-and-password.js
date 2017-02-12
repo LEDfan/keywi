@@ -28,15 +28,11 @@ function searchForPasswordInput(userInput) {
 }
 
 browser.runtime.onMessage.addListener(function _func(request, sender, sendResponse) {
-    if (request.type == "username-and-password") {
+    if (request.type === "username-and-password") {
+        if (document.activeElement.tagName !== "INPUT") //Only useful for input elements
+            return ;
+
         let usernameField = document.activeElement;
-        if (usernameField.tagName === "IFRAME") {
-            /**
-             * We ignore this request. Since this content script is loaded into all the frames of this page, the
-             * script injected in the iframe containing the username field will fill in the username and password.
-             */
-            return;
-        }
         usernameField.value = request.username;
 
         /**
@@ -51,11 +47,37 @@ browser.runtime.onMessage.addListener(function _func(request, sender, sendRespon
         usernameField.dispatchEvent(event);
 
         let passwordField = searchForPasswordInput(usernameField);
-        if (passwordField === null) {
+        if (passwordField === null && !request.suppress_error_on_missing_pw_field) {
             browser.runtime.sendMessage({type:"no-password-field-found"});
         } else {
             passwordField.value = request.password;
             passwordField.dispatchEvent(event);
+        }
+    } else if (request.type === "username") {
+        if (document.activeElement.tagName !== "INPUT") //Only useful for input elements
+            return ;
+
+        let event = new KeyboardEvent("keydown", {
+            key: "ArrowLeft",
+        });
+        usernameField.dispatchEvent(event);
+
+        document.activeElement.value = request.username;
+    } else if (request.type === "password") {
+        if (document.activeElement.tagName !== "INPUT") //Only useful for input elements
+            return ;
+
+        let event = new KeyboardEvent("keydown", {
+            key: "ArrowLeft",
+        });
+        usernameField.dispatchEvent(event);
+
+        if (document.activeElement.type !== "password") {
+            if (confirm("This is not a password field. Are you sure you want to fill your password?")) {
+                document.activeElement.value = request.password;
+            }
+        } else {
+            document.activeElement.value = request.password;
         }
     }
 });
