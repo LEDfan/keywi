@@ -35,7 +35,6 @@ browser.runtime.onMessage.addListener(function _func(request, sender, sendRespon
              * We ignore this request. Since this content script is loaded into all the frames of this page, the
              * script injected in the iframe containing the username field will fill in the username and password.
              */
-            browser.runtime.onMessage.removeListener(_func);
             return;
         }
         usernameField.value = request.username;
