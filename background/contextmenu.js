@@ -6,6 +6,17 @@ browser.contextMenus.create({
 
 activeGetLogins = [];
 
+browser.runtime.onMessage.addListener((request, sender, sendresponse) => {
+    if (request.type == "no-password-field-found") {
+        browser.notifications.create({
+            type: "basic",
+            message: "No password field found, filling only username.",
+            iconUrl: browser.extension.getURL("icons/keepass-96.png"),
+            title: "{Keepass}"
+        });
+    }
+})
+
 browser.contextMenus.onClicked.addListener((info, tab) => {
     if (info.menuItemId == "username-and-password") {
         if (activeGetLogins.indexOf(tab.id) === -1) {
