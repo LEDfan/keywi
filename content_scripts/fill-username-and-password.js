@@ -47,7 +47,7 @@ browser.runtime.onMessage.addListener(function _func(request, sender, sendRespon
         usernameField.dispatchEvent(event);
 
         let passwordField = searchForPasswordInput(usernameField);
-        if (passwordField === null) {
+        if (passwordField === null && !request.suppress_error_on_missing_pw_field) {
             browser.runtime.sendMessage({type:"no-password-field-found"});
         } else {
             passwordField.value = request.password;
@@ -56,10 +56,12 @@ browser.runtime.onMessage.addListener(function _func(request, sender, sendRespon
     } else if (request.type === "username") {
         if (document.activeElement.tagName !== "INPUT") //Only useful for input elements
             return ;
+
         let event = new KeyboardEvent("keydown", {
             key: "ArrowLeft",
         });
         usernameField.dispatchEvent(event);
+
         document.activeElement.value = request.username;
     } else if (request.type === "password") {
         if (document.activeElement.tagName !== "INPUT") //Only useful for input elements

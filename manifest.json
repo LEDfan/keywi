@@ -55,12 +55,6 @@
       },
       "description": "Fill the username/password field from the currently active field"
     },
-    "fill-username": {
-      "suggested_key": {
-        "default": "Alt+Shift+F"
-      },
-      "description": "Fill your username in the currently active field"
-    },
     "fill-password": {
       "suggested_key": {
         "default": "Ctrl+Shift+D"
