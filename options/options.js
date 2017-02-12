@@ -21,7 +21,7 @@ window.addEventListener("DOMContentLoaded", function(){
     });
 
     document.getElementById("btn-reset").addEventListener("click", function(){
-        if (window.userInfoData !== null) {
+        if (window.userInfoData !== null && typeof window.userInfoData["Keepass database id"] !== "undefined") {
             // when the secure storage is locked we can't show the id.
             alert("To completely disconnect keepass, you will have to remove the key with id \"" + window.userInfoData["Keepass database id"] + "\" in Keepass!");
         }
