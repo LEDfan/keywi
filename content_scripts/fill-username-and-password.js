@@ -27,9 +27,17 @@ function searchForPasswordInput(userInput) {
     }
 }
 
-browser.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+browser.runtime.onMessage.addListener(function _func(request, sender, sendResponse) {
     if (request.type == "username-and-password") {
-        var usernameField = document.activeElement;
+        let usernameField = document.activeElement;
+        if (usernameField.tagName === "IFRAME") {
+            /**
+             * We ignore this request. Since this content script is loaded into all the frames of this page, the
+             * script injected in the iframe containing the username field will fill in the username and password.
+             */
+            browser.runtime.onMessage.removeListener(_func);
+            return;
+        }
         usernameField.value = request.username;
 
         /**
@@ -43,7 +51,7 @@ browser.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         });
         usernameField.dispatchEvent(event);
 
-        var passwordField = searchForPasswordInput(usernameField);
+        let passwordField = searchForPasswordInput(usernameField);
         if (passwordField === null) {
             browser.runtime.sendMessage({type:"no-password-field-found"});
         } else {

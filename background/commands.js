@@ -2,7 +2,7 @@ browser.commands.onCommand.addListener((cmd) => {
     if (cmd === "fill-form") {
         browser.tabs.query({currentWindow: true, active: true}).then((tabs) => {
             browser.tabs.executeScript(tabs[0].id,
-                {file: "content_scripts/fill-username-and-password.js"},
+                {file: "content_scripts/fill-username-and-password.js", allFrames: true},
                 (result) => {
                     Keepass.getLogins(tabs[0].url, (entries) => {
                         browser.tabs.sendMessage(tabs[0].id, {
