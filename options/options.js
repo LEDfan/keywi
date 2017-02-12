@@ -11,12 +11,13 @@ window.addEventListener("DOMContentLoaded", function(){
         }, 1000));
     }
 
-    readAndUpdateUserInfo()
+    readAndUpdateUserInfo();
 
     document.getElementById("btn-re-encrypt").addEventListener("click", function(){
-        browser.runtime.sendMessage({"type": "re-encrypt_local_secure_storage"}).then(function() {
-            readAndUpdateUserInfo();
-        });
+        browser.runtime.sendMessage({"type": "re-encrypt_local_secure_storage"})
+            .then(function() {
+                readAndUpdateUserInfo();
+            });
     });
 
     document.getElementById("btn-reset").addEventListener("click", function(){
@@ -24,9 +25,10 @@ window.addEventListener("DOMContentLoaded", function(){
             // when the secure storage is locked we can't show the id.
             alert("To completely disconnect keepass, you will have to remove the key with id \"" + window.userInfoData["Keepass database id"] + "\" in Keepass!");
         }
-        browser.runtime.sendMessage({"type": "reset"}).then(function(data) {
-            readAndUpdateUserInfo();
-        });
+        browser.runtime.sendMessage({"type": "reset"})
+            .then(function() {
+                readAndUpdateUserInfo();
+            });
     });
 });
 

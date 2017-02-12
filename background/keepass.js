@@ -395,6 +395,8 @@ browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
             Keepass.associate(function() {
                 sendResponse();
             });
+        }).catch(function() {
+            sendResponse();
         });
         return true;
     } else if (request.type === "options_user_info") {

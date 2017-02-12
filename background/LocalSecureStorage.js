@@ -299,8 +299,8 @@ LocalSecureStorage.prototype.reencrypt = function(callback) {
                     console.log(userKey);
                     if (userKey !== LocalSecureStorage.prototype._dummyValueKey) {
                         dataToSave[userKey] = self._decrypt(data[key]);
-                        self.delete(userKey); // remove from the Secure Storage
                     }
+                    self.delete(userKey); // remove from the Secure Storage
                     Keepass.state.associated = false;
                 }
             }
