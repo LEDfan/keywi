@@ -60,9 +60,9 @@ browser.runtime.onMessage.addListener(function _func(request, sender, sendRespon
         let event = new KeyboardEvent("keydown", {
             key: "ArrowLeft",
         });
-        usernameField.dispatchEvent(event);
 
         document.activeElement.value = request.username;
+       	document.activeElement.dispatchEvent(event);
     } else if (request.type === "password") {
         if (document.activeElement.tagName !== "INPUT") //Only useful for input elements
             return ;
@@ -70,8 +70,6 @@ browser.runtime.onMessage.addListener(function _func(request, sender, sendRespon
         let event = new KeyboardEvent("keydown", {
             key: "ArrowLeft",
         });
-        usernameField.dispatchEvent(event);
-
         if (document.activeElement.type !== "password") {
             if (confirm("This is not a password field. Are you sure you want to fill your password?")) {
                 document.activeElement.value = request.password;
@@ -79,6 +77,7 @@ browser.runtime.onMessage.addListener(function _func(request, sender, sendRespon
         } else {
             document.activeElement.value = request.password;
         }
+       	document.activeElement.dispatchEvent(event);
     }
 });
 
