@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Keepass",
-  "version": "0.1.0-beta1",
+  "version": "0.1.0beta1",
   "description": "WIP Minimalistic keepass plugin using web Extensions",
   "icons": {
     "48": "icons/beasts-48.png"
