@@ -21,6 +21,45 @@ Minimalistic Keepass plugin using Web Extensions and KeepassHTTP.
    - there are multiple forms on the website (unlikely)
  - no injecting of buttons or icons into forms
 
+## Usage
+Keywi uses the local storage mechanism of the browser to store some information needed to connect to Keepass. This information includes the key used to authenticate and encrypt the communication with Keepass. The information stored in the local storage of the browser is stored unencrypted.
+Therefore Keywi encrypts this information (`database.key`, `database.id` and `database.hash`) using 256-bit AES key derived from a user-provided password. 
+
+This password is asked to the user the first time Keywi is used for encrypting the information. Every time you start Firefox it's asked to decrypt the information.
+
+### First time
+ 1. make sure the correct Keepass database is open
+ 2. install the addon
+ 3. you'll be asked to enter a password for secure storage. You should **not** use the same password as used in Keepass. Make sure it's a secure and strong password.
+
+![Setup Secure Storage](.github/screenshots/setup-secure-storage.png)
+ 4. keepass will ask to confirm the association
+![Associate With Keepass](.github/screenshots/associate.png)
+
+### When Firefox starts
+You will be asked to unlock the Secure Storage using the same password as during the setup.
+![Unlock Secure Storage](.github/screenshots/unlock-secure-storage.png)
+
+### Fill in credentials
+ 1. select the username input field
+ 2. right click and choose "Fill username and password" inside the "Keywi" submenu. It's possible to only fill your username or password.
+![Right click to fill in](.github/screenshots/fill-context-menu.png)
+ 3. Click "Allow" when keepass asks permission for the request to the credentials
+ 4. the username and password are filled
+ 
+### Keyboard shortcuts:
+The following shortcuts are supported:
+ - <kb>Ctrl</kb> + <kb>Shift</kb> + <kb>F</kb> Fill username and password in the current active input field (only the username will be filled when no password field is found)
+ - <kb>Ctrl</kb> + <kb>Shift</kb> + <kb>D</kb> Fill only password in the current active input field
+ 
+### Multiple Credentials for one URL
+When Keepass finds multiple Credentials for one URL, it will ask you to select one:
+![Select a password](.github/screenshots/multiple-credentials.png)
+
+### Disable "Remember for logins" in Firefox
+To provide a better user experience we advise to disable the feature in Firefox to remember logins.  
+ 
+
 ## Alternatives
 ### [Passifox](https://github.com/pfn/passifox)
 Special thanks to passifox, we used it as inspiration for this addon and use KeepassHTTP of the same author.
@@ -64,3 +103,6 @@ This project uses the following libraries which are all found under the `vendor`
  - `reqwest.min.js` from reqwest https://github.com/ded/reqwest licensed under the MIT license
  - `utf8.js` part of the passifox project https://github.com/pfn/passifox/blob/master/chromeipass/background/utf8.js licensed under GPL v3
  - Please note that some functions of the `background/keepass.js` file are based on functions of the passifox project https://github.com/pfn/passifox licensed under the GPL v3
+
+## Logo
+The logo is based on https://pixabay.com/en/key-lock-web-1294351/ and https://pixabay.com/en/kiwi-fruit-food-half-green-fresh-310189/
