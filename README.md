@@ -13,22 +13,30 @@ Minimalistic Keepass plugin using Web Extensions and KeepassHTTP.
  - Using the Firefox web extensions API, to support Electrolysis
  - Support Keepass, later maybe [Pass](https://www.passwordstore.org/)
  - Minimal amount of libraries (aes, cryptoheplers and reqwest)
- - no automatic form filling, i.e. only when the user wants to. This is very important, because sometimes the credentials are filled in the wrong site (e.g. a DNS spoofing) or it's filled in the register for, sometimes you just don't want to log in etc
+ - no automatic form filling, i.e. only when the user wants to. This is very important because:
+   - credentials can be filled in the wrong site (e.g. a DNS spoofing)
+   - crendetials can be filled in the sign up form
+   - credentials can be filled in a hidden form
+   - you don't want to log in on this website now
+   - there are multiple forms on the website (unlikely)
  - no injecting of buttons or icons into forms
 
 ## Alternatives
 ### [Passifox](https://github.com/pfn/passifox)
+Special thanks to passifox, we used it as inspiration for this addon and use KeepassHTTP of the same author.
+Some differences between this addon and Passifox:
  - some forms can't be filled (e.g. openmediavault has some problems with it)
  - doesn't uses web extensions, thus not compatible with Electrolysis
  - automatic form filling
+ 
 
  
 ### [Keefox](http://keefox.org/)
+Some differences between this addon and Keefox:
  - doesn't uses web extensions, thus not compatible with Electrolysis
  - very feature rich, almost a password manager on it's own
  - automatic form filling
- 
- 
+
 ## Authors
  - @LEDfan Tobia De Koninck
  - @RobinJadoul Robin Jadoul
