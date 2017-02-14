@@ -1,4 +1,4 @@
-![Logo](icons/keywi.png)
+![Logo](icons/keywi-256.png)
 
 Keywi
 ===
