@@ -52,8 +52,8 @@ You will be asked to unlock the Secure Storage using the same password as during
  
 ### Keyboard shortcuts:
 The following shortcuts are supported:
- - <kb>Ctrl</kb> + <kb>Shift</kb> + <kb>F</kb> Fill username and password in the current active input field (only the username will be filled when no password field is found)
- - <kb>Ctrl</kb> + <kb>Shift</kb> + <kb>D</kb> Fill only password in the current active input field
+ - <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>F</kbd> Fill username and password in the current active input field (only the username will be filled when no password field is found)
+ - <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>D</kbd> Fill only password in the current active input field
  
 ### Multiple Credentials for one URL
 When Keepass finds multiple Credentials for one URL, it will ask you to select one:
