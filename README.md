@@ -27,13 +27,16 @@ Therefore Keywi encrypts this information (`database.key`, `database.id` and `da
 
 This password is asked to the user the first time Keywi is used for encrypting the information. Every time you start Firefox it's asked to decrypt the information.
 
+Keywi requires Firefox 51 or later.
+
 ### First time
- 1. make sure the correct Keepass database is open
- 2. install the addon
- 3. you'll be asked to enter a password for secure storage. You should **not** use the same password as used in Keepass. Make sure it's a secure and strong password.
+ 1. Install the KeepassHTTP plugin in Keepass. See: https://github.com/pfn/keepasshttp
+ 2. make sure the correct Keepass database is open
+ 3. install the addon
+ 4. you'll be asked to enter a password for secure storage. You should **not** use the same password as used in Keepass. Make sure it's a secure and strong password.
 
 ![Setup Secure Storage](.github/screenshots/setup-secure-storage.png)
- 4. keepass will ask to confirm the association
+ 5. keepass will ask to confirm the association
 ![Associate With Keepass](.github/screenshots/associate.png)
 
 ### When Firefox starts
