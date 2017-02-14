@@ -233,7 +233,7 @@ Keepass.getLogins = function (url, callback) {
                             type: "basic",
                             message: "Cannot connect to your Keepass database, is it running and unlocked?",
                             iconUrl: browser.extension.getURL("icons/keepass-96.png"),
-                            title: "{Keepass}"
+                            title: "Keywi"
                         });
                     },
                     success: function (resp) {
@@ -256,7 +256,7 @@ Keepass.getLogins = function (url, callback) {
                                         type: "basic",
                                         message: "No passwords found",
                                         iconUrl: browser.extension.getURL("icons/keepass-96.png"),
-                                        title: "{Keepass}"
+                                        title: "Keywi"
                                     }); // TODO replace by injected message
                                 } else if (decryptedEntries.length === 1) {
                                     callback(decryptedEntries[0]);
@@ -275,8 +275,8 @@ Keepass.getLogins = function (url, callback) {
                             browser.notifications.create({
                                 type: "basic",
                                 message: "Problem getting logins from your Keepass database, have you associated with this database?",
-                                iconUrl: browser.extension.getURL("icons/keepass-96.png"),
-                                title: "{Keepass}"
+                                iconUrl: browser.extension.getURL("icons/keywi-96.png"),
+                                title: "Keywi"
                             });
                         });
                     }
@@ -338,8 +338,8 @@ Keepass.associate = function(callback) {
                         browser.notifications.create({
                             type: "basic",
                             message: "Cannot connect to your Keepass database, is it running and unlocked?",
-                            iconUrl: browser.extension.getURL("icons/keepass-96.png"),
-                            title: "{Keepass}"
+                            iconUrl: browser.extension.getURL("icons/keywi-96.png"),
+                            title: "Keywi"
                         });
                     },
                     success: function(resp) {
@@ -361,8 +361,8 @@ Keepass.associate = function(callback) {
                             browser.notifications.create({
                                 type: "basic",
                                 message: "Something went wrong during association.",
-                                iconUrl: browser.extension.getURL("icons/keepass-96.png"),
-                                title: "{Keepass}"
+                                iconUrl: browser.extension.getURL("icons/keywi-96.png"),
+                                title: "Keywi"
                             });
                         }
                     }

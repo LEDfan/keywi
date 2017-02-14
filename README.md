@@ -1,4 +1,6 @@
-Keepass (working name)
+![Logo](icons/keywi.png)
+
+Keywi
 ===
 
 ## Goals

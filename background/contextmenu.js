@@ -29,8 +29,8 @@ browser.runtime.onMessage.addListener((request, sender, sendresponse) => {
         browser.notifications.create({
             type: "basic",
             message: "No password field found, filling only username.",
-            iconUrl: browser.extension.getURL("icons/keepass-96.png"),
-            title: "{Keepass}"
+            iconUrl: browser.extension.getURL("icons/keywi-96.png"),
+            title: "Keywi"
         });
     }
 });

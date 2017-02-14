@@ -8,9 +8,9 @@ function init() {
                 Keepass._ss.has("database.key").then(function(key) {
                     browser.notifications.create({
                         type: "basic",
-                        message: "{Keepass} is already associated with a database, but another database is open.",
-                        iconUrl: browser.extension.getURL("icons/keepass-96.png"),
-                        title: "{Keepass}"
+                        message: "Keywi is already associated with a database, but another database is open.",
+                        iconUrl: browser.extension.getURL("icons/keywi-96.png"),
+                        title: "Keywi"
                     });
                 }).catch(function() {
                     Keepass.associate(function() {

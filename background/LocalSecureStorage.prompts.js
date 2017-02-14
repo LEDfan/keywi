@@ -16,9 +16,9 @@ LocalSecureStorage.prompts.setupNewPassword = function () {
                     console.log("Setup storage was aborted!");
                     browser.notifications.create("secure-storage-cancelled", {
                         type: "basic",
-                        iconUrl: browser.extension.getURL("icons/keepass-96.png"),
-                        title: "{Keepass}",
-                        message: "Secure Storage Setup was canceled, {Keepass} cannot work without. You can re-setup it from the settings."
+                        iconUrl: browser.extension.getURL("icons/keywi-96.png"),
+                        title: "Keywi",
+                        message: "Secure Storage Setup was canceled, Keywi cannot work without. You can re-setup it from the settings."
                     });
                     reject("Aborted!");
                 }
@@ -58,9 +58,9 @@ LocalSecureStorage.prompts.unlock = function (verifyFunc) {
                     console.log("Unlock Secure storage was aborted!");
                     browser.notifications.create("secure-storage-cancelled", {
                         type: "basic",
-                        iconUrl: browser.extension.getURL("icons/keepass-96.png"),
-                        title: "{Keepass}",
-                        message: "Secure Storage unlock was canceled, {Keepass} cannot work without."
+                        iconUrl: browser.extension.getURL("icons/keywi-96.png"),
+                        title: "Keywi",
+                        message: "Secure Storage unlock was canceled, Keywi cannot work without."
                     });
                     reject("Aborted!");
                 }
