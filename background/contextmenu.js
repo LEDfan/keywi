@@ -1,3 +1,22 @@
+/**
+ * @copyright Tobia De Koninck
+ * @copyright Robin Jadoul
+ *
+ * This file is part of Keywi.
+ * Keywi is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Keywi is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with Keywi.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 browser.contextMenus.create({
     id: "username-and-password",
     title: "Fill username and password",
@@ -29,8 +48,8 @@ browser.runtime.onMessage.addListener((request, sender, sendresponse) => {
         browser.notifications.create({
             type: "basic",
             message: "No password field found, filling only username.",
-            iconUrl: browser.extension.getURL("icons/keepass-96.png"),
-            title: "{Keepass}"
+            iconUrl: browser.extension.getURL("icons/keywi-96.png"),
+            title: "Keywi"
         });
     }
 });

@@ -1,10 +1,11 @@
 {
   "manifest_version": 2,
-  "name": "Keepass",
-  "version": "0.1.0-beta1",
-  "description": "WIP Minimalistic keepass plugin using web Extensions",
+  "name": "Keywi",
+  "version": "0.1.0beta1",
+  "description": "Minimalistic Keepass plugin using Web Extensions and KeepassHTTP",
   "icons": {
-    "48": "icons/beasts-48.png"
+    "48": "icons/keywi-48.png",
+    "96": "icons/keywi-96.png"
   },
   "background": {
     "scripts": [
@@ -60,6 +61,12 @@
         "default": "Ctrl+Shift+D"
       },
       "description": "Fill your password in the currently active field"
+    }
+  },
+  "applications": {
+    "gecko": {
+      "id": "keywi@ledfan.be",
+      "strict_min_version": "51.0"
     }
   }
 }

@@ -1,4 +1,23 @@
 /**
+ * @copyright Tobia De Koninck
+ * @copyright Robin Jadoul
+ *
+ * This file is part of Keywi.
+ * Keywi is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Keywi is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with Keywi.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/**
  * This file holds the main API to the Keepass Database
  */
 
@@ -233,7 +252,7 @@ Keepass.getLogins = function (url, callback) {
                             type: "basic",
                             message: "Cannot connect to your Keepass database, is it running and unlocked?",
                             iconUrl: browser.extension.getURL("icons/keepass-96.png"),
-                            title: "{Keepass}"
+                            title: "Keywi"
                         });
                     },
                     success: function (resp) {
@@ -256,7 +275,7 @@ Keepass.getLogins = function (url, callback) {
                                         type: "basic",
                                         message: "No passwords found",
                                         iconUrl: browser.extension.getURL("icons/keepass-96.png"),
-                                        title: "{Keepass}"
+                                        title: "Keywi"
                                     }); // TODO replace by injected message
                                 } else if (decryptedEntries.length === 1) {
                                     callback(decryptedEntries[0]);
@@ -275,8 +294,8 @@ Keepass.getLogins = function (url, callback) {
                             browser.notifications.create({
                                 type: "basic",
                                 message: "Problem getting logins from your Keepass database, have you associated with this database?",
-                                iconUrl: browser.extension.getURL("icons/keepass-96.png"),
-                                title: "{Keepass}"
+                                iconUrl: browser.extension.getURL("icons/keywi-96.png"),
+                                title: "Keywi"
                             });
                         });
                     }
@@ -338,8 +357,8 @@ Keepass.associate = function(callback) {
                         browser.notifications.create({
                             type: "basic",
                             message: "Cannot connect to your Keepass database, is it running and unlocked?",
-                            iconUrl: browser.extension.getURL("icons/keepass-96.png"),
-                            title: "{Keepass}"
+                            iconUrl: browser.extension.getURL("icons/keywi-96.png"),
+                            title: "Keywi"
                         });
                     },
                     success: function(resp) {
@@ -361,8 +380,8 @@ Keepass.associate = function(callback) {
                             browser.notifications.create({
                                 type: "basic",
                                 message: "Something went wrong during association.",
-                                iconUrl: browser.extension.getURL("icons/keepass-96.png"),
-                                title: "{Keepass}"
+                                iconUrl: browser.extension.getURL("icons/keywi-96.png"),
+                                title: "Keywi"
                             });
                         }
                     }

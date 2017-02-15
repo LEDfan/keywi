@@ -1,3 +1,22 @@
+/**
+ * @copyright Tobia De Koninck
+ * @copyright Robin Jadoul
+ *
+ * This file is part of Keywi.
+ * Keywi is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Keywi is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with Keywi.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 LocalSecureStorage.prompts = {};
 
 LocalSecureStorage.prompts.setupNewPassword = function () {
@@ -16,9 +35,9 @@ LocalSecureStorage.prompts.setupNewPassword = function () {
                     console.log("Setup storage was aborted!");
                     browser.notifications.create("secure-storage-cancelled", {
                         type: "basic",
-                        iconUrl: browser.extension.getURL("icons/keepass-96.png"),
-                        title: "{Keepass}",
-                        message: "Secure Storage Setup was canceled, {Keepass} cannot work without. You can re-setup it from the settings."
+                        iconUrl: browser.extension.getURL("icons/keywi-96.png"),
+                        title: "Keywi",
+                        message: "Secure Storage Setup was canceled, Keywi cannot work without. You can re-setup it from the settings."
                     });
                     reject("Aborted!");
                 }
@@ -58,9 +77,9 @@ LocalSecureStorage.prompts.unlock = function (verifyFunc) {
                     console.log("Unlock Secure storage was aborted!");
                     browser.notifications.create("secure-storage-cancelled", {
                         type: "basic",
-                        iconUrl: browser.extension.getURL("icons/keepass-96.png"),
-                        title: "{Keepass}",
-                        message: "Secure Storage unlock was canceled, {Keepass} cannot work without."
+                        iconUrl: browser.extension.getURL("icons/keywi-96.png"),
+                        title: "Keywi",
+                        message: "Secure Storage unlock was canceled, Keywi cannot work without."
                     });
                     reject("Aborted!");
                 }
