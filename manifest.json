@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Keywi",
-  "version": "0.1.0beta1",
+  "version": "0.1.0beta2",
   "description": "Minimalistic Keepass plugin using Web Extensions and KeepassHTTP",
   "icons": {
     "48": "icons/keywi-48.png",
@@ -65,7 +65,7 @@
   },
   "applications": {
     "gecko": {
-      "id": "keywi@ledfan.be",
+      "id": "keywi-ff-add-on@ledfan.be",
       "strict_min_version": "51.0"
     }
   }
