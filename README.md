@@ -82,6 +82,8 @@ Some differences between this addon and Keefox:
 ## Note about add-on ID's
 To speed up the testing of the add-on we release a signed but self-distributed version of it, this addon has the id `keywi-ff-add-on-ss@ledfan.be`. The add-on distributed using AMO has `keywi-ff-add-on@ledfan.be` as id.
 
+Warning: this means that when you switch between the self-distributed version and the version from AMO you need to re-setup the Secure Storage and re-associate with Keepass.
+
 ## Authors
  - @LEDfan Tobia De Koninck
  - @RobinJadoul Robin Jadoul
