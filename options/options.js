@@ -20,12 +20,20 @@
 window.addEventListener("DOMContentLoaded", function(){
     var inputs = document.querySelectorAll("#options input");
     for (var input of inputs) {
-        browser.storage.local.get(input.name).then(function(val){
-            input.value = val[input.name] || "";
-        });
+        (function(input) {
+            browser.storage.local.get(input.name).then(function(val){
+                input.value = val[input.name] || "";
+                if (input.type === "checkbox") {
+                    input.checked = Number.parseInt(val[input.name] || "0");
+                }
+            });
+        })(input);
         input.addEventListener("change", debounce(function() {
             var opt = {};
-            opt[input.name] = input.value;
+            opt[this.name] = this.value;
+            if (this.type === "checkbox") {
+                opt[this.name] = this.checked | 0;
+            }
             browser.storage.local.set(opt);
         }, 1000));
     }

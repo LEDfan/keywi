@@ -41,6 +41,10 @@
                 <label for="password-hash-rounds">Number of hashing rounds for key generation (advanced): </label>
                 <input id="password-hash-rounds" type="number" name="password-hash-rounds" placeholder="5000" min="5000">
             </fieldset>
+            <fieldset>
+                <input type="checkbox" name="defer_unlock_ss" id="defer_unlock_ss" />
+                <label for="defer_unlock_ss">Don't unlock the secure storage on startup</label>
+            </fieldset>
             <button id="btn-re-encrypt" >Re-encrypt the Secure Storage</button>
             <button id="btn-reset" >Reset all settings</button>
         </div>
