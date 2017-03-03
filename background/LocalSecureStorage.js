@@ -17,15 +17,22 @@
  * along with Keywi.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-function LocalSecureStorage() {
+function LocalSecureStorage(unlock) {
+    if (typeof unlock === 'undefined') {
+        unlock = true;
+    }
     let self = this;
     return new Promise(function(resolve, reject) {
-        self._unlockStorage().then(function() {
-           resolve(self);
-        }).catch(function(err) {
-           console.log(err);
-           reject(self);
-        });
+        if (!unlock) {
+            resolve(self);
+        } else {
+            self._unlockStorage().then(function() {
+               resolve(self);
+            }).catch(function(err) {
+               console.log(err);
+               reject(self);
+            });
+        }
     });
 }
 

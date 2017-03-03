@@ -20,10 +20,11 @@
 function init() {
     // browser.storage.local.clear(); // uncomment this to test the mechanism to ask the user for a new key
     browser.storage.local.get("defer_unlock_ss").then(function(storage) {
-        if (!Number.parseInt(storage["defer_unlock_ss"] || "0")) {
-            new LocalSecureStorage().then(function(ss) {
-                Keepass.setSecureStorage(ss);
-                console.log("Initialized the Secure Storage, associating with keepass now.");
+        let unlock = !Number.parseInt(storage["defer_unlock_ss"] || "0");
+        new LocalSecureStorage(unlock).then(function(ss) {
+            Keepass.setSecureStorage(ss);
+            console.log("Initialized the Secure Storage, associating with keepass now.");
+            if (unlock) {
                 Keepass.reCheckAssociated().then(function(associated) {
                     if (!associated) {
                         Keepass._ss.has("database.key").then(function(key) {
@@ -42,15 +43,15 @@ function init() {
                         console.log("Associated! 2");
                     }
                 });
-            }).catch(function(ss) {
-                console.log("Failed to initialize Secure Storage, not associating with keepass!");
-                Keepass.setSecureStorage(ss);
-            });
-            // Keepass.reCheckAssociated().then(function(associated) {
-            //     if (!associated) {
-                // }
-            // });
-        }
+            }
+        }).catch(function(ss) {
+            console.log("Failed to initialize Secure Storage, not associating with keepass!");
+            Keepass.setSecureStorage(ss);
+        });
+        // Keepass.reCheckAssociated().then(function(associated) {
+        //     if (!associated) {
+        // }
+        // });
     });
 }
 
