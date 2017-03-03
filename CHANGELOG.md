@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.1.0-beta2] [03/03/2017]
+### Added
+ - Option to not unlock secure storage at startup
 
 ## [0.1.0-beta2] [17/02/2017]
 ### Added
