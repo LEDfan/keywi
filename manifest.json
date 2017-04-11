@@ -9,7 +9,7 @@
   },
   "background": {
     "scripts": [
-      "vendor/reqwest.min.js",
+      "vendor/reqwest.js",
       "vendor/utf8.js",
       "vendor/aes.js",
       "vendor/cryptoHelpers.js",
