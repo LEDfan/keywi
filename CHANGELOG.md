@@ -4,7 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.1.0-beta2] [03/03/2017]
+## [0.1.0-beta4] [18/05/2017]
+### Changed
+ - Replaced `reqwest.min.js` by `reqwest.js` for easier AMO reviews.
+
+## [0.1.0-beta3] [03/03/2017]
 ### Added
  - Option to not unlock secure storage at startup
 
