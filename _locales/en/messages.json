@@ -78,5 +78,69 @@
   "confirmNotPassField": {
     "message": "This is not a password field. Are you sure you want to fill your password?",
     "description": "Confirm with the user they want to fill a password in something that is no password field"
+  },
+  "dialogSetupSSTitle": {
+    "message": "Setup Secure Storage",
+    "description": "The title for the setup Secure Storage dialog"
+  },
+  "dialogSetupSSHeader": {
+    "message": "Setup the secure storage",
+    "description": "The header for the setup Secure Storage dialog"
+  },
+  "dialogSetupSSp1": {
+    "message": "Keywi uses a password for securely storing the information needed to connect to the Keepass database.",
+    "description": "The first part of the setup Secure Storage dialog body"
+  },
+  "dialogSetupSSp2": {
+    "message": "Fill in a secure password, this is a different password from the one used to unlock the Keepass database.",
+    "description": "The second part of the setup Secure Storage dialog body"
+  },
+  "dialogUnlockSSTitle": {
+    "message": "Unlock Secure Storage",
+    "description": "The title for the unlock Secure Storage dialog"
+  },
+  "dialogUnlockSSHeader": {
+    "message": "Unlock the secure storage",
+    "description": "The header for the unlock Secure Storage dialog"
+  },
+  "dialogUnlockSSp1": {
+    "message": "Keywi uses a password for securely storing the information needed to connect to the Keepass database.",
+    "description": "The first part of the unlock Secure Storage dialog body"
+  },
+  "dialogUnlockSSp2": {
+    "message": "This password is now needed to unlock the Secure Storage.",
+    "description": "The second part of the unlock Secure Storage dialog body"
+  },
+  "dialogSelectTitle": {
+    "message": "Select password",
+    "description": "The title of the select multiple passwords dialog"
+  },
+  "dialogSelectHeader": {
+    "message": "Select a password",
+    "description": "The header of the select multiple passwords dialog"
+  },
+  "dialogSelectBody": {
+    "message": "Keepass found multiple passwords for this url, please select one.",
+    "description": "The body of the select multiple passwords dialog"
+  },
+  "Cancel": {
+    "message": "Cancel",
+    "description": "Cancel"
+  },
+  "Save": {
+    "message": "Save",
+    "description": "Save"
+  },
+  "Password": {
+    "message": "Password",
+    "description": "Password"
+  },
+  "samePass": {
+    "message": "Same password",
+    "description": "Same password"
+  },
+  "Unlock": {
+    "message": "Unlock",
+    "description": "Unlock"
   }
 }
