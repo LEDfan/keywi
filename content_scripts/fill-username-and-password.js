@@ -88,7 +88,7 @@ browser.runtime.onMessage.addListener(function _func(request, sender, sendRespon
             key: "ArrowLeft",
         });
         if (document.activeElement.type !== "password") {
-            if (confirm("This is not a password field. Are you sure you want to fill your password?")) {
+            if (confirm(browser.i18n.getMessage("confirmNotPassField"))) {
                 document.activeElement.value = request.password;
             }
         } else {

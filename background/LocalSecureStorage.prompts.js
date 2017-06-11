@@ -37,7 +37,7 @@ LocalSecureStorage.prompts.setupNewPassword = function () {
                         type: "basic",
                         iconUrl: browser.extension.getURL("icons/keywi-96.png"),
                         title: "Keywi",
-                        message: "Secure Storage Setup was canceled, Keywi cannot work without. You can re-setup it from the settings."
+                        message: browser.i18n.getMessage("SSsetupCancelled")
                     });
                     reject("Aborted!");
                 }
@@ -79,7 +79,7 @@ LocalSecureStorage.prompts.unlock = function (verifyFunc) {
                         type: "basic",
                         iconUrl: browser.extension.getURL("icons/keywi-96.png"),
                         title: "Keywi",
-                        message: "Secure Storage unlock was canceled, Keywi cannot work without."
+                        message: browser.i18n.getMessage("SSunlockCancelled")
                     });
                     reject("Aborted!");
                 }

@@ -250,7 +250,7 @@ Keepass.getLogins = function (url, callback) {
                     error: function (err) {
                         browser.notifications.create({
                             type: "basic",
-                            message: "Cannot connect to your Keepass database, is it running and unlocked?",
+                            message: browser.i18n.getMessage("cannotConnect"),
                             iconUrl: browser.extension.getURL("icons/keepass-96.png"),
                             title: "Keywi"
                         });
@@ -273,7 +273,7 @@ Keepass.getLogins = function (url, callback) {
                                 if (decryptedEntries.length === 0) {
                                     browser.notifications.create({
                                         type: "basic",
-                                        message: "No passwords found",
+                                        message: browser.i18n.getMessage("noPassFound"),
                                         iconUrl: browser.extension.getURL("icons/keepass-96.png"),
                                         title: "Keywi"
                                     }); // TODO replace by injected message
@@ -293,7 +293,7 @@ Keepass.getLogins = function (url, callback) {
 
                             browser.notifications.create({
                                 type: "basic",
-                                message: "Problem getting logins from your Keepass database, have you associated with this database?",
+                                message: browser.i18n.getMessage("noLogins"),
                                 iconUrl: browser.extension.getURL("icons/keywi-96.png"),
                                 title: "Keywi"
                             });
@@ -356,7 +356,7 @@ Keepass.associate = function(callback) {
                     error: function(err) {
                         browser.notifications.create({
                             type: "basic",
-                            message: "Cannot connect to your Keepass database, is it running and unlocked?",
+                            message: browser.i18n.getMessage("cannotConnect"),
                             iconUrl: browser.extension.getURL("icons/keywi-96.png"),
                             title: "Keywi"
                         });
@@ -379,7 +379,7 @@ Keepass.associate = function(callback) {
                         } else {
                             browser.notifications.create({
                                 type: "basic",
-                                message: "Something went wrong during association.",
+                                message: browser.i18n.getMessage("assocFailed"),
                                 iconUrl: browser.extension.getURL("icons/keywi-96.png"),
                                 title: "Keywi"
                             });
@@ -426,24 +426,24 @@ browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
                 hash = data;
                 Keepass._ss.get("database.id").then(function(data) {
                     id = data;
-                    sendResponse({
-                        "Secure storage unlocked": Keepass._ss.ready(),
-                        "Keepass database associated": Keepass.ready(),
-                        "Keepass database hash": hash,
-                        "Keepass database id": id
-                    });
+                    let response = {}
+                    response[browser.i18n.getMessage("statusSSunlocked")] = Keepass._ss.ready();
+                    response[browser.i18n.getMessage("statusDBassoc")] = Keepass.ready();
+                    response[browser.i18n.getMessage("statusDBhash")] = hash;
+                    response[browser.i18n.getMessage("statusDBid")] = id;
+                    sendResponse(response);
                 });
             }).catch(function() {
-                sendResponse({
-                    "Secure storage unlocked": Keepass._ss.ready(),
-                    "Keepass database associated": Keepass.ready(),
-                });
+                let response = {}
+                response[browser.i18n.getMessage("statusSSunlocked")] = Keepass._ss.ready();
+                response[browser.i18n.getMessage("statusDBassoc")] = Keepass.ready();
+                sendResponse(response);
             });
         } else {
-            sendResponse({
-                "Secure storage unlocked": Keepass._ss.ready(),
-                "Keepass database associated": Keepass.ready(),
-            });
+            let response = {}
+            response[browser.i18n.getMessage("statusSSunlocked")] = Keepass._ss.ready();
+            response[browser.i18n.getMessage("statusDBassoc")] = Keepass.ready();
+            sendResponse(response);
         }
         return true; // http://stackoverflow.com/a/40773823
     }

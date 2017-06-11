@@ -129,7 +129,7 @@ LocalSecureStorage.prototype._unlockExistingPassword = function() {
 
                     if (checkIvStr !== iv) {
                         console.log("Error decrypting: key wrong!");
-                        reject("Wrong  key provided by user!");
+                        reject(browser.i18n.getMessage("SSwrongUnlockKey"));
                     } else {
                         accept(encryptionKey);
                     }

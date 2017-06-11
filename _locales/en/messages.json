@@ -1,0 +1,82 @@
+{
+  "extensionDescription": {
+    "message": "Minimalistic Keepass plugin using Web Extensions and KeepassHTTP",
+    "description": "The description for the extension, used in the manifest."
+  },
+  "fillUsernamePassDescription": {
+    "message": "Fill the username/password field from the currently active field",
+    "description": "The description for the fill username/password hotkey"
+  },
+  "fillPassDescription": {
+    "message": "Fill your password in the currently active field",
+    "description": "The description for the fill password hotkey"
+  },
+  "SSsetupCancelled": {
+    "message": "Secure Storage Setup was canceled, Keywi cannot work without. You can re-setup it from the settings.",
+    "description": "Displayed when the setup for the Secure Storage is cancelled."
+  },
+  "SSunlockCancelled": {
+    "message": "Secure Storage unlock was canceled, Keywi cannot work without.",
+    "description": "Displayed when the unlock for the Secure Storage is cancelled."
+  },
+  "SSwrongUnlockKey": {
+    "message": "Wrong key provided by user!",
+    "description": "Alert when the wrong key is given at Secure Storage unlock time"
+  },
+  "contextFillUserPass": {
+    "message": "Fill username and password",
+    "description": "Context menu to fill username and password"
+  },
+  "contextFillUser": {
+    "message": "Fill username",
+    "description": "Context menu to fill username"
+  },
+  "contextFillPass": {
+    "message": "Fill password",
+    "description": "Context menu to fill password"
+  },
+  "noPassFieldFound": {
+    "message": "No password field found, filling only username.",
+    "description": "Displayed when no password field was found when filling username and password"
+  },
+  "otherDBOpen": {
+    "message": "Keywi is already associated with a database, but another database is open.",
+    "description": "Displayed at initialization if another database than the one keywi is associated with is open"
+  },
+  "cannotConnect": {
+    "message": "Cannot connect to your Keepass database, is it running and unlocked?",
+    "description": "Displayed when keywi cannot connect to the Keepass database"
+  },
+  "noPassFound": {
+    "message": "No passwords found",
+    "description": "Displayed when keywi cannot find any suitable passwords"
+  },
+  "noLogins": {
+    "message": "Problem getting logins from your Keepass database, have you associated with this database?",
+    "description": "Displayed when Keepass doesn't give access"
+  },
+  "assocFailed": {
+    "message": "Something went wrong during association.",
+    "description": "Displayed when something goes wrong during association"
+  },
+  "statusSSunlocked": {
+    "message": "Secure storage unlocked",
+    "description": "is Secure Storage unlocked?"
+  },
+  "statusDBassoc": {
+    "message": "Keepass database associated",
+    "description": "is the DB associated?"
+  },
+  "statusDBhash": {
+    "message": "Keepass database hash",
+    "description": "What is the DB hash?"
+  },
+  "statusDBid": {
+    "message": "Keepass database id",
+    "description": "What is the DB id?"
+  },
+  "confirmNotPassField": {
+    "message": "This is not a password field. Are you sure you want to fill your password?",
+    "description": "Confirm with the user they want to fill a password in something that is no password field"
+  }
+}
