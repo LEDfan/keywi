@@ -142,5 +142,41 @@
   "Unlock": {
     "message": "Unlock",
     "description": "Unlock"
+  },
+  "optTitle": {
+    "message": "Options for Keywi",
+    "description": "The title for the options page"
+  },
+  "optUserInfoHeader": {
+    "message": "The following information is know about your connection with Keepass:",
+    "description": "The header for the user info on the options page"
+  },
+  "Key": {
+    "message": "Key",
+    "description": "Key"
+  },
+  "Value": {
+    "message": "Value",
+    "description": "Value"
+  },
+  "optKeepassHTTPURL": {
+    "message": "KeepassHTTP url:",
+    "description": "options page: KeepassHTTP url"
+  },
+  "optHashRounds": {
+    "message": "Number of hashing rounds for key generation (advanced):",
+    "description": "options page: number of hashing rounds"
+  },
+  "optDeferUnlockSS": {
+    "message": "Don't unlock the secure storage on startup",
+    "description": "options page: don't unlock the secure storage on startup"
+  },
+  "optReEncrypt": {
+    "message": "Re-encrypt the Secure Storage",
+    "description": "options page: re-encrypt the secure storage"
+  },
+  "optReset": {
+    "message": "Reset all settings",
+    "description": "options page: reset all settings"
   }
 }
