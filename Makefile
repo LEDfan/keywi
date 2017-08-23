@@ -10,11 +10,11 @@ lint:
 release-ss:
     ifndef API_KEY
 		echo "API_KEY is not set"
-		exit
+		false
     endif
     ifndef API_SECRET
 		echo "API_SECRET is not set"
-		exit
+		false
     endif
 	sed -i 's/keywi-ff-add-on@ledfan.be/keywi-ff-add-on-ss@ledfan.be/g' manifest.json
 	web-ext sign --api-key ${API_KEY} --api-secret ${API_SECRET}
