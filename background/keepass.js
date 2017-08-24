@@ -94,14 +94,20 @@ Keepass.helpers.decryptEntry = function (entry, iv) {
 
 Keepass.prompts = {};
 
+Keepass.prompts.setWindowSize = function(width, height) {
+    this.windowWidth = width;
+    this.windowHeight = height;
+};
+
 Keepass.prompts._selectCredentials = function(possibleCredentials) {
+    let self = this;
     return new Promise(function(resolve, reject) {
         const url = browser.extension.getURL('dialog/select_multiple_passwords.html');
         browser.windows.create({
             // tabId: tab.id,
             type: 'panel',
-            width: 400,
-            height: 600,
+            width: self.windowWidth,
+            height: self.windowHeight,
             incognito: false,
             url: url
         }).then(function(newWindow) {
