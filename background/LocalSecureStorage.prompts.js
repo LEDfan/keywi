@@ -19,13 +19,19 @@
 
 LocalSecureStorage.prompts = {};
 
+LocalSecureStorage.prompts.setWindowSize = function(width, height) {
+    this.windowWidth = width;
+    this.windowHeight = height;
+};
+
 LocalSecureStorage.prompts.setupNewPassword = function () {
+    let self = this;
     return new Promise(function (resolve, reject) {
         const url = browser.extension.getURL('dialog/setup_secure_storage.html');
         browser.windows.create({
             type: 'panel',
-            width: 400,
-            height: 600,
+            width: self.windowWidth,
+            height: self.windowHeight,
             incognito: false,
             url: url
         }).then(function(newWindow) {
@@ -62,12 +68,13 @@ LocalSecureStorage.prompts.setupNewPassword = function () {
 };
 
 LocalSecureStorage.prompts.unlock = function (verifyFunc) {
+    let self = this;
     return new Promise(function (resolve, reject) {
         const url = browser.extension.getURL('dialog/unlock_secure_storage.html');
         browser.windows.create({
             type: 'panel',
-            width: 400,
-            height: 600,
+            width: self.windowWidth,
+            height: self.windowHeight,
             incognito: false,
             url: url
         }).then(function(newWindow) {
