@@ -45,10 +45,15 @@ function init () {
           }
         });
       }
-    }).
-      catch(function (ss) {
-        console.log('Failed to initialize Secure Storage, not associating with keepass!');
-        Keepass.setSecureStorage(ss);
+      }).catch(function(err) {
+        console.log(err);
+        console.log("Failed to initialize Secure Storage, not associating with keepass!");
+        browser.notifications.create({
+          'type': "basic",
+          'message': "Failed to initialize Secure Storage!.",
+          'iconUrl': browser.extension.getURL("icons/keywi-96.png"),
+          'title': "Keywi"
+        });
       });
   });
 }
