@@ -21,6 +21,7 @@
       "background/LocalSecureStorage.prompts.js",
       "background/contextmenu.js",
       "background/commands.js",
+      "background/request.js",
       "background/init.js"
     ]
   },
