@@ -62,6 +62,30 @@ When Keepass finds multiple Credentials for one URL, it will ask you to select o
 ### Disable "Remember for logins" in Firefox
 To provide a better user experience we advise to disable the feature in Firefox to remember logins.  
  
+## Translations
+Currently the following translations are available:
+ - EN
+ - NL
+ 
+To provide extra translations please open a pull request:
+ 1. fork this repo and clone it into your workspace
+ 2. copy the `_locales/en/messages.json` file to e.g. `_locales/de/message.json`
+ 3. translate all `message` fields inside this file
+ 4. commit and push to Github
+ 5. open a pull request
+ 
+We believe that the following words should not be translated, because they are well-known and improves the UX:
+ - Keywi
+ - Keepass
+ - database
+ - Secure Storage
+ - hash
+ 
+The following word should always be capitalized:
+ - Keywi
+ - Keepass
+ - Secure Storage
+  
 
 ## Alternatives
 ### [Passifox](https://github.com/pfn/passifox)
