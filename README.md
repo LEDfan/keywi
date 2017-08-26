@@ -16,7 +16,7 @@ Description on addons.mozilla.org starts here.
  - No editing of the Keepass database
  - Using the Firefox web extensions API, to support Electrolysis
  - Support Keepass, later maybe [Pass](https://www.passwordstore.org/)
- - Minimal amount of libraries (aes, cryptoheplers and reqwest)
+ - Minimal amount of libraries (aes and cryptoheplers)
  - no automatic form filling, i.e. only when the user wants to. This is very important because:
    - credentials can be filled in the wrong site (e.g. a DNS spoofing)
    - crendetials can be filled in the sign up form
@@ -154,7 +154,6 @@ This project uses the following libraries which are all found under the `vendor`
  - `aes.js` from slowAES https://code.google.com/archive/p/slowaes licensed under Apache License 2.0
  - `cryptoHelpers.js` from slowAES https://code.google.com/archive/p/slowaes licensed under Apache License 2.0
  - `debounce.js` part of Underscoe.js http://underscorejs.org/ licensed under the MIT license
- - `reqwest.js` from reqwest https://github.com/ded/reqwest licensed under the MIT license
  - `utf8.js` part of the passifox project https://github.com/pfn/passifox/blob/master/chromeipass/background/utf8.js licensed under GPL v3
  - Please note that some functions of the `background/keepass.js` file are based on functions of the passifox project https://github.com/pfn/passifox licensed under the GPL v3
 
