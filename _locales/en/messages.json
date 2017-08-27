@@ -60,7 +60,7 @@
     "description": "Displayed when something goes wrong during association"
   },
   "statusSSunlocked": {
-    "message": "Secure storage unlocked",
+    "message": "Secure Storage unlocked",
     "description": "is Secure Storage unlocked?"
   },
   "statusDBassoc": {
@@ -84,7 +84,7 @@
     "description": "The title for the setup Secure Storage dialog"
   },
   "dialogSetupSSHeader": {
-    "message": "Setup the secure storage",
+    "message": "Setup the Secure Storage",
     "description": "The header for the setup Secure Storage dialog"
   },
   "dialogSetupSSp1": {
@@ -100,7 +100,7 @@
     "description": "The title for the unlock Secure Storage dialog"
   },
   "dialogUnlockSSHeader": {
-    "message": "Unlock the secure storage",
+    "message": "Unlock the Secure Storage",
     "description": "The header for the unlock Secure Storage dialog"
   },
   "dialogUnlockSSp1": {
@@ -168,7 +168,7 @@
     "description": "options page: number of hashing rounds"
   },
   "optDeferUnlockSS": {
-    "message": "Don't unlock the secure storage on startup",
+    "message": "Don't unlock the Secure Storage on startup",
     "description": "options page: don't unlock the secure storage on startup"
   },
   "optReEncrypt": {

@@ -5,6 +5,10 @@ Keywi
 
 Minimalistic Keepass plugin using Web Extensions and KeepassHTTP.
 
+<!---
+Description on addons.mozilla.org starts here.
+-->
+
 ## Goals
  - Minimalistic password integration in Firefox
  - Fill username and password in login form, using context menu and keyboard shortcut
@@ -61,6 +65,10 @@ When Keepass finds multiple Credentials for one URL, it will ask you to select o
 
 ### Disable "Remember for logins" in Firefox
 To provide a better user experience we advise to disable the feature in Firefox to remember logins.  
+
+<!---
+Description on addons.mozilla.org ends here.
+-->
  
 ## Translations
 Currently the following translations are available:
@@ -83,6 +91,20 @@ The following word should always be capitalized:
  - Keywi
  - Keepass
  - Secure Storage
+
+### Translation of addons.mozilla.org metadata
+ 1. fork this repo and clone it into your workspace
+ 2. copy the `_amo/en/description.html` file to e.g. `_amo/nl/description.html`
+ 2. copy the `_amo/en/summary.html` file to e.g. `_amo/nl/summary.html`
+ 3. translate it
+ 4. commit and push to Github
+ 5. open a pull request
+
+In `description.html` these HTML tags are supported:
+```
+<a href title> <abbr title> <acronym title> <b> <blockquote> <code> <em> <i> <li> <ol> <strong> <ul
+```
+
   
 
 ## Alternatives

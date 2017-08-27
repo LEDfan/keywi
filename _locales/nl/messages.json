@@ -60,7 +60,7 @@
     "description": "Displayed when something goes wrong during association"
   },
   "statusSSunlocked": {
-    "message": "Secure storage ontgrendeld",
+    "message": "Secure Storage ontgrendeld",
     "description": "is Secure Storage unlocked?"
   },
   "statusDBassoc": {
