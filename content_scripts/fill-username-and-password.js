@@ -30,15 +30,10 @@ function searchForPasswordInput(userInput) {
         parent = parent.parentElement;
 
         let passwordField = parent.querySelector("input[type='password']");
-        console.log(passwordField);
-        if (passwordField != null) {
-            console.log("Found password field:");
-            console.log(passwordField);
+        if (passwordField !== null) {
             return passwordField;
         }
-
         if (parent.tagName === "BODY" || parent.tagName === "FORM") {
-            console.log("No password field found!");
             return null;
         }
     }
@@ -46,7 +41,7 @@ function searchForPasswordInput(userInput) {
 
 browser.runtime.onMessage.addListener(function _func(request, sender, sendResponse) {
     if (request.type === "username-and-password") {
-        if (document.activeElement.tagName !== "INPUT") //Only useful for input elements
+        if (document.activeElement.tagName !== "INPUT") // Only useful for input elements
             return ;
 
         let usernameField = document.activeElement;
@@ -71,7 +66,7 @@ browser.runtime.onMessage.addListener(function _func(request, sender, sendRespon
             passwordField.dispatchEvent(event);
         }
     } else if (request.type === "username") {
-        if (document.activeElement.tagName !== "INPUT") //Only useful for input elements
+        if (document.activeElement.tagName !== "INPUT") // Only useful for input elements
             return ;
 
         let event = new KeyboardEvent("keydown", {
@@ -81,7 +76,7 @@ browser.runtime.onMessage.addListener(function _func(request, sender, sendRespon
         document.activeElement.value = request.username;
        	document.activeElement.dispatchEvent(event);
     } else if (request.type === "password") {
-        if (document.activeElement.tagName !== "INPUT") //Only useful for input elements
+        if (document.activeElement.tagName !== "INPUT") // Only useful for input elements
             return ;
 
         let event = new KeyboardEvent("keydown", {

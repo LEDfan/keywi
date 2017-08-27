@@ -108,8 +108,7 @@ Keepass.prompts._selectCredentials = function(possibleCredentials) {
             const openedWindowId = newWindow.id;
             let onRemoved = function(removedWindowId) {
                 if (openedWindowId === removedWindowId) {
-                    console.log("Select multiple passwords canceled");
-                    reject("Aborted!");
+                    reject();
                 }
             };
 
@@ -118,7 +117,6 @@ Keepass.prompts._selectCredentials = function(possibleCredentials) {
 
                 browser.tabs.onUpdated.addListener(function _updateFunc(tabId, changeInfo, tabInfo) {
                     if (tabId === openedTabId) {
-                        console.log(tabInfo);
                         if (tabInfo.status === "complete") {
                             setTimeout(function() {
                                 browser.tabs.sendMessage(openedTabId, {
@@ -210,8 +208,6 @@ Keepass.reCheckAssociated = function() {
 };
 
 Keepass.getLogins = function (url, callback) {
-    console.log("Getlogins for url " + url);
-
     if (!this.ready()) {
         Keepass.associate(function() {
             Keepass.getLogins(url, callback);
@@ -223,10 +219,6 @@ Keepass.getLogins = function (url, callback) {
 
     Keepass._ss.get("database.key").then(function(key) {
         Keepass._ss.get("database.id").then(function(id) {
-            console.log("key, id:");
-            console.log(key);
-            console.log(id);
-
             var verifiers = Crypto.generateVerifier(key);
 
             var req = {
@@ -289,8 +281,6 @@ Keepass.getLogins = function (url, callback) {
 
 
                         }).catch(function(resp) {
-                            console.log("RetrieveCredentials for " + url + " rejected");
-
                             browser.notifications.create({
                                 type: "basic",
                                 message: browser.i18n.getMessage("noLogins"),
@@ -362,12 +352,7 @@ Keepass.associate = function(callback) {
                         });
                     },
                     success: function(resp) {
-                        console.log(resp);
                         if (resp.Success) {
-                            console.log(resp);
-                            console.log("Associated key is: " + key);
-                            console.log("Id is: " + resp.Id);
-                            console.log("Hash is: " + resp.Hash);
                             Keepass._ss.set("database.id", resp.Id).then(function() {
                                 return Keepass._ss.set("database.key", key);
                             }).then(function() {
@@ -392,7 +377,6 @@ Keepass.associate = function(callback) {
 };
 
 browser.storage.onChanged.addListener(function(changes, areaName) {
-    console.log(changes);
     if (changes.hasOwnProperty("keepass-server-url")) {
         Keepass.state.associated = false;
     }

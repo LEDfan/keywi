@@ -32,7 +32,6 @@ LocalSecureStorage.prompts.setupNewPassword = function () {
             const openedWindowId = newWindow.id;
             let onRemoved = function(removedWindowId) {
                 if (openedWindowId === removedWindowId) {
-                    console.log("Setup storage was aborted!");
                     browser.notifications.create("secure-storage-cancelled", {
                         type: "basic",
                         iconUrl: browser.extension.getURL("icons/keywi-96.png"),
@@ -74,14 +73,13 @@ LocalSecureStorage.prompts.unlock = function (verifyFunc) {
             const openedWindowId = newWindow.id;
             let onRemoved = function(removedWindowId) {
                 if (openedWindowId === removedWindowId) {
-                    console.log("Unlock Secure storage was aborted!");
                     browser.notifications.create("secure-storage-cancelled", {
                         type: "basic",
                         iconUrl: browser.extension.getURL("icons/keywi-96.png"),
                         title: "Keywi",
                         message: browser.i18n.getMessage("SSunlockCancelled")
                     });
-                    reject("Aborted!");
+                    reject();
                 }
             };
             browser.runtime.onMessage.addListener(function _func(request, sender, sendResponse) {
@@ -90,7 +88,6 @@ LocalSecureStorage.prompts.unlock = function (verifyFunc) {
                      * Call the verifyfunction, this function will verify if the provided password/userKey is correct.
                      * If it's correct the first callback will be called, if it isn't correct the second callback will be called.
                      */
-                    console.log(sender);
                     verifyFunc(request.data.password, function(key) {
                         // we're done here, cleanup and remove the window
                         browser.runtime.onMessage.removeListener(_func);

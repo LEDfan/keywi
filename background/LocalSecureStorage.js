@@ -128,7 +128,6 @@ LocalSecureStorage.prototype._unlockExistingPassword = function() {
                     var checkIvStr = Crypto.decryptAsString(verifier, encryptionKey, iv);
 
                     if (checkIvStr !== iv) {
-                        console.log("Error decrypting: key wrong!");
                         reject(browser.i18n.getMessage("SSwrongUnlockKey"));
                     } else {
                         accept(encryptionKey);
@@ -252,17 +251,11 @@ LocalSecureStorage.prototype._decrypt = function (data) {
     let checkIvStr = Crypto.decryptAsString(verifier, LocalSecureStorage.prototype._encryptionkey, iv);
 
     if (checkIvStr !== iv) {
-        console.log("Error decrypting: key wrong!");
         throw "Error decrypting: key wrong!";
-        // return null;
     }
 
-    /**
-     * Decrypt the data.
-     */
-    let decryptedDataStr = Crypto.decryptAsString(data.data, LocalSecureStorage.prototype._encryptionkey, iv);
-
-    return decryptedDataStr;
+    // Decrypt the data.
+    return Crypto.decryptAsString(data.data, LocalSecureStorage.prototype._encryptionkey, iv);
 };
 
 LocalSecureStorage.prototype.delete = function (key) {
@@ -282,7 +275,6 @@ LocalSecureStorage.prototype.clear = function() {
             if (key.substr(0, prefixLength) === LocalSecureStorage.prototype._prefix) {
                 promiseChain = promiseChain.then(function() {
                     let userKey = key.substr(prefixLength, key.length - prefixLength);
-                    console.log(userKey);
                     return self.delete(userKey)
                 });
             }
@@ -322,7 +314,6 @@ LocalSecureStorage.prototype.reencrypt = function(callback) {
                     // only re-encrypt encrypted keys
                     // and do not ree-ncrypt the dummy value
                     let userKey = key.substr(prefixLength, key.length - prefixLength);
-                    console.log(userKey);
                     if (userKey !== LocalSecureStorage.prototype._dummyValueKey) {
                         dataToSave[userKey] = self._decrypt(data[key]);
                     }
@@ -342,14 +333,12 @@ LocalSecureStorage.prototype.reencrypt = function(callback) {
                     }
                     Keepass.state.associated = originalAssociated;
                     callback();
-                }).catch(function(err) {
-                    console.log(err);
+                }).catch(function() {
                     // TODO
                     callback();
                 });
             }, 1000);
-        }).catch(function(err) {
-            console.log(err);
+        }).catch(function() {
             callback();
             // TODO
         });
