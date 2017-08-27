@@ -1,0 +1,1 @@
+Minimalistic password filler add-on for Keepass. It uses Web Extensions and KeepassHTTP. The plugin is only meant to fill in credentials, not to edit the Keepass database in any way. (add or update credentials)
