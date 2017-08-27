@@ -74,9 +74,7 @@ To provide extra translations please open a pull request:
  4. commit and push to Github
  5. open a pull request
  
-We believe that the following words should not be translated, because they are well-known and improves the UX:
- - Keywi
- - Keepass
+It's not necessary to translate the following words, if there is no good translation which fits the context:
  - database
  - Secure Storage
  - hash

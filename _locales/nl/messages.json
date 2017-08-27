@@ -4,11 +4,11 @@
     "description": "The description for the extension, used in the manifest."
   },
   "fillUsernamePassDescription": {
-    "message": "Vul uw gebruikersnaam en paswoord vanuit het huidige actieve invoerveld",
+    "message": "Gebruikersnaam en paswoord invullen in het actieve invoerveld",
     "description": "The description for the fill username/password hotkey"
   },
   "fillPassDescription": {
-    "message": "Vul uw paswoord in het hduige active invoerveld",
+    "message": "Paswoord invullen in het active invoerveld",
     "description": "The description for the fill password hotkey"
   },
   "SSsetupCancelled": {
@@ -20,23 +20,23 @@
     "description": "Displayed when the unlock for the Secure Storage is cancelled."
   },
   "SSwrongUnlockKey": {
-    "message": "U heeft een foute key ingevoerd.",
+    "message": "U heeft een foute key ingevoerd, probeer het opnieuw.",
     "description": "Alert when the wrong key is given at Secure Storage unlock time"
   },
   "contextFillUserPass": {
-    "message": "Vul gebruikersnaam and paswoord in",
+    "message": "Gebruikersnaam en paswoord invullen",
     "description": "Context menu to fill username and password"
   },
   "contextFillUser": {
-    "message": "Vul gebruikersnaam in",
+    "message": "Gebruikersnaam invullen",
     "description": "Context menu to fill username"
   },
   "contextFillPass": {
-    "message": "Vul paswoord in",
+    "message": "Paswoord invullen",
     "description": "Context menu to fill password"
   },
   "noPassFieldFound": {
-    "message": "Geen paswoord invoerveld gevonden, enkel de gebruikersnaam word ingevuld",
+    "message": "Geen paswoordveld gevonden, enkel de gebruikersnaam wordt ingevuld",
     "description": "Displayed when no password field was found when filling username and password"
   },
   "otherDBOpen": {
@@ -44,7 +44,7 @@
     "description": "Displayed at initialization if another database than the one keywi is associated with is open"
   },
   "cannotConnect": {
-    "message": "Keywi kan niet verbinden met Keepass, is uw Keepass database geopend?",
+    "message": "Keywi kan niet verbinden met Keepass, is de juiste Keepass database geopend?",
     "description": "Displayed when keywi cannot connect to the Keepass database"
   },
   "noPassFound": {
@@ -52,7 +52,7 @@
     "description": "Displayed when keywi cannot find any suitable passwords"
   },
   "noLogins": {
-    "message": "Er was een probleem bij het ophalen van uw credentials, heeft u Keywi geassocieerd met de Keepass database?",
+    "message": "Er was een probleem bij het ophalen van de credentials, heeft u Keywi geassocieerd met de Keepass database?",
     "description": "Displayed when Keepass doesn't give access"
   },
   "assocFailed": {
@@ -76,15 +76,15 @@
     "description": "What is the DB id?"
   },
   "confirmNotPassField": {
-    "message": "Dit is geen paswoord veld, bent u zeker om hier uw paswoord in te vullen?",
+    "message": "Dit is geen paswoord veld, wilt u hier echt uw paswoord invullen?",
     "description": "Confirm with the user they want to fill a password in something that is no password field"
   },
   "dialogSetupSSTitle": {
-    "message": "Stel de Secure Storage in",
+    "message": "Secure Storage instellen",
     "description": "The title for the setup Secure Storage dialog"
   },
   "dialogSetupSSHeader": {
-    "message": "Stel de Secure Storage in",
+    "message": "Secure Storage instellen",
     "description": "The header for the setup Secure Storage dialog"
   },
   "dialogSetupSSp1": {
@@ -124,7 +124,7 @@
     "description": "The body of the select multiple passwords dialog"
   },
   "Cancel": {
-    "message": "Annuleer",
+    "message": "Annuleren",
     "description": "Cancel"
   },
   "Save": {
@@ -136,11 +136,11 @@
     "description": "Password"
   },
   "samePass": {
-    "message": "Herhaal paswoord",
-    "description": "Same password"
+    "message": "Herhaal het paswoord",
+    "description": "Placeholder of the repeat password field"
   },
   "Unlock": {
-    "message": "Ontgrendel",
+    "message": "Ontgrendelen",
     "description": "Unlock"
   },
   "optTitle": {
@@ -148,7 +148,7 @@
     "description": "The title for the options page"
   },
   "optUserInfoHeader": {
-    "message": "Informatie over uw verbinding met Keepass:",
+    "message": "Informatie over de verbinding met Keepass:",
     "description": "The header for the user info on the options page"
   },
   "Key": {
@@ -168,7 +168,7 @@
     "description": "options page: number of hashing rounds"
   },
   "optDeferUnlockSS": {
-    "message": "Ontgrendel de Secure Storage niet bij het opstarten van Firefox",
+    "message": "Secure Storage niet ontgrendelen bij het opstarten van Firefox",
     "description": "options page: don't unlock the secure storage on startup"
   },
   "optReEncrypt": {

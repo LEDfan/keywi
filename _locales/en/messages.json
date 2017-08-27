@@ -4,7 +4,7 @@
     "description": "The description for the extension, used in the manifest."
   },
   "fillUsernamePassDescription": {
-    "message": "Fill the username/password field from the currently active field",
+    "message": "Fill the username and password field from the currently active field",
     "description": "The description for the fill username/password hotkey"
   },
   "fillPassDescription": {
@@ -20,7 +20,7 @@
     "description": "Displayed when the unlock for the Secure Storage is cancelled."
   },
   "SSwrongUnlockKey": {
-    "message": "Wrong key provided by user!",
+    "message": "The key isn't correct, try again.",
     "description": "Alert when the wrong key is given at Secure Storage unlock time"
   },
   "contextFillUserPass": {
@@ -136,8 +136,8 @@
     "description": "Password"
   },
   "samePass": {
-    "message": "Same password",
-    "description": "Same password"
+    "message": "Repeat the  password",
+    "description": "Placeholder of the repeat password field"
   },
   "Unlock": {
     "message": "Unlock",
@@ -148,7 +148,7 @@
     "description": "The title for the options page"
   },
   "optUserInfoHeader": {
-    "message": "The following information is know about your connection with Keepass:",
+    "message": "Keepass connection information:",
     "description": "The header for the user info on the options page"
   },
   "Key": {
