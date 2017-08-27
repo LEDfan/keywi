@@ -1,9 +1,13 @@
+dist: trusty
+sudo: false
+
 language: node_js
 node_js:
- - "6"
+     - "6"
 
 install:
- - npm install 
+     - make deps
 
 script:
- - ./node_modules/.bin/eslint . || true
+     - make lint
+

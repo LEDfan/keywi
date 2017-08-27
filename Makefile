@@ -1,10 +1,11 @@
-.PHONY: run lint release-ss
+.PHONY: run lint release-ss deps
 
 run:
 	web-ext run --no-reload
 
 lint:
-	./node_modules/.bin/eslint .
+	./node_modules/.bin/eslint . || true
+	./node_modules/.bin/web-ext lint || true
 
 # release self signed/distributed version
 release-ss:
@@ -20,4 +21,6 @@ release-ss:
 	web-ext sign --api-key ${API_KEY} --api-secret ${API_SECRET}
 	sed -i 's/keywi-ff-add-on-ss@ledfan.be/keywi-ff-add-on@ledfan.be/g' manifest.json
 
+deps:
+	npm install eslint web-ext
 
