@@ -22,7 +22,7 @@
  * as contenteditable for the context menu. This script make all these input fields contentEditable.
  * @see background/contextmenu.js
  */
-let inputEls = document.querySelectorAll("input[type=email], input[type=tel]");
-for (let el of inputEls) {
-    el.contentEditable = "true";
+const inputEls = document.querySelectorAll('input[type=email], input[type=tel]');
+for (const el of inputEls) {
+  el.contentEditable = 'true';
 }
