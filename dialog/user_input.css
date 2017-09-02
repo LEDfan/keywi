@@ -34,8 +34,15 @@ header {
     margin: 0;
     padding: 15px;
     text-align: center;
-    line-height: 70px;
+    height: 70px;
     flex: none;
+
+    /**
+     * Center the footer text
+     */
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 header h1 {

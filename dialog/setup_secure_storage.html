@@ -20,28 +20,26 @@
 <!DOCTYPE html>
     <html>
         <head>
-            <title>Setup Secure Storage</title>
+            <title data-i18n="dialogSetupSSTitle"></title>
             <link rel="stylesheet" type="text/css" href="user_input.css">
         </head>
     <body>
         <header>
-            <h1 id="msg">
-                Setup the secure storage
-            </h1>
+            <h1 id="msg" data-i18n="dialogSetupSSHeader"></h1>
         </header>
         <div id="container">
             <div id="text">
                 <p>
-                    Keywi uses a password for securely storing the information needed to connect to the Keepass database.<br>
-                    Fill in a secure password, this is a different password then the one used to unlock the Keepass database.
+                <span data-i18n="dialogSetupSSp1"></span><br>
+                <span data-i18n="dialogSetupSSp2"></span>
                 </p>
             </div>
             <div id="form">
                 <form>
-                    <input id="pass1" type="password" placeholder="Password" autofocus>
-                    <input id="pass2" type="password" placeholder="Same password">
-                    <input id="submit" type="submit" value="Save">
-                    <button type="button" id="cancel">Cancel</button>
+                    <input id="pass1" type="password" data-i18n="placeholder.Password" autofocus>
+                    <input id="pass2" type="password" data-i18n="placeholder.samePass">
+                    <input id="submit" type="submit" data-i18n="value.Save">
+                    <button type="button" id="cancel" data-i18n="Cancel"></button>
                 </form>
             </div>
         </div>

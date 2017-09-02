@@ -30,7 +30,7 @@ function init() {
                         Keepass._ss.has("database.key").then(function(key) {
                             browser.notifications.create({
                                 type: "basic",
-                                message: "Keywi is already associated with a database, but another database is open.",
+                                message: browser.i18n.getMessage("otherDBOpen"),
                                 iconUrl: browser.extension.getURL("icons/keywi-96.png"),
                                 title: "Keywi"
                             });

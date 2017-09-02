@@ -18,6 +18,15 @@
  */
 
 window.addEventListener("DOMContentLoaded", function(){
+    for (let e of document.body.parentElement.querySelectorAll("[data-i18n]")) {
+        if (e.dataset.i18n.indexOf(".") >= 0) { // attr.key: replace given attribute with i18n of key
+            let spl = e.dataset.i18n.split(".");
+            e.setAttribute(spl[0], browser.i18n.getMessage(spl[1]));
+        } else { // Replace the content of the element
+            e.innerHTML = browser.i18n.getMessage(e.dataset.i18n);
+        }
+    }
+
     var inputs = document.querySelectorAll("#options input");
     for (var input of inputs) {
         (function(input) {

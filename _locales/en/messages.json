@@ -1,0 +1,182 @@
+{
+  "extensionDescription": {
+    "message": "Minimalistic Keepass plugin using Web Extensions and KeepassHTTP",
+    "description": "The description for the extension, used in the manifest."
+  },
+  "fillUsernamePassDescription": {
+    "message": "Fill the username and password field from the currently active field",
+    "description": "The description for the fill username/password hotkey"
+  },
+  "fillPassDescription": {
+    "message": "Fill your password in the currently active field",
+    "description": "The description for the fill password hotkey"
+  },
+  "SSsetupCancelled": {
+    "message": "Secure Storage Setup was canceled, Keywi cannot work without. You can re-setup it from the settings.",
+    "description": "Displayed when the setup for the Secure Storage is cancelled."
+  },
+  "SSunlockCancelled": {
+    "message": "Secure Storage unlock was canceled, Keywi cannot work without.",
+    "description": "Displayed when the unlock for the Secure Storage is cancelled."
+  },
+  "SSwrongUnlockKey": {
+    "message": "The key isn't correct, try again.",
+    "description": "Alert when the wrong key is given at Secure Storage unlock time"
+  },
+  "contextFillUserPass": {
+    "message": "Fill username and password",
+    "description": "Context menu to fill username and password"
+  },
+  "contextFillUser": {
+    "message": "Fill username",
+    "description": "Context menu to fill username"
+  },
+  "contextFillPass": {
+    "message": "Fill password",
+    "description": "Context menu to fill password"
+  },
+  "noPassFieldFound": {
+    "message": "No password field found, filling only username.",
+    "description": "Displayed when no password field was found when filling username and password"
+  },
+  "otherDBOpen": {
+    "message": "Keywi is already associated with a database, but another database is open.",
+    "description": "Displayed at initialization if another database than the one keywi is associated with is open"
+  },
+  "cannotConnect": {
+    "message": "Cannot connect to your Keepass database, is it running and unlocked?",
+    "description": "Displayed when keywi cannot connect to the Keepass database"
+  },
+  "noPassFound": {
+    "message": "No passwords found",
+    "description": "Displayed when keywi cannot find any suitable passwords"
+  },
+  "noLogins": {
+    "message": "Problem getting logins from your Keepass database, have you associated with this database?",
+    "description": "Displayed when Keepass doesn't give access"
+  },
+  "assocFailed": {
+    "message": "Something went wrong during association.",
+    "description": "Displayed when something goes wrong during association"
+  },
+  "statusSSunlocked": {
+    "message": "Secure Storage unlocked",
+    "description": "is Secure Storage unlocked?"
+  },
+  "statusDBassoc": {
+    "message": "Keepass database associated",
+    "description": "is the DB associated?"
+  },
+  "statusDBhash": {
+    "message": "Keepass database hash",
+    "description": "What is the DB hash?"
+  },
+  "statusDBid": {
+    "message": "Keepass database id",
+    "description": "What is the DB id?"
+  },
+  "confirmNotPassField": {
+    "message": "This is not a password field. Are you sure you want to fill your password?",
+    "description": "Confirm with the user they want to fill a password in something that is no password field"
+  },
+  "dialogSetupSSTitle": {
+    "message": "Setup Secure Storage",
+    "description": "The title for the setup Secure Storage dialog"
+  },
+  "dialogSetupSSHeader": {
+    "message": "Setup the Secure Storage",
+    "description": "The header for the setup Secure Storage dialog"
+  },
+  "dialogSetupSSp1": {
+    "message": "Keywi uses a password for securely storing the information needed to connect to the Keepass database.",
+    "description": "The first part of the setup Secure Storage dialog body"
+  },
+  "dialogSetupSSp2": {
+    "message": "Fill in a secure password, this is a different password from the one used to unlock the Keepass database.",
+    "description": "The second part of the setup Secure Storage dialog body"
+  },
+  "dialogUnlockSSTitle": {
+    "message": "Unlock Secure Storage",
+    "description": "The title for the unlock Secure Storage dialog"
+  },
+  "dialogUnlockSSHeader": {
+    "message": "Unlock the Secure Storage",
+    "description": "The header for the unlock Secure Storage dialog"
+  },
+  "dialogUnlockSSp1": {
+    "message": "Keywi uses a password for securely storing the information needed to connect to the Keepass database.",
+    "description": "The first part of the unlock Secure Storage dialog body"
+  },
+  "dialogUnlockSSp2": {
+    "message": "This password is now needed to unlock the Secure Storage.",
+    "description": "The second part of the unlock Secure Storage dialog body"
+  },
+  "dialogSelectTitle": {
+    "message": "Select password",
+    "description": "The title of the select multiple passwords dialog"
+  },
+  "dialogSelectHeader": {
+    "message": "Select a password",
+    "description": "The header of the select multiple passwords dialog"
+  },
+  "dialogSelectBody": {
+    "message": "Keepass found multiple passwords for this url, please select one.",
+    "description": "The body of the select multiple passwords dialog"
+  },
+  "Cancel": {
+    "message": "Cancel",
+    "description": "Cancel"
+  },
+  "Save": {
+    "message": "Save",
+    "description": "Save"
+  },
+  "Password": {
+    "message": "Password",
+    "description": "Password"
+  },
+  "samePass": {
+    "message": "Repeat the  password",
+    "description": "Placeholder of the repeat password field"
+  },
+  "Unlock": {
+    "message": "Unlock",
+    "description": "Unlock"
+  },
+  "optTitle": {
+    "message": "Options for Keywi",
+    "description": "The title for the options page"
+  },
+  "optUserInfoHeader": {
+    "message": "Keepass connection information:",
+    "description": "The header for the user info on the options page"
+  },
+  "Key": {
+    "message": "Key",
+    "description": "Key"
+  },
+  "Value": {
+    "message": "Value",
+    "description": "Value"
+  },
+  "optKeepassHTTPURL": {
+    "message": "KeepassHTTP url:",
+    "description": "options page: KeepassHTTP url"
+  },
+  "optHashRounds": {
+    "message": "Number of hashing rounds for key generation (advanced):",
+    "description": "options page: number of hashing rounds"
+  },
+  "optDeferUnlockSS": {
+    "message": "Don't unlock the Secure Storage on startup",
+    "description": "options page: don't unlock the secure storage on startup"
+  },
+  "optReEncrypt": {
+    "message": "Re-encrypt the Secure Storage",
+    "description": "options page: re-encrypt the secure storage"
+  },
+  "optReset": {
+    "message": "Reset all settings",
+    "description": "options page: reset all settings"
+  }
+}

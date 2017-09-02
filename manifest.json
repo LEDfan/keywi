@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "Keywi",
   "version": "0.1.0beta4",
-  "description": "Minimalistic Keepass plugin using Web Extensions and KeepassHTTP",
+  "description": "__MSG_extensionDescription__",
   "icons": {
     "48": "icons/keywi-48.png",
     "96": "icons/keywi-96.png"
@@ -54,15 +54,16 @@
       "suggested_key": {
         "default": "Ctrl+Shift+F"
       },
-      "description": "Fill the username/password field from the currently active field"
+      "description": "__MSG_fillUsernamePassDescription__"
     },
     "fill-password": {
       "suggested_key": {
         "default": "Ctrl+Shift+D"
       },
-      "description": "Fill your password in the currently active field"
+      "description": "__MSG_fillPassDescription__"
     }
   },
+  "default_locale": "en",
   "applications": {
     "gecko": {
       "id": "keywi-ff-add-on@ledfan.be",
