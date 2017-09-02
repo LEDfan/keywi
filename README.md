@@ -3,7 +3,7 @@
 Keywi
 ===
 
-Minimalistic Keepass plugin using Web Extensions and KeepassHTTP.
+Minimalistic Keepass extension using Web Extensions and KeepassHTTP.
 
 <!---
 Description on addons.mozilla.org starts here.
@@ -27,7 +27,7 @@ Description on addons.mozilla.org starts here.
 
 ## Usage
 Keywi uses the local storage mechanism of the browser to store some information needed to connect to Keepass. This information includes the key used to authenticate and encrypt the communication with Keepass. The information stored in the local storage of the browser is stored unencrypted.
-Therefore Keywi encrypts this information (`database.key`, `database.id` and `database.hash`) using 256-bit AES key derived from a user-provided password. 
+Therefore Keywi encrypts this information (`database.key`, `database.id` and `database.hash`) using 256-bit AES key derived from a user-provided password.
 
 This password is asked to the user the first time Keywi is used for encrypting the information. Every time you start Firefox it's asked to decrypt the information.
 
@@ -53,40 +53,40 @@ You will be asked to unlock the Secure Storage using the same password as during
 ![Right click to fill in](.github/screenshots/fill-context-menu.png)
  3. Click "Allow" when keepass asks permission for the request to the credentials
  4. the username and password are filled
- 
+
 ### Keyboard shortcuts:
 The following shortcuts are supported:
  - <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>F</kbd> Fill username and password in the current active input field (only the username will be filled when no password field is found)
  - <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>D</kbd> Fill only password in the current active input field
- 
+
 ### Multiple Credentials for one URL
 When Keepass finds multiple Credentials for one URL, it will ask you to select one:
 ![Select a password](.github/screenshots/multiple-credentials.png)
 
 ### Disable "Remember for logins" in Firefox
-To provide a better user experience we advise to disable the feature in Firefox to remember logins.  
+To provide a better user experience we advise to disable the feature in Firefox to remember logins.
 
 <!---
 Description on addons.mozilla.org ends here.
 -->
- 
+
 ## Translations
 Currently the following translations are available:
  - EN
  - NL
- 
+
 To provide extra translations please open a pull request:
  1. fork this repo and clone it into your workspace
  2. copy the `_locales/en/messages.json` file to e.g. `_locales/de/message.json`
  3. translate all `message` fields inside this file
  4. commit and push to Github
  5. open a pull request
- 
+
 It's not necessary to translate the following words, if there is no good translation which fits the context:
  - database
  - Secure Storage
  - hash
- 
+
 The following word should always be capitalized:
  - Keywi
  - Keepass
@@ -107,7 +107,7 @@ In `description.html` these HTML tags are supported:
 
 The `summary.txt` file only supports plain text up to 250 characters.
 
-  
+
 
 ## Alternatives
 ### [Passifox](https://github.com/pfn/passifox)
@@ -116,9 +116,9 @@ Some differences between this addon and Passifox:
  - some forms can't be filled (e.g. openmediavault has some problems with it)
  - doesn't uses web extensions, thus not compatible with Electrolysis
  - automatic form filling
- 
 
- 
+
+
 ### [Keefox](http://keefox.org/)
 Some differences between this addon and Keefox:
  - doesn't uses web extensions, thus not compatible with Electrolysis
@@ -133,7 +133,7 @@ Warning: this means that when you switch between the self-distributed version an
 ## Authors
  - @LEDfan Tobia De Koninck
  - @RobinJadoul Robin Jadoul
- 
+
 ## License
 Keywi is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -147,8 +147,8 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Keywi.  If not, see <http://www.gnu.org/licenses/>.
- 
- 
+
+
 ## Used libraries
 This project uses the following libraries which are all found under the `vendor` directory:
  - `aes.js` from slowAES https://code.google.com/archive/p/slowaes licensed under Apache License 2.0
