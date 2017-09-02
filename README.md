@@ -16,7 +16,7 @@ Description on addons.mozilla.org starts here.
  - No editing of the Keepass database
  - Using the Firefox web extensions API, to support Electrolysis
  - Support Keepass, later maybe [Pass](https://www.passwordstore.org/)
- - Minimal amount of libraries (aes and cryptoheplers)
+ - Minimal amount of libraries (aes and cryptohelpers)
  - no automatic form filling, i.e. only when the user wants to. This is very important because:
    - credentials can be filled in the wrong site (e.g. a DNS spoofing)
    - crendetials can be filled in the sign up form
