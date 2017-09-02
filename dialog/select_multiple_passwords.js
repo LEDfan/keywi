@@ -16,35 +16,9 @@
  * You should have received a copy of the GNU General Public License
  * along with Keywi.  If not, see <http://www.gnu.org/licenses/>.
  */
-window.addEventListener("DOMContentLoaded", function(){
-    browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-        if (request.type === "select_mul_pass_data") {
-            const length = request.data.possibleCredentials.length;
-            let html = "";
 
-            for (let i = 0; i < length; i++) {
-                html += generateButtonRow(i, request.data.possibleCredentials[i].Name, request.data.possibleCredentials[i].Login);
-            }
-
-            document.getElementById("passwords").innerHTML = html;
-            let els = document.getElementsByClassName("password-choose-btn");
-
-            for (let el of els) {
-                el.addEventListener("click", function() {
-                    browser.runtime.sendMessage({
-                        type: "select_mul_pass_user_input",
-                        data: {
-                            selected: this.dataset.index
-                        }
-                    });
-                }, false);
-            }
-        }
-    });
-});
-
-let generateButtonRow =  function(index, name, login) {
-    return `
+const generateButtonRow = function (index, name, login) {
+  return `
     <div class="password-container">
             <button data-index="${index}" class="password-choose-btn">${login} (${name})</button>
          </div>
@@ -52,9 +26,34 @@ let generateButtonRow =  function(index, name, login) {
 `;
 };
 
-document.getElementById("cancel").onclick = function() {
-    browser.runtime.sendMessage({
-        type: "select_mul_pass_cancel",
-        data: {}
-    });
+window.addEventListener('DOMContentLoaded', function () {
+  browser.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+    if (request.type === 'select_mul_pass_data') {
+      const length = request.data.possibleCredentials.length;
+      let html = '';
+
+      for (let i = 0; i < length; i++) {
+        html += generateButtonRow(i, request.data.possibleCredentials[i].Name, request.data.possibleCredentials[i].Login);
+      }
+
+      document.getElementById('passwords').innerHTML = html;
+      const els = document.getElementsByClassName('password-choose-btn');
+
+      for (const el of els) {
+        el.addEventListener('click', function () {
+          browser.runtime.sendMessage({
+            'type': 'select_mul_pass_user_input',
+            'data': {'selected': this.dataset.index}
+          });
+        }, false);
+      }
+    }
+  });
+});
+
+document.getElementById('cancel').onclick = function () {
+  browser.runtime.sendMessage({
+    'type': 'select_mul_pass_cancel',
+    'data': {}
+  });
 };

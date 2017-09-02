@@ -1,35 +1,78 @@
 {
-    "env": {
-        "browser": true,
-        "es6": true,
-		"webextensions": true
-    },
-    "extends": "eslint:all",
-    "parserOptions": {
-        "sourceType": "module"
-    },
-    "rules": {
-        "indent": [
-            "error",
-            4
-        ],
-        "linebreak-style": [
-            "error",
-            "unix"
-        ],
-        "quotes": [
-            "error",
-            "double"
-        ],
-        "semi": [
-            "error",
-            "always"
-        ]
-    },
-	"globals" : {
-		"cryptoHelpers": true,
-		"slowAES": true,
-		"reqwest": true,
-		"UTF8": true
-	}
+  "env": {
+    "browser": true,
+    "es6": true,
+    "webextensions": true
+  },
+  "extends": "eslint:all",
+  "parserOptions": {
+    "sourceType": "module"
+  },
+  "rules": {
+    "indent": [
+      "error",
+      2
+    ],
+    "linebreak-style": [
+      "error",
+      "unix"
+    ],
+    "quotes": [
+      "error",
+      "single"
+    ],
+    "semi": [
+      "error",
+      "always"
+    ],
+    "padded-blocks": "off",
+    "capitalized-comments": "off",
+    "sort-keys": "off",
+    "no-console": "off",
+    "require-jsdoc": "off",
+    "max-len": "off",
+    "no-negated-condition": "off",
+    "prefer-arrow-callback": "off",
+    "object-property-newline": "off",
+    "object-shorthand": "off",
+    "valid-jsdoc": "off",
+    "no-underscore-dangle": "off",
+    "no-warning-comments": "off",
+    "no-magic-numbers": "off",
+    "one-var": "off",
+    "func-style": "off",
+    "func-names": "off",
+    "line-comment-position": "off",
+    "no-inline-comments": "off",
+    "init-declarations": "off",
+    "no-unused-vars": "off",
+    "max-lines": "off",
+    "consistent-this": "off",
+    "max-statements": "off",
+    "prefer-promise-reject-errors": "off",
+    "id-length": "off",
+    "no-plusplus": "off",
+    "callback-return": "off",
+    "no-prototype-builtins": "off",
+    "consistent-return": "off",
+    "no-param-reassign": "off",
+    "prefer-destructuring": "off",
+    "no-throw-literal": "off",
+    "no-empty-function": "off",
+    "no-alert": "off",
+    "no-constant-condition": "off",
+    "no-invalid-this": "off",
+    "no-bitwise": "off"
+  },
+  "globals": {
+    "cryptoHelpers": true,
+    "slowAES": true,
+    "reqwest": true,
+    "UTF8": true,
+    "Keepass": true,
+    "LocalSecureStorage": true,
+    "activeGetLogins": true,
+    "SecureStorage": true,
+    "debounce": true
+  }
 }

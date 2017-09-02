@@ -17,28 +17,26 @@
  * along with Keywi.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-document.forms[0].onsubmit = function(e) {
-    e.preventDefault(); // Prevent submission
-    let password = document.getElementById('pass').value;
-        browser.runtime.sendMessage({
-            type: "ss_unlock_user_input",
-            data: {
-                password: password
-            }
-        });
-        // browser.windows.remove(window.windowId);
+document.forms[0].onsubmit = function (e) {
+  e.preventDefault(); // Prevent submission
+  const password = document.getElementById('pass').value;
+  browser.runtime.sendMessage({
+    'type': 'ss_unlock_user_input',
+    'data': {'password': password}
+  });
+  // browser.windows.remove(window.windowId);
 };
 
 // browser.tabs.sendMessage(tab.id, {type: "ss_unlock_wrong_key", msg: msg});
-browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-    if (request.type === "ss_unlock_reject") {
-        alert(request.msg);
-    }
+browser.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+  if (request.type === 'ss_unlock_reject') {
+    alert(request.msg);
+  }
 });
 
-document.getElementById("cancel").onclick = function() {
-    browser.runtime.sendMessage({
-        type: "ss_unlock_cancel",
-        data: {}
-    });
+document.getElementById('cancel').onclick = function () {
+  browser.runtime.sendMessage({
+    'type': 'ss_unlock_cancel',
+    'data': {}
+  });
 };
