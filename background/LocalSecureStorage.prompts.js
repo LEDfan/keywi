@@ -36,7 +36,7 @@ LocalSecureStorage.prompts.setupNewPassword = function () {
             'type': 'basic',
             'iconUrl': browser.extension.getURL('icons/keywi-96.png'),
             'title': 'Keywi',
-            'message': browser.i18n.getMessage("SSsetupCancelled")
+            'message': browser.i18n.getMessage('SSsetupCancelled')
           });
           reject('Aborted!');
         }
@@ -76,7 +76,7 @@ LocalSecureStorage.prompts.unlock = function (verifyFunc) {
             'type': 'basic',
             'iconUrl': browser.extension.getURL('icons/keywi-96.png'),
             'title': 'Keywi',
-            'message': browser.i18n.getMessage("SSunlockCancelled")
+            'message': browser.i18n.getMessage('SSunlockCancelled')
           });
           reject();
         }

@@ -83,7 +83,7 @@ browser.runtime.onMessage.addListener(function _func (request, sender, sendRespo
 
     const event = new KeyboardEvent('keydown', {'key': 'ArrowLeft'});
     if (document.activeElement.type !== 'password') {
-      if (confirm(browser.i18n.getMessage("confirmNotPassField"))) {
+      if (confirm(browser.i18n.getMessage('confirmNotPassField'))) {
         document.activeElement.value = request.password;
       }
     } else {

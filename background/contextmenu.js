@@ -19,7 +19,7 @@
 
 browser.contextMenus.create({
   'id': 'username-and-password',
-  'title': browser.i18n.getMessage("contextFillUserPass"),
+  'title': browser.i18n.getMessage('contextFillUserPass'),
   'contexts': ['editable']
 });
 browser.contextMenus.create({
@@ -47,7 +47,7 @@ browser.runtime.onMessage.addListener((request, sender, sendresponse) => {
   if (request.type === 'no-password-field-found') {
     browser.notifications.create({
       'type': 'basic',
-      'message': browser.i18n.getMessage("noPassFieldFound"),
+      'message': browser.i18n.getMessage('noPassFieldFound'),
       'iconUrl': browser.extension.getURL('icons/keywi-96.png'),
       'title': 'Keywi'
     });
