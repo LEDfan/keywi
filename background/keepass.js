@@ -253,7 +253,7 @@ Keepass.getLogins = function (url, callback) {
 
             browser.notifications.create({
               'type': 'basic',
-              'message': 'Problem getting logins from your Keepass database, have you associated with this database?',
+              'message': browser.i18n.getMessage('noLogins'),
               'iconUrl': browser.extension.getURL('icons/keywi-96.png'),
               'title': 'Keywi'
             });
@@ -262,7 +262,7 @@ Keepass.getLogins = function (url, callback) {
         catch(function () {
           browser.notifications.create({
             'type': 'basic',
-            'message': 'Cannot connect to your Keepass database, is it running and unlocked?',
+            'message': browser.i18n.getMessage('cannotConnect'),
             'iconUrl': browser.extension.getURL('icons/keepass-96.png'),
             'title': 'Keywi'
           });
@@ -328,7 +328,7 @@ Keepass.associate = function (callback) {
         } else {
           browser.notifications.create({
             'type': 'basic',
-            'message': 'Something went wrong during association.',
+            'message': browser.i18n.getMessage('assocFailed'),
             'iconUrl': browser.extension.getURL('icons/keywi-96.png'),
             'title': 'Keywi'
           });
@@ -337,7 +337,7 @@ Keepass.associate = function (callback) {
         catch(function () {
           browser.notifications.create({
             'type': 'basic',
-            'message': 'Cannot connect to your Keepass database, is it running and unlocked?',
+            'message': browser.i18n.getMessage('cannotConnect'),
             'iconUrl': browser.extension.getURL('icons/keywi-96.png'),
             'title': 'Keywi'
           });
