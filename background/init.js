@@ -30,7 +30,7 @@ function init () {
             Keepass._ss.has('database.key').then(function () {
               browser.notifications.create({
                 'type': 'basic',
-                'message': browser.i18n.getMessage("otherDBOpen"),
+                'message': browser.i18n.getMessage('otherDBOpen'),
                 'iconUrl': browser.extension.getURL('icons/keywi-96.png'),
                 'title': 'Keywi'
               });
@@ -45,14 +45,15 @@ function init () {
           }
         });
       }
-      }).catch(function(err) {
+    }).
+      catch(function (err) {
         console.log(err);
-        console.log("Failed to initialize Secure Storage, not associating with keepass!");
+        console.log('Failed to initialize Secure Storage, not associating with keepass!');
         browser.notifications.create({
-          'type': "basic",
-          'message': "Failed to initialize Secure Storage!.",
-          'iconUrl': browser.extension.getURL("icons/keywi-96.png"),
-          'title': "Keywi"
+          'type': 'basic',
+          'message': 'Failed to initialize Secure Storage!.',
+          'iconUrl': browser.extension.getURL('icons/keywi-96.png'),
+          'title': 'Keywi'
         });
       });
   });

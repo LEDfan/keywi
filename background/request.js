@@ -17,18 +17,18 @@
  * along with Keywi.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-function request(req) {
-    return browser.storage.local.get("keepass-server-url").then(function(pref) {
-        return fetch(pref["keepass-server-url"] || 'http://localhost:19455',
-            {
-                method: "POST",
-                body: JSON.stringify(req),
-                headers: new Headers({
-                    'Content-Type': 'application/json'
-                })
-            })
-            .then(function(res) {
-                return res.json();
-            });
-    });
+function request (req) {
+  return browser.storage.local.get('keepass-server-url').then(function (pref) {
+    return fetch(
+      pref['keepass-server-url'] || 'http://localhost:19455',
+      {
+        'method': 'POST',
+        'body': JSON.stringify(req),
+        'headers': new Headers({'Content-Type': 'application/json'})
+      }
+    ).
+      then(function (res) {
+        return res.json();
+      });
+  });
 }
