@@ -234,7 +234,7 @@ Keepass.getLogins = function (url, callback) {
             if (decryptedEntries.length === 0) {
               browser.notifications.create({
                 'type': 'basic',
-                'message': 'No passwords found',
+                'message': browser.i18n.getMessage('noPassFound'),
                 'iconUrl': browser.extension.getURL('icons/keywi-96.png'),
                 'title': 'Keywi'
               }); // TODO replace by injected message

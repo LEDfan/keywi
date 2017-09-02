@@ -51,7 +51,7 @@ function init () {
         console.log('Failed to initialize Secure Storage, not associating with keepass!');
         browser.notifications.create({
           'type': 'basic',
-          'message': 'Failed to initialize Secure Storage!.',
+          'message': browser.i18n.getMessage('initSSFailed'),
           'iconUrl': browser.extension.getURL('icons/keywi-96.png'),
           'title': 'Keywi'
         });
