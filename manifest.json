@@ -9,7 +9,6 @@
   },
   "background": {
     "scripts": [
-      "vendor/reqwest.js",
       "vendor/utf8.js",
       "vendor/aes.js",
       "vendor/cryptoHelpers.js",
@@ -21,6 +20,7 @@
       "background/LocalSecureStorage.prompts.js",
       "background/contextmenu.js",
       "background/commands.js",
+      "background/request.js",
       "background/init.js"
     ]
   },

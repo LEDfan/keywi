@@ -178,5 +178,9 @@
   "optReset": {
     "message": "Herstel alle instellingen",
     "description": "options page: reset all settings"
+  },
+  "initSSFailed": {
+    "message": "De Secure Storage kon niet geïnitialiseerd worden.",
+    "description": "Message shown when the secure storage can't be initialized"
   }
 }

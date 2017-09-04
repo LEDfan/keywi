@@ -67,12 +67,12 @@
   "globals": {
     "cryptoHelpers": true,
     "slowAES": true,
-    "reqwest": true,
     "UTF8": true,
     "Keepass": true,
     "LocalSecureStorage": true,
     "activeGetLogins": true,
     "SecureStorage": true,
-    "debounce": true
+    "debounce": true,
+    "request": true
   }
 }

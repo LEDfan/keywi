@@ -22,14 +22,12 @@ const Crypto = {};
 Crypto.keySize = 8;
 
 Crypto.encrypt = function (input, key, iv) {
-  return btoa(cryptoHelpers.convertByteArrayToString(
-    slowAES.encrypt(
-      cryptoHelpers.convertStringToByteArray(input),
-      slowAES.modeOfOperation.CBC,
-      cryptoHelpers.convertStringToByteArray(atob(key)),
-      cryptoHelpers.convertStringToByteArray(atob(iv)
-      )
-    )));
+  return btoa(cryptoHelpers.convertByteArrayToString(slowAES.encrypt(
+    cryptoHelpers.convertStringToByteArray(input),
+    slowAES.modeOfOperation.CBC,
+    cryptoHelpers.convertStringToByteArray(atob(key)),
+    cryptoHelpers.convertStringToByteArray(atob(iv))
+  )));
 };
 
 Crypto.decryptAsString = function (input, key, iv) {
