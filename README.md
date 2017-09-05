@@ -3,7 +3,7 @@
 Keywi
 ===
 
-Minimalistic Keepass extension using Web Extensions and KeepassHTTP.
+Minimalistic Keepass plugin using Web Extensions and KeepassHTTP.
 
 <!---
 Description on addons.mozilla.org starts here.
