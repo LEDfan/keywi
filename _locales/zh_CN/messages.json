@@ -1,0 +1,186 @@
+{
+  "extensionDescription": {
+    "message": "极简的 Keepass 插件，基于 Web Extensions 与 KeepassHTTP",
+    "description": "The description for the extension, used in the manifest."
+  },
+  "fillUsernamePassDescription": {
+    "message": "在当前输入框填入用户名与密码",
+    "description": "The description for the fill username/password hotkey"
+  },
+  "fillPassDescription": {
+    "message": "在当前输入框填入密码",
+    "description": "The description for the fill password hotkey"
+  },
+  "SSsetupCancelled": {
+    "message": "Secure Storage 配置已取消，因此 Keywi 无法正常工作。你可以从设置中重新配置。",
+    "description": "Displayed when the setup for the Secure Storage is cancelled."
+  },
+  "SSunlockCancelled": {
+    "message": "Secure Storage 解锁已取消，因此 Keywi 无法正常工作。",
+    "description": "Displayed when the unlock for the Secure Storage is cancelled."
+  },
+  "SSwrongUnlockKey": {
+    "message": "解锁密钥不匹配，请重试。",
+    "description": "Alert when the wrong key is given at Secure Storage unlock time"
+  },
+  "contextFillUserPass": {
+    "message": "填入用户名与密码",
+    "description": "Context menu to fill username and password"
+  },
+  "contextFillUser": {
+    "message": "填入用户名",
+    "description": "Context menu to fill username"
+  },
+  "contextFillPass": {
+    "message": "填入密码",
+    "description": "Context menu to fill password"
+  },
+  "noPassFieldFound": {
+    "message": "未找到密码输入框，仅填入用户名。",
+    "description": "Displayed when no password field was found when filling username and password"
+  },
+  "otherDBOpen": {
+    "message": "Keywi 已与一个 Keepass database关联，但是已打开的是另一个 database。",
+    "description": "Displayed at initialization if another database than the one keywi is associated with is open"
+  },
+  "cannotConnect": {
+    "message": "无法连接到 Keepass database，请确认 Keepass 正在运行并已解锁。",
+    "description": "Displayed when keywi cannot connect to the Keepass database"
+  },
+  "noPassFound": {
+    "message": "未找到密码",
+    "description": "Displayed when keywi cannot find any suitable passwords"
+  },
+  "noLogins": {
+    "message": "登录到 Keepass database 时出错，请确认已与该 database 关联。",
+    "description": "Displayed when Keepass doesn't give access"
+  },
+  "assocFailed": {
+    "message": "关联出错",
+    "description": "Displayed when something goes wrong during association"
+  },
+  "statusSSunlocked": {
+    "message": "Secure Storage 已解锁",
+    "description": "is Secure Storage unlocked?"
+  },
+  "statusDBassoc": {
+    "message": "Keepass database 已关联",
+    "description": "is the DB associated?"
+  },
+  "statusDBhash": {
+    "message": "Keepass database 哈希值",
+    "description": "What is the DB hash?"
+  },
+  "statusDBid": {
+    "message": "Keepass database ID",
+    "description": "What is the DB id?"
+  },
+  "confirmNotPassField": {
+    "message": "这不是一个密码输入框。确定填入密码?",
+    "description": "Confirm with the user they want to fill a password in something that is no password field"
+  },
+  "dialogSetupSSTitle": {
+    "message": "Secure Storage 配置",
+    "description": "The title for the setup Secure Storage dialog"
+  },
+  "dialogSetupSSHeader": {
+    "message": "配置你的 Secure Storage",
+    "description": "The header for the setup Secure Storage dialog"
+  },
+  "dialogSetupSSp1": {
+    "message": "Keywi 使用一个密码来安全地存储连接到 Keepass database 所需的信息。",
+    "description": "The first part of the setup Secure Storage dialog body"
+  },
+  "dialogSetupSSp2": {
+    "message": "填入一个安全的密码，这不是用于解锁 Keepass database 的密码。",
+    "description": "The second part of the setup Secure Storage dialog body"
+  },
+  "dialogUnlockSSTitle": {
+    "message": "解锁 Secure Storage",
+    "description": "The title for the unlock Secure Storage dialog"
+  },
+  "dialogUnlockSSHeader": {
+    "message": "解锁你的 Secure Storage",
+    "description": "The header for the unlock Secure Storage dialog"
+  },
+  "dialogUnlockSSp1": {
+    "message": "Keywi 使用一个密码来安全地存储连接到 Keepass database 所需的信息。",
+    "description": "The first part of the unlock Secure Storage dialog body"
+  },
+  "dialogUnlockSSp2": {
+    "message": "现在输入解锁 Secure Storage 的密码。",
+    "description": "The second part of the unlock Secure Storage dialog body"
+  },
+  "dialogSelectTitle": {
+    "message": "选择密码",
+    "description": "The title of the select multiple passwords dialog"
+  },
+  "dialogSelectHeader": {
+    "message": "选择一条密码",
+    "description": "The header of the select multiple passwords dialog"
+  },
+  "dialogSelectBody": {
+    "message": "Keepass 为当前URL匹配了多个密码，请选择一个。",
+    "description": "The body of the select multiple passwords dialog"
+  },
+  "Cancel": {
+    "message": "取消",
+    "description": "Cancel"
+  },
+  "Save": {
+    "message": "保存",
+    "description": "Save"
+  },
+  "Password": {
+    "message": "密码",
+    "description": "Password"
+  },
+  "samePass": {
+    "message": "确认密码",
+    "description": "Placeholder of the repeat password field"
+  },
+  "Unlock": {
+    "message": "解锁",
+    "description": "Unlock"
+  },
+  "optTitle": {
+    "message": "Keywi 选项",
+    "description": "The title for the options page"
+  },
+  "optUserInfoHeader": {
+    "message": "Keepass 连接信息：",
+    "description": "The header for the user info on the options page"
+  },
+  "Key": {
+    "message": "密钥",
+    "description": "Key"
+  },
+  "Value": {
+    "message": "值",
+    "description": "Value"
+  },
+  "optKeepassHTTPURL": {
+    "message": "KeepassHTTP URL：",
+    "description": "options page: KeepassHTTP url"
+  },
+  "optHashRounds": {
+    "message": "密钥生成时的哈希散列数（高级设置）：",
+    "description": "options page: number of hashing rounds"
+  },
+  "optDeferUnlockSS": {
+    "message": "启动时不解锁 Secure Storage",
+    "description": "options page: don't unlock the secure storage on startup"
+  },
+  "optReEncrypt": {
+    "message": "重新加密 Secure Storage",
+    "description": "options page: re-encrypt the secure storage"
+  },
+  "optReset": {
+    "message": "重置所有设置",
+    "description": "options page: reset all settings"
+  },
+  "initSSFailed": {
+    "message": "初始化 Secure Storage 失败！",
+    "description": "Message shown when the secure storage can't be initialized"
+  }
+}
