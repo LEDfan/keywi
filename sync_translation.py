@@ -16,11 +16,12 @@
 # You should have received a copy of the GNU General Public License
 # along with Keywi.  If not, see <http://www.gnu.org/licenses/>.
 
-
-# This script synchronises a translated language file with the English one
-# It will:
-#  - add new keys from `en/message.json` to any other language file
-#  - update descriptions from `en/messages.json` to any other language file
+"""
+This script synchronises a translated language file with the English one
+It will:
+  - add new keys from `en/message.json` to any other language file
+ - update descriptions from `en/messages.json` to any other language file
+"""
 
 import os
 import os.path
@@ -49,8 +50,6 @@ def sync_translation(base_path, base, target_file_name):
 
         if target[id]["message"] == base[id]["message"]:
             not_translated.append(id)
-
-    print(join(base_path, target_file_name))
 
     with open(join(base_path, target_file_name), 'w') as file:
         json.dump(target, file, indent=2, ensure_ascii=False)
