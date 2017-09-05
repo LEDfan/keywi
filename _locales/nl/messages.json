@@ -120,7 +120,7 @@
     "description": "The header of the select multiple passwords dialog"
   },
   "dialogSelectBody": {
-    "message": "Keepass heeft meerder paswoorden gevonden voor deze URL, gelieve er één te selecteren.",
+    "message": "Keepass heeft meerdere paswoorden gevonden voor deze URL, gelieve er één te selecteren.",
     "description": "The body of the select multiple passwords dialog"
   },
   "Cancel": {

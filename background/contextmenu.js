@@ -24,7 +24,7 @@ browser.contextMenus.create({
 });
 browser.contextMenus.create({
   'id': 'username',
-  'title': 'Fill username',
+  'title': browser.i18n.getMessage('contextFillUser'),
   'contexts': ['editable']
 });
 browser.runtime.getBrowserInfo().then((info) => {
@@ -36,7 +36,7 @@ browser.runtime.getBrowserInfo().then((info) => {
   }
   browser.contextMenus.create({
     'id': 'password',
-    'title': 'Fill password',
+    'title': browser.i18n.getMessage('contextFillPass'),
     'contexts': [ctx]
   });
 });

@@ -18,8 +18,11 @@ release-ss:
 		false
     endif
 	sed -i 's/keywi-ff-add-on@ledfan.be/keywi-ff-add-on-ss@ledfan.be/g' manifest.json
-	web-ext sign --api-key ${API_KEY} --api-secret ${API_SECRET}
+	web-ext sign --ignore-files Makefile sync_translation.py --api-key ${API_KEY} --api-secret ${API_SECRET}
 	sed -i 's/keywi-ff-add-on-ss@ledfan.be/keywi-ff-add-on@ledfan.be/g' manifest.json
+
+build:
+	web-ext build --ignore-files Makefile sync_translation.py
 
 deps:
 	npm install eslint web-ext

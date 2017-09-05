@@ -4,6 +4,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.0.0-rc1] [05/09/2017]
+### Added
+ - Support internationalization [#62](https://github.com/LEDfan/keywi/pull/62)
+ - Helper script to synchronise translations [#72](https://github.com/LEDfan/keywi/pull/72)
+ - Chinese internationalization [#71](https://github.com/LEDfan/keywi/pull/71)
+ - Dutch internationalization [#62](https://github.com/LEDfan/keywi/pull/62)
+### Changed
+ - Improve code style and remove debug messages [#70](https://github.com/LEDfan/keywi/pull/70)
+ - Replace reqwest library by native browser api [#69](https://github.com/LEDfan/keywi/pull/69)
+### Deprecated
+### Removed
+### Fixed
+ - Let the footer of dialogs fill up all remaining space [#68](https://github.com/LEDfan/keywi/pull/68)
+
+### Security
+
 ## [0.1.0-beta4] [18/05/2017]
 ### Changed
  - Replaced `reqwest.min.js` by `reqwest.js` for easier AMO reviews.
