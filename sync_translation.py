@@ -1,4 +1,22 @@
 #!/usr/bin/env python3
+
+# @copyright Tobia De Koninck
+# @copyright Robin Jadoul
+#
+# This file is part of Keywi.
+# Keywi is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Keywi is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with Keywi.  If not, see <http://www.gnu.org/licenses/>.
+
+
 # This script synchronises a translated language file with the English one
 # It will:
 #  - add new keys from `en/message.json` to any other language file
@@ -6,54 +24,55 @@
 
 import os
 import os.path
+from os.path import join
 import json
 from collections import OrderedDict
 
 translations = {}
 
-def synctranslation(base, target_file_name):
-  added = []
-  updated = []
-  nottranslated = []
 
-  with open(target_file_name) as file:
-    # target = json.load(file)
-    target = json.load(file, object_pairs_hook=OrderedDict)
+def sync_translation(base_path, base, target_file_name):
+    added = []
+    updated = []
+    not_translated = []
 
-  for id in sorted(base):
-    if id not in target:
-      added.append(id)
-      target[id] = base[id]
-    elif target[id]["description"] != base[id]["description"]:
-      updated.append(id)
-      target[id]["description"] = base[id]["description"]
+    with open(join(base_path, target_file_name)) as file:
+        target = json.load(file, object_pairs_hook=OrderedDict)
 
-    if target[id]["message"] == base[id]["message"]:
-      nottranslated.append(id)
+    for id in sorted(base):
+        if id not in target:
+            added.append(id)
+            target[id] = base[id]
+        elif target[id]["description"] != base[id]["description"]:
+            updated.append(id)
+            target[id]["description"] = base[id]["description"]
 
-  with open(target_file_name, 'w') as file:
-    json.dump(target, file, indent=2, ensure_ascii=False)
+        if target[id]["message"] == base[id]["message"]:
+            not_translated.append(id)
 
-  return {"added": added, "updated": updated, "nottranslated": nottranslated}
+    print(join(base_path, target_file_name))
+
+    with open(join(base_path, target_file_name), 'w') as file:
+        json.dump(target, file, indent=2, ensure_ascii=False)
+
+    return {"added": added, "updated": updated, "nottranslated": not_translated}
 
 
 if __name__ == "__main__":
+    base_path = os.path.dirname(__file__)
 
-  with open(os.path.join('_locales', 'en', 'messages.json')) as file:
-    enTranslation = json.load(file)
+    with open(join(base_path, '_locales', 'en', 'messages.json')) as file:
+        enTranslation = json.load(file)
 
-  for f in os.listdir('_locales'):
-    if f != "en":
-      stats = synctranslation(enTranslation, os.path.join("_locales", f, "messages.json"))
+    for f in os.listdir(join(base_path, '_locales')):
+        if f != "en":
+            stats = sync_translation(base_path, enTranslation, os.path.join("_locales", f, "messages.json"))
 
-      if len(stats["added"]) > 0:
-        for key in stats["added"]:
-          print("[" + str(f) + "] Added              " + str(key))
+            for key in stats["added"]:
+                print("[" + str(f) + "] Added              " + str(key))
 
-      if len(stats["updated"]) > 0:
-        for key in stats["updated"]:
-          print("[" + str(f) + "] Updated            " + str(key))
+            for key in stats["updated"]:
+                print("[" + str(f) + "] Updated            " + str(key))
 
-      if len(stats["nottranslated"]) > 0:
-        for key in stats["nottranslated"]:
-          print("[" + str(f) + "] Needs translation  " + str(key))
+            for key in stats["nottranslated"]:
+                print("[" + str(f) + "] Needs translation  " + str(key))
