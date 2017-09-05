@@ -178,5 +178,9 @@
   "optReset": {
     "message": "重置所有设置",
     "description": "options page: reset all settings"
+  },
+  "initSSFailed": {
+    "message": "初始化 Secure Storage 失败！",
+    "description": "Message shown when the secure storage can't be initialized"
   }
 }
