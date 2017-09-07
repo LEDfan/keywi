@@ -24,6 +24,7 @@ It will:
 """
 
 import os
+import sys
 import os.path
 from os.path import join
 import json
@@ -48,9 +49,6 @@ def sync_translation(base_path, base, target_file_name):
             updated.append(id)
             target[id]["description"] = base[id]["description"]
 
-        if target[id]["message"] == base[id]["message"]:
-            not_translated.append(id)
-
     with open(join(base_path, target_file_name), 'w') as file:
         json.dump(target, file, indent=2, ensure_ascii=False)
 
@@ -58,20 +56,28 @@ def sync_translation(base_path, base, target_file_name):
 
 
 if __name__ == "__main__":
+    stats_only = len(sys.argv) == 2 and sys.argv[1] == "--stats-only"
+
     base_path = os.path.dirname(__file__)
 
     with open(join(base_path, '_locales', 'en', 'messages.json')) as file:
         enTranslation = json.load(file)
 
+    total = len(enTranslation)
+
     for f in os.listdir(join(base_path, '_locales')):
         if f != "en":
             stats = sync_translation(base_path, enTranslation, os.path.join("_locales", f, "messages.json"))
 
-            for key in stats["added"]:
-                print("[" + str(f) + "] Added              " + str(key))
+            if not stats_only:
+                for key in stats["added"]:
+                    print("[" + str(f) + "] Added              " + str(key))
 
-            for key in stats["updated"]:
-                print("[" + str(f) + "] Updated            " + str(key))
+                for key in stats["updated"]:
+                    print("[" + str(f) + "] Updated            " + str(key))
 
-            for key in stats["nottranslated"]:
-                print("[" + str(f) + "] Needs translation  " + str(key))
+                for key in stats["nottranslated"]:
+                    print("[" + str(f) + "] Needs translation  " + str(key))
+            else:
+                 print(("[" + str(f) + "]").ljust(20, ' ') + str(total - len(stats["nottranslated"])) + "/" + str(total))
+
