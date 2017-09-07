@@ -72,8 +72,8 @@ Description on addons.mozilla.org ends here.
 
 ## Translations
 Currently the following translations are available:
- - EN
- - NL
+
+![Translation](https://ci.ledfan.be/static/translation-status.png)
 
 To provide extra translations please open a pull request:
  1. fork this repo and clone it into your workspace
