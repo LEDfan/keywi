@@ -23,7 +23,7 @@ window.addEventListener('DOMContentLoaded', function () {
       const spl = e.dataset.i18n.split('.');
       e.setAttribute(spl[0], browser.i18n.getMessage(spl[1]));
     } else { // Replace the content of the element
-      e.innerHTML = browser.i18n.getMessage(e.dataset.i18n);
+      e.innerText = browser.i18n.getMessage(e.dataset.i18n);
     }
   }
 });

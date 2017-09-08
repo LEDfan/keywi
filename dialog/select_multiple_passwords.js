@@ -36,7 +36,7 @@ window.addEventListener('DOMContentLoaded', function () {
         html += generateButtonRow(i, request.data.possibleCredentials[i].Name, request.data.possibleCredentials[i].Login);
       }
 
-      document.getElementById('passwords').innerHTML = html;
+      document.getElementById('passwords').innerText = html;
       const els = document.getElementsByClassName('password-choose-btn');
 
       for (const el of els) {
