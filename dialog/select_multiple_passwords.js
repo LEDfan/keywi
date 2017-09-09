@@ -18,10 +18,10 @@
  */
 
 const generateButtonRow = function (name, login) {
-  let div = document.createElement('div');
+  const div = document.createElement('div');
   div.classList.add('password-container');
 
-  let button = document.createElement('button');
+  const button = document.createElement('button');
   button.classList.add('password-choose-btn');
   button.innerText = `${login} (${name})`;
 
@@ -34,7 +34,7 @@ window.addEventListener('DOMContentLoaded', function () {
   browser.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     if (request.type === 'select_mul_pass_data') {
       const length = request.data.possibleCredentials.length;
-      let passwordsEl = document.getElementById('passwords');
+      const passwordsEl = document.getElementById('passwords');
 
       // clear previous entries
       while (passwordsEl.hasChildNodes()) {
@@ -42,7 +42,7 @@ window.addEventListener('DOMContentLoaded', function () {
       }
 
       for (let i = 0; i < length; i++) {
-        let el = generateButtonRow(request.data.possibleCredentials[i].Name, request.data.possibleCredentials[i].Login);
+        const el = generateButtonRow(request.data.possibleCredentials[i].Name, request.data.possibleCredentials[i].Login);
         el.addEventListener('click', function () {
           browser.runtime.sendMessage({
             'type': 'select_mul_pass_user_input',
