@@ -17,36 +17,41 @@
  * along with Keywi.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const generateButtonRow = function (index, name, login) {
-  return `
-    <div class="password-container">
-            <button data-index="${index}" class="password-choose-btn">${login} (${name})</button>
-         </div>
-    </div>
-`;
+const generateButtonRow = function (name, login) {
+  let div = document.createElement('div');
+  div.classList.add('password-container');
+
+  let button = document.createElement('button');
+  button.classList.add('password-choose-btn');
+  button.innerText = `${login} (${name})`;
+
+  div.appendChild(button);
+
+  return div;
 };
 
 window.addEventListener('DOMContentLoaded', function () {
   browser.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     if (request.type === 'select_mul_pass_data') {
       const length = request.data.possibleCredentials.length;
-      let html = '';
+      let passwordsEl = document.getElementById('passwords');
 
-      for (let i = 0; i < length; i++) {
-        html += generateButtonRow(i, request.data.possibleCredentials[i].Name, request.data.possibleCredentials[i].Login);
+      // clear previous entries
+      while (passwordsEl.hasChildNodes()) {
+        passwordsEl.removeChild(passwordsEl.lastChild);
       }
 
-      document.getElementById('passwords').innerText = html;
-      const els = document.getElementsByClassName('password-choose-btn');
-
-      for (const el of els) {
+      for (let i = 0; i < length; i++) {
+        let el = generateButtonRow(request.data.possibleCredentials[i].Name, request.data.possibleCredentials[i].Login);
         el.addEventListener('click', function () {
           browser.runtime.sendMessage({
             'type': 'select_mul_pass_user_input',
-            'data': {'selected': this.dataset.index}
+            'data': {'selected': i}
           });
         }, false);
+        passwordsEl.appendChild(el);
       }
+
     }
   });
 });
