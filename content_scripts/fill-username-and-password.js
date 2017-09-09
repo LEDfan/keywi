@@ -40,6 +40,22 @@ function searchForPasswordInput (userInput) {
 }
 
 browser.runtime.onMessage.addListener(function _func (request, sender, sendResponse) {
+  /**
+   * Some website use a custom made placeholder using <label>'s. This placeholder is removed by JS when the user
+   * enters something in the input field. However since we change the value of the input field using JS this event
+   * isn't triggered. Therefore we simulate a key press.
+   * See e.g. dropbox.com
+   */
+  const event = new KeyboardEvent('keydown', {'key': 'ArrowLeft'});
+  /**
+   * Some websites use a JS framework like React which interact with the input field in a different matter than plain
+   * HTML. Therefore after filling we send the 'input' event to the input field so these frameworks now the contents
+   * of the input field has changed.
+   */
+  let inputEvent = new Event('input', {
+    'bubbles': true,
+    'cancelable': true
+  });
   if (request.type === 'username-and-password') {
     // Only useful for input elements
     if (document.activeElement.tagName !== 'INPUT') {
@@ -48,15 +64,8 @@ browser.runtime.onMessage.addListener(function _func (request, sender, sendRespo
 
     const usernameField = document.activeElement;
     usernameField.value = request.username;
-
-    /**
-         * Some website use a custom made placeholder using <label>'s. This placeholder is removed by JS when the user
-         * enters something in the input field. However since we change the value of the input field using JS this event
-         * isn't triggered. Therefore we simulate a key press.
-         * See e.g. dropbox.com
-         */
-    const event = new KeyboardEvent('keydown', {'key': 'ArrowLeft'});
     usernameField.dispatchEvent(event);
+    usernameField.dispatchEvent(inputEvent);
 
     const passwordField = searchForPasswordInput(usernameField);
     if (passwordField === null && !request.suppress_error_on_missing_pw_field) {
@@ -64,6 +73,7 @@ browser.runtime.onMessage.addListener(function _func (request, sender, sendRespo
     } else {
       passwordField.value = request.password;
       passwordField.dispatchEvent(event);
+      passwordField.dispatchEvent(inputEvent);
     }
   } else if (request.type === 'username') {
     // Only useful for input elements
@@ -71,17 +81,15 @@ browser.runtime.onMessage.addListener(function _func (request, sender, sendRespo
       return;
     }
 
-    const event = new KeyboardEvent('keydown', {'key': 'ArrowLeft'});
-
     document.activeElement.value = request.username;
     document.activeElement.dispatchEvent(event);
+    document.activeElement.dispatchEvent(inputEvent);
   } else if (request.type === 'password') {
     // Only useful for input elements
     if (document.activeElement.tagName !== 'INPUT') {
       return;
     }
 
-    const event = new KeyboardEvent('keydown', {'key': 'ArrowLeft'});
     if (document.activeElement.type !== 'password') {
       if (confirm(browser.i18n.getMessage('confirmNotPassField'))) {
         document.activeElement.value = request.password;
@@ -90,6 +98,7 @@ browser.runtime.onMessage.addListener(function _func (request, sender, sendRespo
       document.activeElement.value = request.password;
     }
     document.activeElement.dispatchEvent(event);
+    document.activeElement.dispatchEvent(inputEvent);
   }
 });
 
