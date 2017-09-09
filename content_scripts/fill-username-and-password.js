@@ -39,7 +39,9 @@ function searchForPasswordInput (userInput) {
   }
 }
 
-browser.runtime.onMessage.addListener(function _func (request, sender, sendResponse) {
+function writeValueToInputElement(element, value) {
+  element.value = value;
+
   /**
    * Some website use a custom made placeholder using <label>'s. This placeholder is removed by JS when the user
    * enters something in the input field. However since we change the value of the input field using JS this event
@@ -47,43 +49,42 @@ browser.runtime.onMessage.addListener(function _func (request, sender, sendRespo
    * See e.g. dropbox.com
    */
   const event = new KeyboardEvent('keydown', {'key': 'ArrowLeft'});
+
   /**
    * Some websites use a JS framework like React which interact with the input field in a different matter than plain
    * HTML. Therefore after filling we send the 'input' event to the input field so these frameworks now the contents
    * of the input field has changed.
    */
-  let inputEvent = new Event('input', {
+  const inputEvent = new Event('input', {
     'bubbles': true,
     'cancelable': true
   });
+  element.dispatchEvent(event);
+  element.dispatchEvent(inputEvent);
+}
+
+browser.runtime.onMessage.addListener(function _func (request, sender, sendResponse) {
   if (request.type === 'username-and-password') {
     // Only useful for input elements
     if (document.activeElement.tagName !== 'INPUT') {
       return;
     }
 
-    const usernameField = document.activeElement;
-    usernameField.value = request.username;
-    usernameField.dispatchEvent(event);
-    usernameField.dispatchEvent(inputEvent);
+    writeValueToInputElement(document.activeElement, request.username);
 
-    const passwordField = searchForPasswordInput(usernameField);
+    const passwordField = searchForPasswordInput(document.activeElement);
+
     if (passwordField === null && !request.suppress_error_on_missing_pw_field) {
       browser.runtime.sendMessage({'type': 'no-password-field-found'});
     } else {
-      passwordField.value = request.password;
-      passwordField.dispatchEvent(event);
-      passwordField.dispatchEvent(inputEvent);
+      writeValueToInputElement(passwordField, request.password);
     }
   } else if (request.type === 'username') {
     // Only useful for input elements
     if (document.activeElement.tagName !== 'INPUT') {
       return;
     }
-
-    document.activeElement.value = request.username;
-    document.activeElement.dispatchEvent(event);
-    document.activeElement.dispatchEvent(inputEvent);
+    writeValueToInputElement(document.activeElement, request.username);
   } else if (request.type === 'password') {
     // Only useful for input elements
     if (document.activeElement.tagName !== 'INPUT') {
@@ -92,13 +93,11 @@ browser.runtime.onMessage.addListener(function _func (request, sender, sendRespo
 
     if (document.activeElement.type !== 'password') {
       if (confirm(browser.i18n.getMessage('confirmNotPassField'))) {
-        document.activeElement.value = request.password;
+        writeValueToInputElement(document.activeElement, request.password);
       }
     } else {
-      document.activeElement.value = request.password;
+      writeValueToInputElement(document.activeElement, request.password);
     }
-    document.activeElement.dispatchEvent(event);
-    document.activeElement.dispatchEvent(inputEvent);
   }
 });
 
