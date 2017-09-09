@@ -76,7 +76,7 @@ browser.runtime.onMessage.addListener(function _func (request, sender, sendRespo
 
     if (passwordField === null && !request.suppress_error_on_missing_pw_field) {
       browser.runtime.sendMessage({'type': 'no-password-field-found'});
-    } else {
+    } else if (passwordField !== null) {
       writeValueToInputElement(passwordField, request.password);
     }
   } else if (request.type === 'username') {
