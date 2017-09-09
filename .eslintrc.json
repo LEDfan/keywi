@@ -62,7 +62,8 @@
     "no-alert": "off",
     "no-constant-condition": "off",
     "no-invalid-this": "off",
-    "no-bitwise": "off"
+    "no-bitwise": "off",
+    "space-before-function-paren": "off"
   },
   "globals": {
     "cryptoHelpers": true,
