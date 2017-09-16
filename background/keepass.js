@@ -360,7 +360,6 @@ browser.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     Keepass._ss.reencrypt(function () {
       sendResponse();
     });
-    return true;
   } else if (request.type === 'reset') {
     Keepass._ss.clear().then(function () {
       return Keepass._ss.reInitialize();
@@ -373,7 +372,6 @@ browser.runtime.onMessage.addListener(function (request, sender, sendResponse) {
       catch(function () {
         sendResponse();
       });
-    return true;
   } else if (request.type === 'options_user_info') {
     let hash = null;
     if (Keepass._ss.ready()) {
@@ -417,10 +415,10 @@ browser.runtime.onMessage.addListener(function (request, sender, sendResponse) {
             sendResponse(response);
           });
     }
-    return true; // http://stackoverflow.com/a/40773823
   } else if (request.type === 'associate')   {
     Keepass.associate(function () {
       sendResponse();
     });
   }
+  return true; // http://stackoverflow.com/a/40773823
 });
