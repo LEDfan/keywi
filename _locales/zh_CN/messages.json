@@ -184,7 +184,7 @@
     "description": "Message shown when the secure storage can't be initialized"
   },
   "optAssociate": {
-    "message": "Associate with Keepass",
+    "message": "与 KeePass 建立关联",
     "description": "options page: text showed on button to associate with Keepass, if not already associated"
   }
 }
