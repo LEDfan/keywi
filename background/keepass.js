@@ -378,19 +378,20 @@ browser.runtime.onMessage.addListener(function (request, sender, sendResponse) {
       // if Secure Storage is unlocked
       Keepass._ss.get('database.hash').then(function (data) {
         hash = data;
-        Keepass._ss.get('database.id').then(function (id) {
+        return Keepass._ss.get('database.id');
+      }).
+        then(function (id) {
           // if database id and hash are available we are associated with Keepass
-          const response = {table: {}, associated: true};
+          const response = {'table': {}, 'associated': true};
           response.table[browser.i18n.getMessage('statusSSunlocked')] = true;
           response.table[browser.i18n.getMessage('statusDBassoc')] = true;
           response.table[browser.i18n.getMessage('statusDBhash')] = hash;
           response.table[browser.i18n.getMessage('statusDBid')] = id;
           sendResponse(response);
-        });
-      }).
+        }).
         catch(function () {
           // database id or hash are not available we are not associated with Keepass
-          const response = {table: {}, associated: false};
+          const response = {'table': {}, 'associated': false};
           response.table[browser.i18n.getMessage('statusSSunlocked')] = true;
           response.table[browser.i18n.getMessage('statusDBassoc')] = false;
           sendResponse(response);
@@ -400,22 +401,23 @@ browser.runtime.onMessage.addListener(function (request, sender, sendResponse) {
       Keepass._ss.has('database.hash').then(function (data) {
         hash = data;
         return Keepass._ss.has('database.id');
-      }).then(function (id) {
+      }).
+        then(function (id) {
           // hash and id are available
-          const response = {table: {}, associated: true};
+          const response = {'table': {}, 'associated': true};
           response.table[browser.i18n.getMessage('statusSSunlocked')] = false;
           response.table[browser.i18n.getMessage('statusDBassoc')] = true;
           sendResponse(response);
         }).
-          catch(function () {
+        catch(function () {
           // hash or id are not available
-            const response = {table: {}, associated: false};
-            response.table[browser.i18n.getMessage('statusSSunlocked')] = false;
-            response.table[browser.i18n.getMessage('statusDBassoc')] = false;
-            sendResponse(response);
-          });
+          const response = {'table': {}, 'associated': false};
+          response.table[browser.i18n.getMessage('statusSSunlocked')] = false;
+          response.table[browser.i18n.getMessage('statusDBassoc')] = false;
+          sendResponse(response);
+        });
     }
-  } else if (request.type === 'associate')   {
+  } else if (request.type === 'associate') {
     Keepass.associate(function () {
       sendResponse();
     });
