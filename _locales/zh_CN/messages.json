@@ -182,5 +182,9 @@
   "initSSFailed": {
     "message": "初始化 Secure Storage 失败！",
     "description": "Message shown when the secure storage can't be initialized"
+  },
+  "optAssociate": {
+    "message": "Associate with Keepass",
+    "description": "options page: text showed on button to associate with Keepass, if not already associated"
   }
 }
