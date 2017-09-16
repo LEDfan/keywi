@@ -24,10 +24,17 @@ function readAndUpdateUserInfo () {
     for (let i = 0; i < length; i++) {
       table.deleteRow(0);
     }
-    for (const key of Object.keys(data)) {
+    for (const key of Object.keys(data.table)) {
       const row = table.insertRow(table.rows.length);
       row.insertCell(0).innerText = key;
-      row.insertCell(1).innerText = data[key];
+      row.insertCell(1).innerText = data.table[key];
+    }
+
+    if (data.associated === true) {
+      document.getElementById('btn-associate').style.display = 'none';
+    } else {
+      // just to be sure when the function is called after the user updates.
+      document.getElementById('btn-associate').style.display = 'block';
     }
   });
 }
@@ -74,6 +81,13 @@ window.addEventListener('DOMContentLoaded', function () {
       alert(`To completely disconnect keepass, you will have to remove the key with id "${window.userInfoData['Keepass database id']}" in Keepass!`);
     }
     browser.runtime.sendMessage({'type': 'reset'}).
+      then(function () {
+        readAndUpdateUserInfo();
+      });
+  });
+
+  document.getElementById('btn-associate').addEventListener('click', function () {
+    browser.runtime.sendMessage({'type': 'associate'}).
       then(function () {
         readAndUpdateUserInfo();
       });
