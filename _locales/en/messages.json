@@ -179,6 +179,10 @@
     "message": "Reset all settings",
     "description": "options page: reset all settings"
   },
+  "optAssociate": {
+    "message": "Associate with Keepass",
+    "description": "options page: text showed on button to associate with Keepass, if not already associated"
+  },
   "initSSFailed": {
     "message": "Failed to initialize Secure Storage!",
     "description": "Message shown when the secure storage can't be initialized"

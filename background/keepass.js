@@ -360,7 +360,6 @@ browser.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     Keepass._ss.reencrypt(function () {
       sendResponse();
     });
-    return true;
   } else if (request.type === 'reset') {
     Keepass._ss.clear().then(function () {
       return Keepass._ss.reInitialize();
@@ -373,33 +372,55 @@ browser.runtime.onMessage.addListener(function (request, sender, sendResponse) {
       catch(function () {
         sendResponse();
       });
-    return true;
   } else if (request.type === 'options_user_info') {
     let hash = null;
-    if (Keepass.ready()) {
+    if (Keepass._ss.ready()) {
+      // if Secure Storage is unlocked
       Keepass._ss.get('database.hash').then(function (data) {
         hash = data;
-        Keepass._ss.get('database.id').then(function (id) {
-          const response = {};
-          response[browser.i18n.getMessage('statusSSunlocked')] = Keepass._ss.ready();
-          response[browser.i18n.getMessage('statusDBassoc')] = Keepass.ready();
-          response[browser.i18n.getMessage('statusDBhash')] = hash;
-          response[browser.i18n.getMessage('statusDBid')] = id;
-          sendResponse(response);
-        });
+        return Keepass._ss.get('database.id');
       }).
+        then(function (id) {
+          // if database id and hash are available we are associated with Keepass
+          const response = {'table': {}, 'associated': true};
+          response.table[browser.i18n.getMessage('statusSSunlocked')] = true;
+          response.table[browser.i18n.getMessage('statusDBassoc')] = true;
+          response.table[browser.i18n.getMessage('statusDBhash')] = hash;
+          response.table[browser.i18n.getMessage('statusDBid')] = id;
+          sendResponse(response);
+        }).
         catch(function () {
-          const response = {};
-          response[browser.i18n.getMessage('statusSSunlocked')] = Keepass._ss.ready();
-          response[browser.i18n.getMessage('statusDBassoc')] = Keepass.ready();
+          // database id or hash are not available we are not associated with Keepass
+          const response = {'table': {}, 'associated': false};
+          response.table[browser.i18n.getMessage('statusSSunlocked')] = true;
+          response.table[browser.i18n.getMessage('statusDBassoc')] = false;
           sendResponse(response);
         });
     } else {
-      const response = {};
-      response[browser.i18n.getMessage('statusSSunlocked')] = Keepass._ss.ready();
-      response[browser.i18n.getMessage('statusDBassoc')] = Keepass.ready();
-      sendResponse(response);
+      // Secure Storage is locked so only check if hash and id are available
+      Keepass._ss.has('database.hash').then(function (data) {
+        hash = data;
+        return Keepass._ss.has('database.id');
+      }).
+        then(function (id) {
+          // hash and id are available
+          const response = {'table': {}, 'associated': true};
+          response.table[browser.i18n.getMessage('statusSSunlocked')] = false;
+          response.table[browser.i18n.getMessage('statusDBassoc')] = true;
+          sendResponse(response);
+        }).
+        catch(function () {
+          // hash or id are not available
+          const response = {'table': {}, 'associated': false};
+          response.table[browser.i18n.getMessage('statusSSunlocked')] = false;
+          response.table[browser.i18n.getMessage('statusDBassoc')] = false;
+          sendResponse(response);
+        });
     }
-    return true; // http://stackoverflow.com/a/40773823
+  } else if (request.type === 'associate') {
+    Keepass.associate(function () {
+      sendResponse();
+    });
   }
+  return true; // http://stackoverflow.com/a/40773823
 });
