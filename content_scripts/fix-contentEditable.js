@@ -35,3 +35,20 @@ fixContentEditable();
  * Some websites dynamically add elements to the DOM.
  */
 document.addEventListener("contextmenu", fixContentEditable, true);
+setTimeout(function() {
+  let inputElements = document.getElementsByTagName('INPUT');
+  for (let inputEl of inputElements) {
+    if (inputEl.type !== "hidden" && inputEl.type !== "submit" && inputEl.type !== "button") {
+      let pos = inputEl.getBoundingClientRect();
+      let topElUnderInput = document.elementFromPoint(pos.x + 2, pos.y + 2);
+      if (topElUnderInput.tagName !== 'INPUT') {
+        // the top most element at the position of the input field isn't the input field itself ...
+        while (topElUnderInput.tagName !== 'INPUT') {
+          // ... remove click events from it and continue until we reached the input event
+          topElUnderInput.style['pointer-events'] = "none";
+          topElUnderInput = document.elementFromPoint(pos.x + 2, pos.y + 2);
+        }
+      }
+    }
+  }
+}, 200);
