@@ -35,20 +35,32 @@ fixContentEditable();
  * Some websites dynamically add elements to the DOM.
  */
 document.addEventListener("contextmenu", fixContentEditable, true);
-setTimeout(function() {
+
+
+/**
+ * Some websites are using a custom placeholder instead of the HTML5 placeholder attribute. They dot his by creating a
+ * overlapping div on the input field. To fix this we remove the click events from the overlapping input fields.
+ */
+(function() {
   let inputElements = document.getElementsByTagName('INPUT');
   for (let inputEl of inputElements) {
     if (inputEl.type !== "hidden" && inputEl.type !== "submit" && inputEl.type !== "button") {
       let pos = inputEl.getBoundingClientRect();
-      let topElUnderInput = document.elementFromPoint(pos.x + 2, pos.y + 2);
+      // noticed that sometimes the overlapping element is a little below the actual input field
+      // so make sure we are actually above an overlapping element
+      let posX = pos.x + 2;
+      let posY = pos.y + 2;
+      let topElUnderInput = document.elementFromPoint(posX, posY);
       if (topElUnderInput.tagName !== 'INPUT') {
         // the top most element at the position of the input field isn't the input field itself ...
         while (topElUnderInput.tagName !== 'INPUT') {
           // ... remove click events from it and continue until we reached the input event
+          // by setting pointer-events to none, the elementFromPoint call which change to the next underlying element
+          // see https://stackoverflow.com/questions/14176988/why-is-document-elementfrompoint-affected-by-pointer-events-none
           topElUnderInput.style['pointer-events'] = "none";
-          topElUnderInput = document.elementFromPoint(pos.x + 2, pos.y + 2);
+          topElUnderInput = document.elementFromPoint(posX, posY);
         }
       }
     }
   }
-}, 200);
+}());

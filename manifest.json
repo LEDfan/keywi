@@ -35,7 +35,7 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["content_scripts/fix-contentEditable.js"],
+      "js": ["content_scripts/fix-contextmenu.js"],
       "run_at": "document_end",
       "all_frames": true
     },
