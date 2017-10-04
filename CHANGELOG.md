@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.1.0rc1] [04/10/2017]
+### Fixed
+ - Fix missing context menu with bad placeholders (e.g. MicroSoft's implementation) [#80](https://github.com/LEDfan/keywi/issues/80) & [#81](https://github.com/LEDfan/keywi/issues/81)
+ - Fix missing context menu with dynamically generated html [#78](https://github.com/LEDfan/keywi/issues/78) & [79](https://github.com/LEDfan/keywi/issues/79)
+
 ## [1.0.0] [19/09/2017]
 ### Added
  - Button to options page to associate when not already associated [#77](https://github.com/LEDfan/keywi/pull/77)
