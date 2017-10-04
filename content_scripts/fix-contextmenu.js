@@ -44,7 +44,13 @@ document.addEventListener("contextmenu", fixContentEditable, true);
 (function() {
   let inputElements = document.getElementsByTagName('INPUT');
   for (let inputEl of inputElements) {
-    if (inputEl.type !== "hidden" && inputEl.type !== "submit" && inputEl.type !== "button") {
+    let style = window.getComputedStyle(inputEl);
+    if (inputEl.type !== "hidden"
+      && inputEl.type !== "submit"
+      && inputEl.type !== "button"
+      && style.getPropertyValue('display') !== "none" // element is hidden -> obviously the parent element will overlap it
+      && inputEl.offsetHeight !== 0                   // another way to check if element is hidden (maybe by parent?)
+    ) {
       let pos = inputEl.getBoundingClientRect();
       // noticed that sometimes the overlapping element is a little below the actual input field
       // so make sure we are actually above an overlapping element
@@ -54,6 +60,13 @@ document.addEventListener("contextmenu", fixContentEditable, true);
       if (topElUnderInput.tagName !== 'INPUT') {
         // the top most element at the position of the input field isn't the input field itself ...
         while (topElUnderInput.tagName !== 'INPUT') {
+          if (topElUnderInput.tagName === "BODY"
+              || topElUnderInput.tagName === "HTML"
+              || topElUnderInput.tagName === "HEADER"
+              || topElUnderInput.tagName === "SECTION") {
+            break;
+          }
+
           // ... remove click events from it and continue until we reached the input event
           // by setting pointer-events to none, the elementFromPoint call which change to the next underlying element
           // see https://stackoverflow.com/questions/14176988/why-is-document-elementfrompoint-affected-by-pointer-events-none
