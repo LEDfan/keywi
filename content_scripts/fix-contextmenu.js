@@ -48,8 +48,8 @@ document.addEventListener("contextmenu", fixContentEditable, true);
       let pos = inputEl.getBoundingClientRect();
       // noticed that sometimes the overlapping element is a little below the actual input field
       // so make sure we are actually above an overlapping element
-      let posX = pos.x + 2;
-      let posY = pos.y + 2;
+      let posX = pos.x + pos.width / 2;
+      let posY = pos.y + pos.height / 2;
       let topElUnderInput = document.elementFromPoint(posX, posY);
       if (topElUnderInput.tagName !== 'INPUT') {
         // the top most element at the position of the input field isn't the input field itself ...
