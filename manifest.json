@@ -35,12 +35,6 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["content_scripts/fix-contentEditable.js"],
-      "run_at": "document_end",
-      "all_frames": true
-    },
-    {
-      "matches": ["<all_urls>"],
       "js": ["content_scripts/fill-username-and-password.js"],
       "run_at": "document_end",
       "all_frames": true

@@ -39,6 +39,29 @@ function searchForPasswordInput (userInput) {
   }
 }
 
+function searchForActiveInput () {
+  if (document.activeElement.tagName === 'INPUT') {
+    return document.activeElement;
+  }
+
+  let elementsUnderMouse = document.elementsFromPoint(window.right_click_pos_x, window.right_click_pos_y);
+
+  for (let el of elementsUnderMouse) {
+    if (el.tagName === 'INPUT') {
+      return el;
+    }
+  }
+
+  return null;
+}
+
+function saveRightClickLocation(event) {
+  window.right_click_pos_x = event.clientX;
+  window.right_click_pos_y = event.clientY;
+}
+
+document.addEventListener("contextmenu", saveRightClickLocation, true);
+
 function writeValueToInputElement(element, value) {
   element.value = value;
 
@@ -64,15 +87,15 @@ function writeValueToInputElement(element, value) {
 }
 
 browser.runtime.onMessage.addListener(function _func (request, sender, sendResponse) {
+  const activeField = searchForActiveInput();
+  if (activeField === null) {
+    browser.runtime.sendMessage({'type': 'no-username-field-found'});
+    return;
+  }
+  const passwordField = searchForPasswordInput(activeField);
+
   if (request.type === 'username-and-password') {
-    // Only useful for input elements
-    if (document.activeElement.tagName !== 'INPUT') {
-      return;
-    }
-
-    writeValueToInputElement(document.activeElement, request.username);
-
-    const passwordField = searchForPasswordInput(document.activeElement);
+    writeValueToInputElement(activeField, request.username);
 
     if (passwordField === null && !request.suppress_error_on_missing_pw_field) {
       browser.runtime.sendMessage({'type': 'no-password-field-found'});
@@ -80,23 +103,14 @@ browser.runtime.onMessage.addListener(function _func (request, sender, sendRespo
       writeValueToInputElement(passwordField, request.password);
     }
   } else if (request.type === 'username') {
-    // Only useful for input elements
-    if (document.activeElement.tagName !== 'INPUT') {
-      return;
-    }
-    writeValueToInputElement(document.activeElement, request.username);
+    writeValueToInputElement(activeField, request.username);
   } else if (request.type === 'password') {
-    // Only useful for input elements
-    if (document.activeElement.tagName !== 'INPUT') {
-      return;
-    }
-
-    if (document.activeElement.type !== 'password') {
+    if (activeField.type !== 'password') {
       if (confirm(browser.i18n.getMessage('confirmNotPassField'))) {
-        writeValueToInputElement(document.activeElement, request.password);
+        writeValueToInputElement(activeField, request.password);
       }
     } else {
-      writeValueToInputElement(document.activeElement, request.password);
+      writeValueToInputElement(activeField, request.password);
     }
   }
 });

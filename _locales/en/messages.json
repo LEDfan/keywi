@@ -39,6 +39,10 @@
     "message": "No password field found, filling only username.",
     "description": "Displayed when no password field was found when filling username and password"
   },
+  "noUsernameFieldFound": {
+    "message": "No username field found.",
+    "description": "Displayed when no username field was found when filling username"
+  },
   "otherDBOpen": {
     "message": "Keywi is already associated with a database, but another database is open.",
     "description": "Displayed at initialization if another database than the one keywi is associated with is open"

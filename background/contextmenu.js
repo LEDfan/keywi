@@ -20,19 +20,19 @@
 browser.contextMenus.create({
   'id': 'username-and-password',
   'title': browser.i18n.getMessage('contextFillUserPass'),
-  'contexts': ['editable']
+ 'contexts': ['all']
 });
 browser.contextMenus.create({
   'id': 'username',
   'title': browser.i18n.getMessage('contextFillUser'),
-  'contexts': ['editable']
+  'contexts': ['all']
 });
 browser.runtime.getBrowserInfo().then((info) => {
   let ctx;
   if (Number.parseInt(info.version.split('.')[0], 10) >= 53) {
     ctx = 'password';
   } else {
-    ctx = 'editable';
+    ctx = 'all';
   }
   browser.contextMenus.create({
     'id': 'password',
@@ -48,6 +48,13 @@ browser.runtime.onMessage.addListener((request, sender, sendresponse) => {
     browser.notifications.create({
       'type': 'basic',
       'message': browser.i18n.getMessage('noPassFieldFound'),
+      'iconUrl': browser.extension.getURL('icons/keywi-96.png'),
+      'title': 'Keywi'
+    });
+  } else if (request.type === 'no-username-field-found') {
+    browser.notifications.create({
+      'type': 'basic',
+      'message': browser.i18n.getMessage('noUsernameFieldFound'),
       'iconUrl': browser.extension.getURL('icons/keywi-96.png'),
       'title': 'Keywi'
     });
