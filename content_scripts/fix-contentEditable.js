@@ -27,6 +27,15 @@ function fixContentEditable() {
   for (const el of inputEls) {
     el.contentEditable = 'true';
   }
+  if (window.location.hostname === "login.live.com") {
+    // see https://github.com/LEDfan/keywi/issues/80
+    // see https://github.com/LEDfan/keywi/pull/81
+    // see https://github.com/LEDfan/keywi/pull/83
+    // see https://github.com/LEDfan/keywi/pull/84
+    for (let el of document.getElementsByClassName('phholder')) {
+      el.style['pointer-events'] = 'none';
+    }
+  }
 }
 
 fixContentEditable();
