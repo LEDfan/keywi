@@ -26,6 +26,12 @@ window.addEventListener('DOMContentLoaded', function () {
       e.innerText = browser.i18n.getMessage(e.dataset.i18n);
     }
   }
+  // Fix for Fx57 bug where bundled page loaded using
+  // browser.windows.create won't show contents unless resized.
+  // See https://bugzilla.mozilla.org/show_bug.cgi?id=1402110
+  browser.windows.getCurrent((win) => {
+    browser.windows.update(win.id, {width:win.width+1})
+  })
 });
 
 document.addEventListener('keyup', function (ev) {
