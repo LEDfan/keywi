@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.1.0] [09/11/2017]
+### Fixed
+ - Use other solution for [#80](https://github.com/LEDfan/keywi/issues/80) implemented in [#85](https://github.com/LEDfan/keywi/issues/85)
+ - Workaround for empty window in >= FF 57 [#86](https://github.com/LEDfan/keywi/pull/86)
+
 ## [1.1.0rc1] [04/10/2017]
 ### Fixed
  - Fix missing context menu with bad placeholders (e.g. MicroSoft's implementation) [#80](https://github.com/LEDfan/keywi/issues/80) & [#81](https://github.com/LEDfan/keywi/issues/81)
