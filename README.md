@@ -119,12 +119,6 @@ Some differences between this addon and Passifox:
 
 
 
-### [Keefox](http://keefox.org/)
-Some differences between this addon and Keefox:
- - doesn't uses web extensions, thus not compatible with Electrolysis
- - very feature rich, almost a password manager on it's own
- - automatic form filling
-
 ## Note about add-on ID's
 To speed up the testing of the add-on we release a signed but self-distributed version of it, this addon has the id `keywi-ff-add-on-ss@ledfan.be`. The add-on distributed using AMO has `keywi-ff-add-on@ledfan.be` as id.
 
