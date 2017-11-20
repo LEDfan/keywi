@@ -100,7 +100,7 @@ Keepass.prompts._selectCredentials = function (possibleCredentials) {
       'type': 'panel',
       'width': 400,
       'height': 600,
-      'incognito': false,
+      'incognito': true,
       'url': url
     }).then(function (newWindow) {
       const openedWindowId = newWindow.id;

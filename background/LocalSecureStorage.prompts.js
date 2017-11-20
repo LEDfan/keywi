@@ -27,7 +27,8 @@ LocalSecureStorage.prompts.setupNewPassword = function () {
       'width': 400,
       'height': 600,
       'incognito': false,
-      'url': url
+      'url': url,
+      'incognito': true
     }).then(function (newWindow) {
       const openedWindowId = newWindow.id;
       const onRemoved = function (removedWindowId) {
@@ -67,7 +68,8 @@ LocalSecureStorage.prompts.unlock = function (verifyFunc) {
       'width': 400,
       'height': 600,
       'incognito': false,
-      'url': url
+      'url': url,
+      'incognito': true
     }).then(function (newWindow) {
       const openedWindowId = newWindow.id;
       const onRemoved = function (removedWindowId) {
