@@ -14,10 +14,10 @@ Description on addons.mozilla.org starts here.
  - Fill username and password in login form, using context menu and keyboard shortcut
  - Use [Keepass HTTP](https://github.com/pfn/keepasshttp)
  - No editing of the Keepass database
- - Using the Firefox web extensions API, to support Electrolysis
- - Support Keepass, later maybe [Pass](https://www.passwordstore.org/)
+ - Using the Firefox web extensions API, to support Firefox 57 and later
+ - Support Keepass, KeepassXC, later maybe [Pass](https://www.passwordstore.org/)
  - Minimal amount of libraries (aes and cryptohelpers)
- - no automatic form filling, i.e. only when the user wants to. This is very important because:
+ - no automatic form filling, i.e. only when the user wants to. The user has to select the form itself. This is very important because:
    - credentials can be filled in the wrong site (e.g. a DNS spoofing)
    - crendetials can be filled in the sign up form
    - credentials can be filled in a hidden form
@@ -116,17 +116,30 @@ Some differences between this addon and Passifox:
  - some forms can't be filled (e.g. openmediavault has some problems with it)
  - doesn't uses web extensions, thus not compatible with Electrolysis
  - automatic form filling
+ 
+### [KeePassHttp-connector](https://github.com/smorks/keepasshttp-connector)
+This extension is a port of chromeIPass to firefox. Some differences:
+ - automatic form filling
+ - auto detect form fields (comes with a gui to manually select a form)
 
-
-
+### [Kee](https://www.kee.pm/)
+Kee does some things which this addon is designed to not do:
+ - Kee is very feature rich, almost a password manager on it's own
+ - Kee automatically fills login form
+ - Kee modifies the Keepass database
+ - Kee injects icons into the form
+ - Kee is not compatible with KeepassXC
+ - auto detect form fields
+ 
+ 
 ## Note about add-on ID's
 To speed up the testing of the add-on we release a signed but self-distributed version of it, this addon has the id `keywi-ff-add-on-ss@ledfan.be`. The add-on distributed using AMO has `keywi-ff-add-on@ledfan.be` as id.
 
 Warning: this means that when you switch between the self-distributed version and the version from AMO you need to re-setup the Secure Storage and re-associate with Keepass.
 
 ## Authors
- - @LEDfan Tobia De Koninck
- - @RobinJadoul Robin Jadoul
+ - [@LEDfan](https://github.com/LEDfan) Tobia De Koninck
+ - [@RobinJadoul](https://github.com/RobinJadoul) Robin Jadoul
 
 ## License
 Keywi is free software: you can redistribute it and/or modify
