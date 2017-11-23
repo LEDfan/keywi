@@ -15,7 +15,7 @@ Description on addons.mozilla.org starts here.
  - Use [Keepass HTTP](https://github.com/pfn/keepasshttp)
  - No editing of the Keepass database
  - Using the Firefox web extensions API, to support Firefox 57 and later
- - Support Keepass, KeepassXC later maybe [Pass](https://www.passwordstore.org/)
+ - Support Keepass, KeepassXC, later maybe [Pass](https://www.passwordstore.org/)
  - Minimal amount of libraries (aes and cryptohelpers)
  - no automatic form filling, i.e. only when the user wants to. The user has to select the form itself. This is very important because:
    - credentials can be filled in the wrong site (e.g. a DNS spoofing)
