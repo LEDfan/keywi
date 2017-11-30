@@ -52,13 +52,13 @@
   "commands": {
     "fill-form": {
       "suggested_key": {
-        "default": "Ctrl+Shift+F"
+        "default": "MacCtrl+Shift+F"
       },
       "description": "__MSG_fillUsernamePassDescription__"
     },
     "fill-password": {
       "suggested_key": {
-        "default": "Ctrl+Shift+D"
+        "default": "MacCtrl+Shift+D"
       },
       "description": "__MSG_fillPassDescription__"
     }

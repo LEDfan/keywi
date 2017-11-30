@@ -26,7 +26,6 @@ LocalSecureStorage.prompts.setupNewPassword = function () {
       'type': 'panel',
       'width': 400,
       'height': 600,
-      'incognito': false,
       'url': url,
       'incognito': true
     }).then(function (newWindow) {
@@ -67,7 +66,6 @@ LocalSecureStorage.prompts.unlock = function (verifyFunc) {
       'type': 'panel',
       'width': 400,
       'height': 600,
-      'incognito': false,
       'url': url,
       'incognito': true
     }).then(function (newWindow) {
