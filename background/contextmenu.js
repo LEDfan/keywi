@@ -64,7 +64,7 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
   if (activeGetLogins.indexOf(tab.id) === -1) {
     // prevent from simultaneous filling in the credentials
     activeGetLogins.push(tab.id);
-    Keepass.getLogins(tab.url, function (entry) {
+    Keepass.getLogins(tab.url).then((entry) => {
       browser.tabs.sendMessage(tab.id, {
         'type': type,
         'username': entry.Login,

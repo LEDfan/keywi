@@ -21,6 +21,10 @@
  * This file holds the main API to the Keepass Database
  */
 
+async function sleep(time) {
+  await new Promise((resolve) => setTimeout(resolve, time));
+}
+
 const Keepass = {};
 
 Keepass._ss = null;
@@ -173,11 +177,28 @@ Keepass.reCheckAssociated = function () {
           'Id': id
         };
 
-        browser.storage.local.get('keepass-server-url').then(function (pref) {
-          request(req).then(function (resp) {
-            Keepass.state.associated = Boolean(resp.Success);
-            resolve(resp.Success);
-          });
+        browser.storage.local.get('keepass-server-url').then(async function(pref) {
+          let tryagain = true;
+          let tries = 20;
+          while (tryagain && tries !== 0) {
+            // eslint-disable-next-line no-await-in-loop, no-loop-func
+            await request(req).then((resp) => {
+              Keepass.state.associated = Boolean(resp.Success);
+              resolve(resp.Success);
+              tryagain = false;
+            }).
+              // eslint-disable-next-line no-loop-func
+              catch(async (res) => {
+                console.log(res);
+                if (res.message === 'Database unavailable') {
+                  tries--;
+                  await sleep(500);
+                } else {
+                  resolve(false);
+                  tryagain = false;
+                }
+              });
+          }
         });
       }).
         catch(function () {
@@ -192,81 +213,99 @@ Keepass.reCheckAssociated = function () {
   });
 };
 
-Keepass.getLogins = function (url, callback) {
+Keepass.getLogins = function (url) {
+
   if (!this.ready()) {
-    Keepass.associate(function () {
-      Keepass.getLogins(url, callback);
+    return Keepass.associate().then(() => {
+      console.log('Not associated!');
+      return Keepass.getLogins(url);
     });
-    return;
   }
 
-  const self = this;
+  return new Promise(function (resolve, reject) {
+    const self = this;
 
-  Keepass._ss.get('database.key').then(function (key) {
-    Keepass._ss.get('database.id').then(function (id) {
-      const verifiers = Crypto.generateVerifier(key);
+    Keepass._ss.get('database.key').then(function (key) {
+      Keepass._ss.get('database.id').then(async function(id) {
+        const verifiers = Crypto.generateVerifier(key);
 
-      const req = {
-        'RequestType': 'get-logins',
-        'SortSelection': true,
-        'TriggerUnlock': false,
-        'Nonce': verifiers[0],
-        'Verifier': verifiers[1],
-        'Id': id,
-        'Url': Crypto.encrypt(url, key, verifiers[0]),
-        'SubmitUrl': null
-      };
-      request(req).then(function (resp) {
-        Keepass.helpers.verifyResponse(resp, key).then(function () {
-          const rIv = resp.Nonce;
-          const decryptedEntries = [];
-          let promiseChain = Promise.resolve();
-          for (let i = 0; i < resp.Entries.length; i++) {
-            promiseChain = promiseChain.then(function () {
-              return Keepass.helpers.decryptEntry(resp.Entries[i], rIv).then(function (decryptedEntry) {
-                // callback([decryptedEntry]);
-                decryptedEntries.push(decryptedEntry);
+        const req = {
+          'RequestType': 'get-logins',
+          'SortSelection': true,
+          'TriggerUnlock': true,
+          'Nonce': verifiers[0],
+          'Verifier': verifiers[1],
+          'Id': id,
+          'Url': Crypto.encrypt(url, key, verifiers[0]),
+          'SubmitUrl': null
+        };
+        let tryagain = true;
+        let tries = 20;
+        while (tryagain && tries !== 0) {
+          // eslint-disable-next-line no-await-in-loop, no-loop-func
+          await request(req).then(function(resp) {
+            tryagain = false;
+            Keepass.helpers.verifyResponse(resp, key).then(function() {
+              const rIv = resp.Nonce;
+              const decryptedEntries = [];
+              let promiseChain = Promise.resolve();
+              for (let i = 0; i < resp.Entries.length; i++) {
+                promiseChain = promiseChain.then(function() {
+                  return Keepass.helpers.decryptEntry(resp.Entries[i], rIv).then(function(decryptedEntry) {
+                    // callback([decryptedEntry]);
+                    decryptedEntries.push(decryptedEntry);
+                  });
+                });
+              }
+              promiseChain.then(function() {
+                // decrypted all entries
+                if (decryptedEntries.length === 0) {
+                  browser.notifications.create({
+                    'type': 'basic',
+                    'message': browser.i18n.getMessage('noPassFound'),
+                    'iconUrl': browser.extension.getURL('icons/keywi-96.png'),
+                    'title': 'Keywi'
+                  }); // TODO replace by injected message
+                } else if (decryptedEntries.length === 1) {
+                  resolve(decryptedEntries[0]);
+                } else {
+                  self.prompts._selectCredentials(decryptedEntries).then(function(selectedCredential) {
+                    resolve(selectedCredential);
+                  });
+                }
               });
-            });
-          }
-          promiseChain.then(function () {
-            // decrypted all entries
-            if (decryptedEntries.length === 0) {
-              browser.notifications.create({
-                'type': 'basic',
-                'message': browser.i18n.getMessage('noPassFound'),
-                'iconUrl': browser.extension.getURL('icons/keywi-96.png'),
-                'title': 'Keywi'
-              }); // TODO replace by injected message
-            } else if (decryptedEntries.length === 1) {
-              callback(decryptedEntries[0]);
-            } else {
-              self.prompts._selectCredentials(decryptedEntries).then(function (selectedCredential) {
-                callback(selectedCredential);
+            }).
+              catch(function(data) {
+                tryagain = false;
+                console.log(`RetrieveCredentials for ${url} rejected`);
+                browser.notifications.create({
+                  'type': 'basic',
+                  'message': browser.i18n.getMessage('noLogins'),
+                  'iconUrl': browser.extension.getURL('icons/keywi-96.png'),
+                  'title': 'Keywi'
+                });
+                reject();
               });
-
-            }
-          });
-        }).
-          catch(function () {
-            console.log(`RetrieveCredentials for ${url} rejected`);
-
-            browser.notifications.create({
-              'type': 'basic',
-              'message': browser.i18n.getMessage('noLogins'),
-              'iconUrl': browser.extension.getURL('icons/keywi-96.png'),
-              'title': 'Keywi'
+          }).
+            // eslint-disable-next-line no-loop-func
+            catch(async function(res) {
+              if (res.message === 'Database unavailable') {
+                tries--;
+                await sleep(500);
+              } else {
+                tryagain = false;
+                browser.notifications.create({
+                  'type': 'basic',
+                  'message': browser.i18n.getMessage('cannotConnect'),
+                  'iconUrl': browser.extension.getURL('icons/keywi-96.png'),
+                  'title': 'Keywi'
+                });
+                reject();
+              }
             });
-          });
-      }).
-        catch(function () {
-          browser.notifications.create({
-            'type': 'basic',
-            'message': browser.i18n.getMessage('cannotConnect'),
-            'iconUrl': browser.extension.getURL('icons/keepass-96.png'),
-            'title': 'Keywi'
-          });
-        });
+        }
+      }
+      );
     });
   });
 };
@@ -284,65 +323,69 @@ Keepass.deassociate = function () {
     });
 };
 
-Keepass.associate = function (callback) {
+Keepass.associate = function () {
 
   if (!Keepass._ss.ready()) {
     // if the secure storage isn't ready yet, first re initialize it
     // before associating the keepass database
     // If it was done the other way around, then if setting up the secure storage would fail
     // the association request would still be done, but the result couldn't be saved
-    Keepass._ss.reInitialize().then(function () {
-      Keepass.associate(callback);
-    });
-    return;
+    return Keepass._ss.reInitialize().
+      then(function () {
+        return Keepass.associate();
+      });
   }
 
   // test if we are already associated and it's working
-  this.reCheckAssociated().then(function (associated) {
-    if (associated) {
-      callback();
-    } else {
-      const rawKey = cryptoHelpers.generateSharedKey(Crypto.keySize * 2);
-      const key = btoa(cryptoHelpers.convertByteArrayToString(rawKey));
-      const verifiers = Crypto.generateVerifier(key);
+  return this.reCheckAssociated().then(function (associated) {
+    return new Promise(function (resolve, reject) {
+      if (associated) {
+        // callback();
+        resolve();
+      } else {
+        const rawKey = cryptoHelpers.generateSharedKey(Crypto.keySize * 2);
+        const key = btoa(cryptoHelpers.convertByteArrayToString(rawKey));
+        const verifiers = Crypto.generateVerifier(key);
 
-      const req = {
-        'RequestType': 'associate',
-        'Key': key,
-        'Nonce': verifiers[0],
-        'Verifier': verifiers[1]
-      };
-      request(req).then(function (resp) {
-        if (resp.Success) {
-          Keepass._ss.set('database.id', resp.Id).
-            then(function () {
-              return Keepass._ss.set('database.key', key);
-            }).
-            then(function () {
-              return Keepass._ss.set('database.hash', resp.Hash);
-            }).
-            then(function () {
-              Keepass.state.associated = true;
-              callback();
+        const req = {
+          'RequestType': 'associate',
+          'Key': key,
+          'Nonce': verifiers[0],
+          'Verifier': verifiers[1]
+        };
+        request(req).then(function (resp) {
+          if (resp.Success) {
+            Keepass._ss.set('database.id', resp.Id).
+              then(function () {
+                return Keepass._ss.set('database.key', key);
+              }).
+              then(function () {
+                return Keepass._ss.set('database.hash', resp.Hash);
+              }).
+              then(function () {
+                Keepass.state.associated = true;
+                // callback();
+                resolve();
+              });
+          } else {
+            browser.notifications.create({
+              'type': 'basic',
+              'message': browser.i18n.getMessage('assocFailed'),
+              'iconUrl': browser.extension.getURL('icons/keywi-96.png'),
+              'title': 'Keywi'
             });
-        } else {
-          browser.notifications.create({
-            'type': 'basic',
-            'message': browser.i18n.getMessage('assocFailed'),
-            'iconUrl': browser.extension.getURL('icons/keywi-96.png'),
-            'title': 'Keywi'
+          }
+        }).
+          catch(function () {
+            browser.notifications.create({
+              'type': 'basic',
+              'message': browser.i18n.getMessage('cannotConnect'),
+              'iconUrl': browser.extension.getURL('icons/keywi-96.png'),
+              'title': 'Keywi'
+            });
           });
-        }
-      }).
-        catch(function () {
-          browser.notifications.create({
-            'type': 'basic',
-            'message': browser.i18n.getMessage('cannotConnect'),
-            'iconUrl': browser.extension.getURL('icons/keywi-96.png'),
-            'title': 'Keywi'
-          });
-        });
-    }
+      }
+    });
   });
 };
 
