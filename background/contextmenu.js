@@ -71,6 +71,8 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
         'password': entry.Password
       });
       activeGetLogins.splice(activeGetLogins.indexOf(tab.id), 1);
+    }, function() {
+      activeGetLogins.splice(activeGetLogins.indexOf(tab.id), 1);
     });
   }
 });
