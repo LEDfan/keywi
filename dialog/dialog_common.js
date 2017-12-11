@@ -12,7 +12,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with Keywi.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -26,9 +26,12 @@ window.addEventListener('DOMContentLoaded', function () {
       e.innerText = browser.i18n.getMessage(e.dataset.i18n);
     }
   }
-  // Fix for Fx57 bug where bundled page loaded using
-  // browser.windows.create won't show contents unless resized.
-  // See https://bugzilla.mozilla.org/show_bug.cgi?id=1402110
+
+  /*
+   * Fix for Fx57 bug where bundled page loaded using
+   * browser.windows.create won't show contents unless resized.
+   * See https://bugzilla.mozilla.org/show_bug.cgi?id=1402110
+   */
   browser.windows.getCurrent((win) => {
     browser.windows.update(win.id, {'width': win.width + 1});
   });

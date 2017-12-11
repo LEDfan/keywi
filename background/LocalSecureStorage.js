@@ -12,7 +12,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with Keywi.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -65,8 +65,8 @@ LocalSecureStorage.prototype.reInitialize = function () {
 LocalSecureStorage.prototype._hasEncryptionKey = function () {
 
   /**
-     * We store some dummy data in the LocalSecureStorage to make the user already provided an encryption key.
-     */
+   * We store some dummy data in the LocalSecureStorage to make the user already provided an encryption key.
+   */
   const self = this;
   return new Promise(function (resolve, reject) {
     self.has(LocalSecureStorage.prototype._dummyValueKey).then(function () {
@@ -255,8 +255,8 @@ LocalSecureStorage.prototype._decrypt = function (data) {
   const verifier = data.verifier;
 
   /**
-     * First verify that the data is encrypted with the key stored in this._encryptionKey.
-     */
+   * First verify that the data is encrypted with the key stored in this._encryptionKey.
+   */
   const checkIvStr = Crypto.decryptAsString(verifier, LocalSecureStorage.prototype._encryptionkey, iv);
 
   if (checkIvStr !== iv) {
@@ -313,16 +313,19 @@ LocalSecureStorage.prototype.reencrypt = function (callback) {
       const prefixLength = LocalSecureStorage.prototype._prefix.length;
 
       /**
-             * Keep track if we have were associated before, if so and we reach the encrypt code, it should be associated again.
-             * If we don't reach the encrypt code i.e. the user canceled something, we are not associated.
-             * @type {boolean}
-             */
+       * Keep track if we have were associated before, if so and we reach the encrypt code, it should be associated again.
+       * If we don't reach the encrypt code i.e. the user canceled something, we are not associated.
+       * @type {boolean}
+       */
       const originalAssociated = Keepass.state.associated;
 
       for (const key of Object.keys(data)) {
         if (key.substr(0, prefixLength) === LocalSecureStorage.prototype._prefix) {
-          // only re-encrypt encrypted keys
-          // and do not ree-ncrypt the dummy value
+
+          /*
+           * only re-encrypt encrypted keys
+           * and do not ree-ncrypt the dummy value
+           */
           const userKey = key.substr(prefixLength, key.length - prefixLength);
           if (userKey !== LocalSecureStorage.prototype._dummyValueKey) {
             dataToSave[userKey] = self._decrypt(data[key]);

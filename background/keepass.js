@@ -12,7 +12,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with Keywi.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -155,9 +155,11 @@ Keepass.setSecureStorage = function (ss) {
   Keepass._ss = ss;
 };
 
-// Keepass.isAssociated = function() {
-//     return Keepass.state.associated;
-// };
+/*
+ * Keepass.isAssociated = function() {
+ *     return Keepass.state.associated;
+ * };
+ */
 
 Keepass.reCheckAssociated = function () {
   return new Promise(function (resolve, reject) {
@@ -290,10 +292,13 @@ Keepass.deassociate = function () {
 Keepass.associate = function (callback) {
 
   if (!Keepass._ss.ready()) {
-    // if the secure storage isn't ready yet, first re initialize it
-    // before associating the keepass database
-    // If it was done the other way around, then if setting up the secure storage would fail
-    // the association request would still be done, but the result couldn't be saved
+
+    /*
+     * if the secure storage isn't ready yet, first re initialize it
+     * before associating the keepass database
+     * If it was done the other way around, then if setting up the secure storage would fail
+     * the association request would still be done, but the result couldn't be saved
+     */
     Keepass._ss.reInitialize().then(function () {
       Keepass.associate(callback);
     });
