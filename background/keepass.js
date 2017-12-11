@@ -192,10 +192,10 @@ Keepass.reCheckAssociated = function () {
   });
 };
 
-Keepass.getLogins = function (url, callback) {
+Keepass.getLogins = function (url, callback, errcallback) {
   if (!this.ready()) {
     Keepass.associate(function () {
-      Keepass.getLogins(url, callback);
+      Keepass.getLogins(url, callback, errcallback);
     });
     return;
   }
@@ -238,6 +238,7 @@ Keepass.getLogins = function (url, callback) {
                 'iconUrl': browser.extension.getURL('icons/keywi-96.png'),
                 'title': 'Keywi'
               }); // TODO replace by injected message
+              errcallback();
             } else if (decryptedEntries.length === 1) {
               callback(decryptedEntries[0]);
             } else {
@@ -257,6 +258,7 @@ Keepass.getLogins = function (url, callback) {
               'iconUrl': browser.extension.getURL('icons/keywi-96.png'),
               'title': 'Keywi'
             });
+            errcallback();
           });
       }).
         catch(function () {
@@ -266,6 +268,7 @@ Keepass.getLogins = function (url, callback) {
             'iconUrl': browser.extension.getURL('icons/keepass-96.png'),
             'title': 'Keywi'
           });
+          errcallback();
         });
     });
   });
