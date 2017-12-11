@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.2.0rc1] [11/12/2017]
+### Fixed
+ - Enable context menu hack on `login.microsoftonline.com` [#96](https://github.com/LEDfan/keywi/issues/96) & [#99](https://github.com/LEDfan/keywi/pull/99)
+ - Fix bug with contextmenu not working after that filling credentials failed [#100](https://github.com/LEDfan/keywi/pull/100)
+
+
+### Changed
+ - Popup windows are now opened in incognito mode to remove them from Firefox history and recently closed [#92](https://github.com/LEDfan/keywi/pull/92)
+ - Use <kb>Ctlr</kb> instead of <kb>Command</kb> on Mac to prevent shortcut collisions [#93](https://github.com/LEDfan/keywi/issues/93) & [#94](https://github.com/LEDfan/keywi/pull/94)
+ - Move site-specific hacks to a dedicated file [#98](https://github.com/LEDfan/keywi/pull/98)
+
+
 ## [1.1.0] [09/11/2017]
 ### Fixed
  - Use other solution for [#80](https://github.com/LEDfan/keywi/issues/80) implemented in [#85](https://github.com/LEDfan/keywi/issues/85)
