@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.2.0] [01/01/2018]
+### Fixed
+ - Fix websites using old version of jQuery validation plugin [#101](https://github.com/LEDfan/keywi/issues/101) & [#102](https://github.com/LEDfan/keywi/pull/102)
+
 ## [1.2.0rc1] [11/12/2017]
 ### Fixed
  - Enable context menu hack on `login.microsoftonline.com` [#96](https://github.com/LEDfan/keywi/issues/96) & [#99](https://github.com/LEDfan/keywi/pull/99)
