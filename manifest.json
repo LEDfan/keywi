@@ -21,7 +21,8 @@
       "background/contextmenu.js",
       "background/commands.js",
       "background/request.js",
-      "background/init.js"
+      "background/init.js",
+      "background/basicauth.js"
     ]
   },
   "permissions": [
@@ -30,7 +31,9 @@
     "contextMenus",
     "tabs",
     "storage",
-    "notifications"
+    "notifications",
+    "webRequest",
+    "webRequestBlocking"
   ],
   "content_scripts": [
     {
