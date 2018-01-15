@@ -143,6 +143,42 @@
     "message": "Unlock",
     "description": "Unlock"
   },
+  "dialogConfirmBasicAuthTitle": {
+    "message": "Keywi for HTTP auth",
+    "description": "The title of the confirm_basic_auth dialog"
+  },
+  "dialogConfirmBasicAuthHeader": {
+    "message": "Use Keywi to supply HTTP credentials?",
+    "description": "The header of the confirm_basic_auth dialog"
+  },
+  "dialogConfirmBasicAuthBody": {
+    "message": "The following page is requesting credentials:",
+    "description": "The main body text for the confirm_basic_auth dialog"
+  },
+  "dialogConfirmBasicAuthFill": {
+    "message": "Use Keywi",
+    "description": "The fill option for the confirm_basic_auth dialog"
+  },
+  "dialogConfirmBasicAuthSkip": {
+    "message": "Skip Keywi",
+    "description": "The skip option for the confirm_basic_auth dialog"
+  },
+  "dialogConfirmBasicAuthPage": {
+    "message": "Page:",
+    "description": "Used in the confirm_basic_auth dialog with page information"
+  },
+  "dialogConfirmBasicAuthHost": {
+    "message": "Host:",
+    "description": "Used in the confirm_basic_auth dialog with page information"
+  },
+  "dialogConfirmBasicAuthRealm": {
+    "message": "Realm:",
+    "description": "Used in the confirm_basic_auth dialog with page information"
+  },
+  "dialogConfirmBasicAuthHostWarning": {
+    "message": "WARNING: this host is different from the page you're visiting:",
+    "description": "Warns the user for differing hosts in the confirm_basic_auth dialog"
+  },
   "optTitle": {
     "message": "Options for Keywi",
     "description": "The title for the options page"

@@ -83,7 +83,7 @@ footer p {
     flex: none;
 }
 
-#pass, #pass1, #pass2, #submit, #cancel {
+.accept, .cancel, #pass, #pass1, #pass2, #submit, #cancel {
     width: 340px;
     padding-top: 5px;
     padding-bottom: 5px;
@@ -97,7 +97,7 @@ footer p {
     border-radius: 4px;
 }
 
-#submit {
+.accept, #submit {
     color: #fff;
     background-color: #5cb85c;
     border: 1px solid transparent;
@@ -105,7 +105,7 @@ footer p {
     cursor:pointer;
 }
 
-#cancel {
+.cancel, #cancel {
     color: #fff;
     background-color: #d9534f;
     border-radius: 4px;
