@@ -53,9 +53,5 @@ document.getElementById('fill').onclick = function () {
 };
 
 document.getElementById('cancel').onclick = function () {
-  browser.runtime.sendMessage({'type': 'confirm_basic_auth_manual'});
-};
-
-document.getElementById('realcancel').onclick = function () {
   browser.runtime.sendMessage({'type': 'confirm_basic_auth_cancel'});
 };

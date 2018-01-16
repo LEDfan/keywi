@@ -159,10 +159,6 @@
     "message": "Use Keywi",
     "description": "The fill option for the confirm_basic_auth dialog"
   },
-  "dialogConfirmBasicAuthSkip": {
-    "message": "Skip Keywi",
-    "description": "The skip option for the confirm_basic_auth dialog"
-  },
   "dialogConfirmBasicAuthPage": {
     "message": "Page:",
     "description": "Used in the confirm_basic_auth dialog with page information"

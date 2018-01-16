@@ -28,3 +28,6 @@
   font-family: monospace;
   font-size: 0.8em;
 }
+#form.force {
+  height: 100px;
+}

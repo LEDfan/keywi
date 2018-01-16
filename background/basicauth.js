@@ -56,9 +56,6 @@
           if (request.type === 'confirm_basic_auth_fill') {
             clean();
             resolve('fill');
-          } else if (request.type === 'confirm_basic_auth_manual') {
-            clean();
-            resolve('manual');
           } else if (request.type === 'confirm_basic_auth_cancel') {
             clean();
             resolve('cancel');
@@ -104,10 +101,8 @@
       .then(function (choice) {
         if (choice === 'fill') {
           return queryDB(details.url);
-        } else if (choice === 'manual') {
-          return {};
         } else if (choice === 'cancel') {
-          return {'cancel': true};
+          return {};
         }
       });
   }, {'urls': ['<all_urls>']}, ['blocking']);
