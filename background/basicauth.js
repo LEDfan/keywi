@@ -18,6 +18,11 @@
  */
 
 (function() {
+  function extractHost(url) {
+    // Extract host from '<protocol>://<host>/<rest>', includes the port
+    return (/:\/\/([^/]+)\//).exec(url)[1];
+  }
+
   function confirmationDialog(config) {
     const dialogUrl = browser.extension.getURL('dialog/confirm_basic_auth.html');
     return browser.windows.create({
@@ -93,10 +98,11 @@
     return browser.tabs.get(details.tabId)
       .then(function (tab) {
         // Prevent looking at the old url when the page hasn't properly loaded yet
+        const host = extractHost(details.url);
         const pageHost = details.frameId === 0
-          ? details.challenger.host
-          : (/:\/\/([^/]+)\//).exec(tab.url)[1];
-        return confirmationDialog({'url': details.url, 'host': details.challenger.host, 'realm': details.realm, 'page_host': pageHost});
+          ? host
+          : extractHost(tab.url);
+        return confirmationDialog({'url': details.url, 'host': host, 'realm': details.realm, 'page_host': pageHost});
       })
       .then(function (choice) {
         if (choice === 'fill') {
