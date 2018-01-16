@@ -119,6 +119,10 @@ footer p {
     margin: 0 auto;
 }
 
+#text.force, #form.force {
+  height: auto;
+}
+
 button {
     cursor:pointer;
 }

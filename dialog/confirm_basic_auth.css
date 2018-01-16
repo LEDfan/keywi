@@ -25,4 +25,6 @@
 }
 .request-info {
   font-style: italic;
+  font-family: monospace;
+  font-size: 0.8em;
 }

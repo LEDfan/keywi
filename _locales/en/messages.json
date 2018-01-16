@@ -179,6 +179,10 @@
     "message": "WARNING: this host is different from the page you're visiting:",
     "description": "Warns the user for differing hosts in the confirm_basic_auth dialog"
   },
+  "dialogConfirmBasicAuthSSLWarning": {
+    "message": "WARNING: The connection is not secured, your credentials will be readable for everyone:",
+    "description": "Warns the user for lack of https in the confirm_basic_auth dialog"
+  },
   "optTitle": {
     "message": "Options for Keywi",
     "description": "The title for the options page"

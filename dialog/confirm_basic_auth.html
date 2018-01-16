@@ -29,17 +29,18 @@
       <h1 id="msg" data-i18n="dialogConfirmBasicAuthHeader"></h1>
     </header>
     <div id="container">
-      <div id="text">
+      <div id="text" class="force">
         <p data-i18n="dialogConfirmBasicAuthBody"></p>
         <ul>
           <li><span data-i18n="dialogConfirmBasicAuthPage"></span> <span id="request-url" class="request-info"></li>
           <li><span data-i18n="dialogConfirmBasicAuthHost"></span> <span id="host" class="request-info"></li>
           <li class="hidden" id="realm-part"><span data-i18n="dialogConfirmBasicAuthRealm"></span> <span id="realm" class="request-info"></li>
-          <li class="hidden warning" id="host-warning"><span data-i18n="dialogConfirmBasicAuthHostWarning"></span> <span id="request-host" class="request-info"></span></li>
+          <li class="hidden warning" id="host-warning"><span data-i18n="dialogConfirmBasicAuthHostWarning" class="request-info"></span> <span id="request-host" class="request-info"></span></li>
+          <li class="hidden warning" id="ssl-warning"><span data-i18n="dialogConfirmBasicAuthSSLWarning" class="request-info"></li>
         </ul>
       </div>
 
-      <div id="form">
+      <div id="form" class="force">
         <button type="button" class="accept" id="fill" data-i18n="dialogConfirmBasicAuthFill"></button>
         <button type="button" id="cancel" data-i18n="dialogConfirmBasicAuthSkip"></button>
         <button type="button" class="cancel" id="realcancel" data-i18n="Cancel"></button>

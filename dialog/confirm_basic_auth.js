@@ -18,20 +18,31 @@
  */
 
 window.addEventListener('DOMContentLoaded', function () {
+  function show(id) {
+    document.getElementById(id).classList.remove('hidden');
+  }
+  function set(id, val) {
+    document.getElementById(id).innerText = val;
+  }
+
   browser.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     if (request.type === 'confirm_basic_auth_data') {
+      const url = request.data.url;
       const host = request.data.host;
       const realm = request.data.realm;
       const pageHost = request.data.page_host;
-      document.getElementById('request-url').innerText = request.data.url;
-      document.getElementById('host').innerText = host;
+      set('request-url', url);
+      set('host', host);
       if (realm !== null && realm !== undefined) {
-        document.getElementById('realm').innerText = realm;
-        document.getElementById('realm-part').classList.remove('hidden');
+        set('realm', realm);
+        show('realm-part');
       }
       if (host !== pageHost) {
-        document.getElementById('request-host').innerText = pageHost;
-        document.getElementById('host-warning').classList.remove('hidden');
+        set('request-host', pageHost);
+        show('host-warning');
+      }
+      if (!url.startsWith('https://')) {
+        show('ssl-warning');
       }
     }
   });
