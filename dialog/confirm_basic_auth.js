@@ -55,3 +55,9 @@ document.getElementById('fill').onclick = function () {
 document.getElementById('cancel').onclick = function () {
   browser.runtime.sendMessage({'type': 'confirm_basic_auth_cancel'});
 };
+
+document.addEventListener('keyup', function (ev) {
+  if (ev.key === 'Accept' || ev.key === 'Execute' || ev.key === 'Enter') {
+    document.getElementById('fill').click();
+  }
+});
