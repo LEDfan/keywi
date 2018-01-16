@@ -18,7 +18,7 @@
  */
 
 (function() {
-  function confirmationDialog(url, host, realm, pageHost) {
+  function confirmationDialog(config) {
     const dialogUrl = browser.extension.getURL('dialog/confirm_basic_auth.html');
     return browser.windows.create({
       'type': 'panel',
@@ -37,7 +37,7 @@
               setTimeout(function () {
                 browser.tabs.sendMessage(openTabId, {
                   'type': 'confirm_basic_auth_data',
-                  'data': {'url': url, 'host': host, 'realm': realm, 'page_host': pageHost}
+                  'data': config
                 });
                 browser.tabs.onUpdated.removeListener(_sendData);
               }, 300);
@@ -95,8 +95,11 @@
     // TODO? track retries
     return browser.tabs.get(details.tabId)
       .then(function (tab) {
-        const pageHost = (/:\/\/([^/]+)\//).exec(tab.url)[1];
-        return confirmationDialog(details.url, details.challenger.host, details.realm, pageHost);
+        // Prevent looking at the old url when the page hasn't properly loaded yet
+        const pageHost = details.frameId === 0
+          ? details.challenger.host
+          : (/:\/\/([^/]+)\//).exec(tab.url)[1];
+        return confirmationDialog({'url': details.url, 'host': details.challenger.host, 'realm': details.realm, 'page_host': pageHost});
       })
       .then(function (choice) {
         if (choice === 'fill') {
