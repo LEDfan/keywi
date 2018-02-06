@@ -28,6 +28,7 @@ import sys
 import os.path
 from os.path import join
 import json
+from copy import copy
 from collections import OrderedDict
 
 translations = {}
@@ -44,7 +45,7 @@ def sync_translation(base_path, base, target_file_name):
     for id in sorted(base):
         if id not in target:
             added.append(id)
-            target[id] = base[id]
+            target[id] = copy(base[id])
             target[id]["message"] = "~~" + target[id]["message"]
         elif target[id]["message"][:2] == "~~":
             not_translated.append(id)
