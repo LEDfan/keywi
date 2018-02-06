@@ -79,8 +79,9 @@ To provide extra translations please open a pull request:
  1. fork this repo and clone it into your workspace
  2. copy the `_locales/en/messages.json` file to e.g. `_locales/de/message.json`
  3. translate all `message` fields inside this file
- 4. commit and push to Github
- 5. open a pull request
+ 4. remove `~~` at the beginning of every translated `message` field (also remove it when the translation is the same as the English version)
+ 5. commit and push to Github
+ 6. open a pull request
 
 It's not necessary to translate the following words, if there is no good translation which fits the context:
  - database

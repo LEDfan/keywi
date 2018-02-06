@@ -19,7 +19,7 @@
 """
 This script synchronises a translated language file with the English one
 It will:
-  - add new keys from `en/message.json` to any other language file
+ - add new keys from `en/message.json` to any other language file
  - update descriptions from `en/messages.json` to any other language file
 """
 
@@ -45,6 +45,9 @@ def sync_translation(base_path, base, target_file_name):
         if id not in target:
             added.append(id)
             target[id] = base[id]
+            target[id]["message"] = "~~" + target[id]["message"]
+        elif target[id]["message"][:2] == "~~":
+            not_translated.append(id)
         elif target[id]["description"] != base[id]["description"]:
             updated.append(id)
             target[id]["description"] = base[id]["description"]
@@ -52,7 +55,7 @@ def sync_translation(base_path, base, target_file_name):
     with open(join(base_path, target_file_name), 'w') as file:
         json.dump(target, file, indent=2, ensure_ascii=False)
 
-    return {"added": added, "updated": updated, "nottranslated": not_translated}
+    return {"added": added, "updated": updated, "not_translated": not_translated}
 
 
 if __name__ == "__main__":
@@ -76,8 +79,8 @@ if __name__ == "__main__":
                 for key in stats["updated"]:
                     print("[" + str(f) + "] Updated            " + str(key))
 
-                for key in stats["nottranslated"]:
-                    print("[" + str(f) + "] Needs translation  " + str(key))
+                for key in stats["not_translated"]:
+                    print("[" + str(f) + "] Not Translated     " + str(key))
             else:
-                 print(("[" + str(f) + "]").ljust(20, ' ') + str(total - len(stats["nottranslated"])) + "/" + str(total))
+                 print(("[" + str(f) + "]").ljust(20, ' ') + str(total - len(stats["added"]) - len(stats["not_translated"])) + "/" + str(total))
 
