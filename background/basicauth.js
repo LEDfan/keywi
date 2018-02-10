@@ -95,15 +95,13 @@
       return;
     }
     // TODO? track retries
-    return browser.tabs.get(details.tabId)
-      .then(function (tab) {
-        // Prevent looking at the old url when the page hasn't properly loaded yet
-        const host = extractHost(details.url);
-        const pageHost = details.frameId === 0
-          ? host
-          : extractHost(tab.url);
-        return confirmationDialog({'url': details.url, 'host': host, 'realm': details.realm, 'page_host': pageHost});
-      })
+    let pageHost;
+    if (typeof details.originUrl !== 'undefined') {
+      pageHost = extractHost(details.originUrl)
+    } else {
+      pageHost = details.challenger.host;
+    }
+    return confirmationDialog({'url': details.url, 'host': details.challenger.host, 'realm': details.realm, 'page_host': pageHost})
       .then(function (choice) {
         if (choice === 'fill') {
           return queryDB(details.url);
