@@ -297,7 +297,7 @@ Keepass.getGUILogins = function(url) {
     if (credentials.length === 1) {
      return credentials[0];
     } else {
-      return self.prompts._selectCredentials(credentials);
+      return Keepass.prompts._selectCredentials(credentials);
     }
   });
 };

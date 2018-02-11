@@ -27,7 +27,7 @@ browser.commands.onCommand.addListener((cmd) => {
     return;
   }
   browser.tabs.query({'currentWindow': true, 'active': true}).then((tabs) => {
-    Keepass.getLogins(tabs[0].url).then((entries) => {
+    Keepass.getGUILogins(tabs[0].url).then((entries) => {
       browser.tabs.sendMessage(tabs[0].id, {
         'type': type,
         'suppress_error_on_missing_pw_field': true,
