@@ -23,7 +23,7 @@
     return (/:\/\/([^/]+)\//).exec(url)[1];
   }
 
-  function confirmationDialog(config) {
+  function  confirmationDialog(config) {
     const dialogUrl = browser.extension.getURL('dialog/confirm_basic_auth.html');
     return browser.windows.create({
       'type': 'panel',
@@ -35,7 +35,7 @@
       const openedWindowId = newWindow.id;
 
       return new Promise(function(resolve, reject) {
-        browser.tabs.query({'windowId': openedWindowId}).then(function (tabs) {
+        browser.tabs.query({"windowId": openedWindowId}).then(function (tabs) {
           const openTabId = tabs[0].id;
           browser.tabs.onUpdated.addListener(function _sendData(tabId, changeInfo, tabInfo) {
             if (tabId === openTabId && tabInfo.status === 'complete') {
@@ -58,12 +58,21 @@
         }
 
         function _handler(request, sender, sendResponse) {
-          if (request.type === 'confirm_basic_auth_fill') {
+          if (request.type === 'confirm_basic_auth_fetch') {
+            Keepass.getLoginsAndErrorHandler(config.url).then((resp) => {
+              sendResponse(resp);
+            }, () => {
+              clean();
+              reject();
+            });
+
+            return true;
+          } else if (request.type === 'confirm_basic_auth_select') {
             clean();
-            resolve('fill');
+            resolve({"code": 'fill', 'username': request.data.selected.Login, 'password': request.data.selected.Password});
           } else if (request.type === 'confirm_basic_auth_cancel') {
             clean();
-            resolve('cancel');
+            resolve({"code" : 'cancel'});
           }
         }
 
@@ -75,16 +84,6 @@
 
         browser.windows.onRemoved.addListener(_onRemove);
         browser.runtime.onMessage.addListener(_handler);
-      });
-    });
-  }
-
-  function queryDB(url) {
-    return new Promise(function(resolve, reject) {
-      Keepass.getLogins(url, function(entry) {
-        resolve({'authCredentials': {'username': entry.Login, 'password': entry.Password}});
-      }, function() {
-        resolve({});
       });
     });
   }
@@ -102,10 +101,11 @@
       pageHost = details.challenger.host;
     }
     return confirmationDialog({'url': details.url, 'host': details.challenger.host, 'realm': details.realm, 'page_host': pageHost})
-      .then(function (choice) {
-        if (choice === 'fill') {
-          return queryDB(details.url);
-        } else if (choice === 'cancel') {
+      .then(function (response) {
+
+        if (response.code === 'fill') {
+          return {"authCredentials": {"username": response.username, "password": response.password}};
+        } else if (response.code === 'cancel') {
           return {};
         }
       });

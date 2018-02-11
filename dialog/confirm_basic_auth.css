@@ -28,6 +28,29 @@
   font-family: monospace;
   font-size: 0.8em;
 }
-#form.force {
-  height: 100px;
+/*#form.force {*/
+  /*height: 100px;*/
+/*}*/
+
+.password-choose-btn {
+  color: #fff;
+  background-color: #5cb85c;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  width: 340px;
+  padding: 5px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  box-sizing: border-box;
+}
+
+#passwords {
+  height: 260px;
+  overflow-y: auto;
+}
+
+
+#cancel-container {
+  height: 60px;
+  padding-top: 10px;
 }

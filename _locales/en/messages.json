@@ -156,7 +156,7 @@
     "description": "The main body text for the confirm_basic_auth dialog"
   },
   "dialogConfirmBasicAuthFill": {
-    "message": "Use Keywi",
+    "message": "Fetch credentials",
     "description": "The fill option for the confirm_basic_auth dialog"
   },
   "dialogConfirmBasicAuthPage": {

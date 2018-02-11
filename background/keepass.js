@@ -276,7 +276,7 @@ Keepass.getLogins = function(url) {
   });
 };
 
-Keepass.getGUILogins = function (url) {
+Keepass.getLoginsAndErrorHandler = function (url) {
   return new Promise(function(resolve, reject) {
     Keepass.getLogins(url).then(function(credentials) {
       if (credentials.length === 0) {
@@ -287,12 +287,8 @@ Keepass.getGUILogins = function (url) {
           'title': 'Keywi'
         });
         reject({code: 'noPassFound'});
-      } else if (credentials.length === 1) {
-        resolve(credentials[0]);
       } else {
-        self.prompts._selectCredentials(credentials).then(function (selectedCredential) {
-          resolve(selectedCredential);
-        });
+        resolve(credentials);
       }
     }, function(data) {
       if (data.code === 'cannotConnect') {
@@ -314,6 +310,16 @@ Keepass.getGUILogins = function (url) {
       }
     });
 
+  });
+};
+
+Keepass.getGUILogins = function(url) {
+  return Keepass.getLoginsAndErrorHandler(url).then((credentials) => {
+    if (credentials.length === 1) {
+     return credentials[0];
+    } else {
+      return self.prompts._selectCredentials(credentials);
+    }
   });
 };
 

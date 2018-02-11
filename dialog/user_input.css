@@ -119,8 +119,12 @@ footer p {
     margin: 0 auto;
 }
 
-#text.force {
+#text.basic_auth, #form.basic_auth {
   height: auto;
+}
+
+#container.basic_auth {
+  min-height: 371px!important; /* make dialogs for basic_auth at least the same height*/
 }
 
 button {
