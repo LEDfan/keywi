@@ -81,6 +81,8 @@ footer p {
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     flex: none;
+    position: relative;
+    min-height: 370px;
 }
 
 .accept, .cancel, #pass, #pass1, #pass2, #submit, #cancel {
@@ -113,20 +115,44 @@ footer p {
 }
 
 #text, #form {
-    height: 185px;
     box-sizing: border-box;
     width: 340px;
-    margin: 0 auto;
 }
 
-#text.basic_auth, #form.basic_auth {
-  height: auto;
+#text {
+  margin: auto auto;
 }
 
-#container.basic_auth {
-  min-height: 371px!important; /* make dialogs for basic_auth at least the same height*/
+#form {
+  position: absolute;
+  bottom: 15px;
+  left: 0;
+  right: 0;
+  margin: auto auto;
 }
 
 button {
     cursor:pointer;
+}
+
+.password-choose-btn {
+  color: #fff;
+  background-color: #5cb85c;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  width: 340px;
+  padding: 5px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  box-sizing: border-box;
+}
+
+#passwords {
+  height: 190px;
+  overflow-y: auto;
+}
+
+#cancel-container {
+  height: 60px;
+  padding-top: 10px;
 }

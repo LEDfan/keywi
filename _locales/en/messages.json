@@ -155,6 +155,10 @@
     "message": "The following page is requesting credentials:",
     "description": "The main body text for the confirm_basic_auth dialog"
   },
+  "dialogConfirmBasicAuthSelect": {
+    "message": "Select a credential:",
+    "description": "The main body text for the confirm_basic_auth dialog"
+  },
   "dialogConfirmBasicAuthFill": {
     "message": "Fetch credentials",
     "description": "The fill option for the confirm_basic_auth dialog"

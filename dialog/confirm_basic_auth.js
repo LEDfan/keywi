@@ -88,7 +88,9 @@ document.getElementById('fetch').onclick = function () {
     }
 
     document.getElementById('fetch').hidden = true;
-    document.getElementById('text').hidden = true;
+    document.getElementsByClassName('dialogConfirmBasicAuthBody')[0].hidden = true;
+    document.getElementsByClassName('dialogConfirmBasicAuthSelect')[0].hidden = false;
+    document.querySelector('#text ul').hidden = true;
     document.getElementById('passwords').hidden = false;
 
   }).catch(error => {
