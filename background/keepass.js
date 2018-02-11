@@ -21,10 +21,6 @@
  * This file holds the main API to the Keepass Database
  */
 
-async function sleep(time) {
-  await new Promise((resolve) => setTimeout(resolve, time));
-}
-
 const Keepass = {};
 
 Keepass._ss = null;
@@ -184,28 +180,11 @@ Keepass.reCheckAssociated = function () {
           'Id': id
         };
 
-        browser.storage.local.get('keepass-server-url').then(async function(pref) {
-          let tryagain = true;
-          let tries = 20;
-          while (tryagain && tries !== 0) {
-            // eslint-disable-next-line no-await-in-loop, no-loop-func
-            await request(req).then((resp) => {
-              Keepass.state.associated = Boolean(resp.Success);
-              resolve(resp.Success);
-              tryagain = false;
-            }).
-              // eslint-disable-next-line no-loop-func
-              catch(async (res) => {
-                console.log(res);
-                if (res.message === 'Database unavailable') {
-                  tries--;
-                  await sleep(500);
-                } else {
-                  resolve(false);
-                  tryagain = false;
-                }
-              });
-          }
+        browser.storage.local.get('keepass-server-url').then(function (pref) {
+          request(req).then(function (resp) {
+            Keepass.state.associated = Boolean(resp.Success);
+            resolve(resp.Success);
+          });
         });
       }).
         catch(function () {
