@@ -28,7 +28,15 @@ function request (req) {
       }
     ).
       then(function (res) {
-        return res.json();
+        if (res.ok) {
+          return res.json();
+        }
+        if (res.status === 503) {
+          throw new Error('Database unavailable');
+        } else {
+          throw new Error('Error during request');
+        }
+
       });
   });
 }

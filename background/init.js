@@ -48,6 +48,7 @@ function init () {
     }).
       catch(function (ss) {
         console.log('Failed to initialize Secure Storage, not associating with keepass!');
+        console.log(ss);
         browser.notifications.create({
           'type': 'basic',
           'message': browser.i18n.getMessage('initSSFailed'),
