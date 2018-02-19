@@ -105,6 +105,6 @@ document.getElementById('cancel').onclick = function () {
 
 document.addEventListener('keyup', function (ev) {
   if (ev.key === 'Accept' || ev.key === 'Execute' || ev.key === 'Enter') {
-    document.getElementById('fill').click();
+    document.getElementById('fetch').click();
   }
 });
