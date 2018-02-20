@@ -1,5 +1,6 @@
 /**
  * @copyright Robin Jadoul
+ * @copyright Tobia De Koninck
  *
  * Copyright (C) 2018  Robin Jadoul
  * This file is part of Keywi.
@@ -23,7 +24,7 @@
     return (/:\/\/([^/]+)\//).exec(url)[1];
   }
 
-  function  confirmationDialog(config) {
+  function confirmationDialog(config) {
     const dialogUrl = browser.extension.getURL('dialog/confirm_basic_auth.html');
     return browser.windows.create({
       'type': 'panel',
@@ -35,7 +36,7 @@
       const openedWindowId = newWindow.id;
 
       return new Promise(function(resolve, reject) {
-        browser.tabs.query({"windowId": openedWindowId}).then(function (tabs) {
+        browser.tabs.query({'windowId': openedWindowId}).then(function (tabs) {
           const openTabId = tabs[0].id;
           browser.tabs.onUpdated.addListener(function _sendData(tabId, changeInfo, tabInfo) {
             if (tabId === openTabId && tabInfo.status === 'complete') {
@@ -52,7 +53,7 @@
 
         function _onRemove(winId) {
           if (openedWindowId === winId) {
-            clean();
+            clean(); // eslint-disable-line no-use-before-define
             reject();
           }
         }
@@ -62,17 +63,17 @@
             Keepass.getLoginsAndErrorHandler(config.url).then((resp) => {
               sendResponse(resp);
             }, () => {
-              clean();
+              clean(); // eslint-disable-line no-use-before-define
               reject();
             });
 
             return true;
           } else if (request.type === 'confirm_basic_auth_select') {
-            clean();
-            resolve({"code": 'fill', 'username': request.data.selected.Login, 'password': request.data.selected.Password});
+            clean(); // eslint-disable-line no-use-before-define
+            resolve({'code': 'fill', 'username': request.data.selected.Login, 'password': request.data.selected.Password});
           } else if (request.type === 'confirm_basic_auth_cancel') {
-            clean();
-            resolve({"code" : 'cancel'});
+            clean(); // eslint-disable-line no-use-before-define
+            resolve({'code': 'cancel'});
           }
         }
 
@@ -96,15 +97,15 @@
     // TODO? track retries
     let pageHost;
     if (typeof details.originUrl !== 'undefined') {
-      pageHost = extractHost(details.originUrl)
+      pageHost = extractHost(details.originUrl);
     } else {
       pageHost = details.challenger.host;
     }
-    return confirmationDialog({'url': details.url, 'host': details.challenger.host, 'realm': details.realm, 'page_host': pageHost})
-      .then(function (response) {
+    return confirmationDialog({'url': details.url, 'host': details.challenger.host, 'realm': details.realm, 'page_host': pageHost}).
+      then(function (response) {
 
         if (response.code === 'fill') {
-          return {"authCredentials": {"username": response.username, "password": response.password}};
+          return {'authCredentials': {'username': response.username, 'password': response.password}};
         } else if (response.code === 'cancel') {
           return {};
         }

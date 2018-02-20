@@ -1,5 +1,6 @@
 /**
  * @copyright Robin Jadoul
+ * @copyright Tobia De Koninck
  *
  * Copyright (C) 2018  Robin Jadoul
  * This file is part of Keywi.
@@ -65,8 +66,6 @@ window.addEventListener('DOMContentLoaded', function () {
 document.getElementById('fetch').onclick = function () {
   // browser.runtime.sendMessage({'type': 'confirm_basic_auth_fill'});
   browser.runtime.sendMessage({'type': 'confirm_basic_auth_fetch'}).then((credentials) => {
-    console.log("DONE!");
-    console.log(credentials);
     const length = credentials.length;
     const passwordsEl = document.getElementById('passwords');
 
@@ -78,7 +77,6 @@ document.getElementById('fetch').onclick = function () {
     for (let i = 0; i < length; i++) {
       const el = generateButtonRow(credentials[i].Name, credentials[i].Login);
       el.addEventListener('click', function() {
-        console.log(credentials);
         browser.runtime.sendMessage({
           'type': 'confirm_basic_auth_select',
           'data': {'selected': credentials[i]}
@@ -93,9 +91,10 @@ document.getElementById('fetch').onclick = function () {
     document.querySelector('#text ul').hidden = true;
     document.getElementById('passwords').hidden = false;
 
-  }).catch(error => {
-    console.log(error);
-  });
+  }).
+    catch((error) => {
+      console.log(error);
+    });
 
 };
 
