@@ -236,7 +236,6 @@ Keepass.getLogins = function(url) {
         reject({'code': 'cannotConnect'});
       }).
       then(function () {
-        console.log('here');
         const rIv = resp.Nonce;
         let promiseChain = Promise.resolve();
         for (let i = 0; i < resp.Entries.length; i++) {
@@ -244,16 +243,12 @@ Keepass.getLogins = function(url) {
             return Keepass.helpers.decryptEntry(resp.Entries[i], rIv).then((decryptedEntry) => decryptedEntries.push(decryptedEntry));
           });
         }
-        console.log('not here');
         return promiseChain;
       }).
       then(function () {
-        console.log('ok here');
-        console.log(decryptedEntries);
         resolve(decryptedEntries);
       }).
-      catch(function (err) {
-        console.log(err);
+      catch(function () {
         console.log(`RetrieveCredentials for ${url} failed`);
 
         reject({'code': 'noLogins'});
