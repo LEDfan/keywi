@@ -48,7 +48,7 @@ window.addEventListener('DOMContentLoaded', function () {
       const pageHost = request.data.page_host;
       set('request-url', url);
       set('host', host);
-      if (realm !== null && realm !== undefined) {
+      if (realm !== null && typeof realm !== 'undefined') {
         set('realm', realm);
         show('realm-part');
       }
