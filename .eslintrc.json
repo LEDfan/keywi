@@ -6,7 +6,8 @@
   },
   "extends": "eslint:all",
   "parserOptions": {
-    "sourceType": "module"
+    "sourceType": "module",
+    "ecmaVersion": 2017
   },
   "rules": {
     "indent": [
@@ -64,7 +65,8 @@
     "no-invalid-this": "off",
     "no-bitwise": "off",
     "space-before-function-paren": "off",
-    "dot-location": "off"
+    "no-loop-func": "warn",
+    "no-undefined": "warn"
   },
   "globals": {
     "cryptoHelpers": true,

@@ -27,9 +27,9 @@
  * see https://github.com/LEDfan/keywi/pull/84
  */
 function applyHacks() {
-  fetch(browser.extension.getURL('content_scripts/hacks.json'))
-    .then((resp) => resp.json())
-    .then((hacks) => {
+  fetch(browser.extension.getURL('content_scripts/hacks.json')).
+    then((resp) => resp.json()).
+    then((hacks) => {
       Object.keys(hacks).forEach((pat) => {
         if (window.location.href.search(new RegExp(pat)) !== -1) {
           for (const el of document.querySelectorAll(hacks[pat])) {

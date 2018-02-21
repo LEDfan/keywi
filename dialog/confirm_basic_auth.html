@@ -1,0 +1,63 @@
+<!--
+  * @copyright Robin Jadoul
+  * @copyright Tobia De Koninck
+  *
+  * Copyright (C) 2018  Robin Jadoul
+  * This file is part of Keywi.
+  * Keywi is free software: you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License as published by
+  * the Free Software Foundation, either version 3 of the License, or
+  * (at your option) any later version.
+  *
+  * Keywi is distributed in the hope that it will be useful,
+  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  * GNU General Public License for more details.
+
+  * You should have received a copy of the GNU General Public License
+  * along with Keywi.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title data-i18n="dialogConfirmBasicAuthTitle"></title>
+    <link rel="stylesheet" type="text/css" href="user_input.css">
+    <link rel="stylesheet" type="text/css" href="confirm_basic_auth.css">
+  </head>
+  <body>
+    <header>
+      <h1 id="msg" data-i18n="dialogConfirmBasicAuthHeader"></h1>
+    </header>
+    <div id="container">
+      <div id="text">
+        <p data-i18n="dialogConfirmBasicAuthBody" class="dialogConfirmBasicAuthBody"></p>
+        <p data-i18n="dialogConfirmBasicAuthSelect" class=dialogConfirmBasicAuthSelect></p>
+        <ul>
+          <li><span data-i18n="dialogConfirmBasicAuthPage"></span> <span id="request-url" class="request-info"></span></li>
+          <li><span data-i18n="dialogConfirmBasicAuthHost"></span> <span id="host" class="request-info"></span></li>
+          <li class="hidden" id="realm-part"><span data-i18n="dialogConfirmBasicAuthRealm"></span> <span id="realm" class="request-info"></span></li>
+          <li class="hidden warning" id="host-warning"><span data-i18n="dialogConfirmBasicAuthHostWarning" class="request-info"></span> <span id="request-host" class="request-info"></span></li>
+          <li class="hidden warning" id="ssl-warning"><span data-i18n="dialogConfirmBasicAuthSSLWarning" class="request-info"></span></li>
+        </ul>
+      </div>
+
+      <div id="form">
+        <div id="passwords">
+
+        </div>
+        <button type="button" class="accept" id="fetch" data-i18n="dialogConfirmBasicAuthFill"></button>
+        <button type="button" id="cancel" data-i18n="Cancel"></button>
+      </div>
+    </div>
+
+    <footer>
+      <p>Keywi</p>
+    </footer>
+
+
+    <script src="dialog_common.js"></script>
+    <script src="confirm_basic_auth.js"></script>
+  </body>
+</html>
+
