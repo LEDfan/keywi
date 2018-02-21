@@ -64,7 +64,6 @@ window.addEventListener('DOMContentLoaded', function () {
 });
 
 document.getElementById('fetch').onclick = function () {
-  // browser.runtime.sendMessage({'type': 'confirm_basic_auth_fill'});
   browser.runtime.sendMessage({'type': 'confirm_basic_auth_fetch'}).then((credentials) => {
     const length = credentials.length;
     const passwordsEl = document.getElementById('passwords');
@@ -104,6 +103,10 @@ document.getElementById('cancel').onclick = function () {
 
 document.addEventListener('keyup', function (ev) {
   if (ev.key === 'Accept' || ev.key === 'Execute' || ev.key === 'Enter') {
-    document.getElementById('fetch').click();
+    if (!document.getElementById('fetch').hidden) {
+      document.getElementById('fetch').click();
+    } else if (document.getElementById('passwords').children.length === 1) {
+      document.getElementById('passwords').children[0].click();
+    }
   }
 });
