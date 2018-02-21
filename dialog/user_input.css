@@ -1,6 +1,6 @@
 /**
- * @copyright Tobia De Koninck
- * @copyright Robin Jadoul
+ * @copyright (C) 2017-2018 Tobia De Koninck
+ * @copyright (C) 2017-2018 Robin Jadoul
  *
  * This file is part of Keywi.
  * Keywi is free software: you can redistribute it and/or modify
