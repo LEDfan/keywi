@@ -9,6 +9,7 @@
   },
   "background": {
     "scripts": [
+      "vendor/browser-polyfill.js",
       "vendor/utf8.js",
       "vendor/aes.js",
       "vendor/cryptoHelpers.js",
@@ -38,19 +39,19 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["content_scripts/fix-contentEditable.js"],
+      "js": ["vendor/browser-polyfill.js", "content_scripts/fix-contentEditable.js"],
       "run_at": "document_end",
       "all_frames": true
     },
     {
       "matches": ["<all_urls>"],
-      "js": ["content_scripts/fill-username-and-password.js"],
+      "js": ["vendor/browser-polyfill.js", "content_scripts/fill-username-and-password.js"],
       "run_at": "document_end",
       "all_frames": true
     },
     {
       "matches": ["<all_urls>"],
-      "js": ["content_scripts/hacks.js"],
+      "js": ["vendor/browser-polyfill.js", "content_scripts/hacks.js"],
       "run_at": "document_end",
       "all_frames": true
     }
@@ -60,23 +61,11 @@
   },
   "commands": {
     "fill-form": {
-      "suggested_key": {
-        "default": "MacCtrl+Shift+F"
-      },
       "description": "__MSG_fillUsernamePassDescription__"
     },
     "fill-password": {
-      "suggested_key": {
-        "default": "MacCtrl+Shift+D"
-      },
       "description": "__MSG_fillPassDescription__"
     }
   },
-  "default_locale": "en",
-  "applications": {
-    "gecko": {
-      "id": "keywi-ff-add-on@ledfan.be",
-      "strict_min_version": "51.0"
-    }
-  }
+  "default_locale": "en"
 }

@@ -66,7 +66,13 @@ function writeValueToInputElement(element, value) {
   }
 }
 
-browser.runtime.onMessage.addListener(function _func (request, sender, sendResponse) {
+// Polyfill does not have this feature, so we need to check if we are on chrome
+var browserVar = browser;
+if (typeof chrome !== 'undefined') {
+  browserVar = chrome
+}
+
+browserVar.runtime.onMessage.addListener(function _func (request, sender, sendResponse) {
   if (request.type === 'username-and-password') {
     // Only useful for input elements
     if (document.activeElement.tagName !== 'INPUT') {
