@@ -24,7 +24,8 @@
   }
 
   function confirmationDialog(config) {
-    const dialogUrl = browser.extension.getURL('dialog/confirm_basic_auth.html');
+    const dialogUrl = browser.extension.getURL('/dialog/confirm_basic_auth.html');
+    console.log("opening dialog", dialogUrl)
     return browser.windows.create({
       'type': 'panel',
       'width': 400,

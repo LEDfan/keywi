@@ -27,18 +27,11 @@ browser.contextMenus.create({
   'title': browser.i18n.getMessage('contextFillUser'),
   'contexts': ['editable']
 });
-browser.runtime.getBrowserInfo().then((info) => {
-  let ctx;
-  if (Number.parseInt(info.version.split('.')[0], 10) >= 53) {
-    ctx = 'password';
-  } else {
-    ctx = 'editable';
-  }
-  browser.contextMenus.create({
-    'id': 'password',
-    'title': browser.i18n.getMessage('contextFillPass'),
-    'contexts': [ctx]
-  });
+
+browser.contextMenus.create({
+'id': 'password',
+'title': browser.i18n.getMessage('contextFillPass'),
+'contexts': ['editable']
 });
 
 activeGetLogins = [];
@@ -48,7 +41,7 @@ browser.runtime.onMessage.addListener((request, sender, sendresponse) => {
     browser.notifications.create({
       'type': 'basic',
       'message': browser.i18n.getMessage('noPassFieldFound'),
-      'iconUrl': browser.extension.getURL('icons/keywi-96.png'),
+      'iconUrl': browser.extension.getURL('/icons/keywi-96.png'),
       'title': 'Keywi'
     });
   }
@@ -61,6 +54,7 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
   } else {
     return;
   }
+  console.log("Clickeed context")
   if (activeGetLogins.indexOf(tab.id) === -1) {
     // prevent from simultaneous filling in the credentials
     activeGetLogins.push(tab.id);

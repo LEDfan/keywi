@@ -27,7 +27,9 @@
  * see https://github.com/LEDfan/keywi/pull/84
  */
 function applyHacks() {
-  fetch(browser.extension.getURL('content_scripts/hacks.json')).
+  var url = browser.extension.getURL('/content_scripts/hacks.json')
+  console.log("Hack path", url)
+  window.fetch(url).
     then((resp) => resp.json()).
     then((hacks) => {
       Object.keys(hacks).forEach((pat) => {
@@ -40,9 +42,9 @@ function applyHacks() {
     });
 }
 
-applyHacks();
+// applyHacks();
 
 /**
  * For dynamically added elements
  */
-document.addEventListener('contextmenu', applyHacks, true);
+// document.addEventListener('contextmenu', applyHacks, true);

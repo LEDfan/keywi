@@ -31,7 +31,7 @@ function init () {
               browser.notifications.create({
                 'type': 'basic',
                 'message': browser.i18n.getMessage('otherDBOpen'),
-                'iconUrl': browser.extension.getURL('icons/keywi-96.png'),
+                'iconUrl': browser.extension.getURL('/icons/keywi-96.png'),
                 'title': 'Keywi'
               });
             }).
@@ -51,7 +51,7 @@ function init () {
         browser.notifications.create({
           'type': 'basic',
           'message': browser.i18n.getMessage('initSSFailed'),
-          'iconUrl': browser.extension.getURL('icons/keywi-96.png'),
+          'iconUrl': browser.extension.getURL('/icons/keywi-96.png'),
           'title': 'Keywi'
         });
         Keepass.setSecureStorage(ss);

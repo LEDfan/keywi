@@ -19,22 +19,25 @@
 
 LocalSecureStorage.prompts = {};
 
+console.log("opening dialog")
 LocalSecureStorage.prompts.setupNewPassword = function () {
+  const url = browser.extension.getURL('/dialog/setup_secure_storage.html');
+  console.log("opening dialog", url)
   return new Promise(function (resolve, reject) {
-    const url = browser.extension.getURL('dialog/setup_secure_storage.html');
+    const url = browser.extension.getURL('/dialog/setup_secure_storage.html');
+    console.log("opening dialog", url)
     browser.windows.create({
       'type': 'panel',
       'width': 400,
       'height': 600,
-      'url': url,
-      'incognito': true
+      'url': url
     }).then(function (newWindow) {
       const openedWindowId = newWindow.id;
       const onRemoved = function (removedWindowId) {
         if (openedWindowId === removedWindowId) {
           browser.notifications.create('secure-storage-cancelled', {
             'type': 'basic',
-            'iconUrl': browser.extension.getURL('icons/keywi-96.png'),
+            'iconUrl': browser.extension.getURL('/icons/keywi-96.png'),
             'title': 'Keywi',
             'message': browser.i18n.getMessage('SSsetupCancelled')
           });
@@ -61,7 +64,7 @@ LocalSecureStorage.prompts.setupNewPassword = function () {
 
 LocalSecureStorage.prompts.unlock = function (verifyFunc) {
   return new Promise(function (resolve, reject) {
-    const url = browser.extension.getURL('dialog/unlock_secure_storage.html');
+    const url = browser.extension.getURL('/dialog/unlock_secure_storage.html');
     browser.windows.create({
       'type': 'panel',
       'width': 400,
@@ -74,7 +77,7 @@ LocalSecureStorage.prompts.unlock = function (verifyFunc) {
         if (openedWindowId === removedWindowId) {
           browser.notifications.create('secure-storage-cancelled', {
             'type': 'basic',
-            'iconUrl': browser.extension.getURL('icons/keywi-96.png'),
+            'iconUrl': browser.extension.getURL('/icons/keywi-96.png'),
             'title': 'Keywi',
             'message': browser.i18n.getMessage('SSunlockCancelled')
           });

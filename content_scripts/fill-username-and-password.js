@@ -66,7 +66,9 @@ function writeValueToInputElement(element, value) {
   }
 }
 
-browser.runtime.onMessage.addListener(function _func (request, sender, sendResponse) {
+console.log('main')
+chrome.runtime.onMessage.addListener(function _func (request, sender, sendResponse) {
+  console.log("Listened")
   if (request.type === 'username-and-password') {
     // Only useful for input elements
     if (document.activeElement.tagName !== 'INPUT') {
