@@ -28,11 +28,22 @@ browser.contextMenus.create({
   'contexts': ['editable']
 });
 
-browser.contextMenus.create({
-'id': 'password',
-'title': browser.i18n.getMessage('contextFillPass'),
-'contexts': ['editable']
-});
+try {
+  browser.runtime.getBrowserInfo().then((info) => {
+    let ctx;
+    if (Number.parseInt(info.version.split('.')[0], 10) >= 53) {
+      ctx = 'password';
+    } else {
+      ctx = 'editable';
+    }
+  })
+} catch (e) {
+  browser.contextMenus.create({
+    'id': 'password',
+    'title': browser.i18n.getMessage('contextFillPass'),
+    'contexts': ['editable']
+  });
+}
 
 activeGetLogins = [];
 
