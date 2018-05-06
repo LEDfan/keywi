@@ -54,7 +54,6 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
   } else {
     return;
   }
-  console.log("Clickeed context")
   if (activeGetLogins.indexOf(tab.id) === -1) {
     // prevent from simultaneous filling in the credentials
     activeGetLogins.push(tab.id);

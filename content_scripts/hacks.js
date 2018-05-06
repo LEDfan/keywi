@@ -28,7 +28,6 @@
  */
 function applyHacks() {
   var url = browser.extension.getURL('/content_scripts/hacks.json')
-  console.log("Hack path", url)
   window.fetch(url).
     then((resp) => resp.json()).
     then((hacks) => {

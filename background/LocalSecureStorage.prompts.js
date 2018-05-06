@@ -19,13 +19,9 @@
 
 LocalSecureStorage.prompts = {};
 
-console.log("opening dialog")
 LocalSecureStorage.prompts.setupNewPassword = function () {
-  const url = browser.extension.getURL('/dialog/setup_secure_storage.html');
-  console.log("opening dialog", url)
   return new Promise(function (resolve, reject) {
     const url = browser.extension.getURL('/dialog/setup_secure_storage.html');
-    console.log("opening dialog", url)
     browser.windows.create({
       'type': 'panel',
       'width': 400,
