@@ -152,7 +152,7 @@
     "description": "The header of the confirm_basic_auth dialog"
   },
   "dialogConfirmBasicAuthBody": {
-    "message": "De volgende pagina vraagt voor uw credentials:",
+    "message": "Deze pagina vraagt voor uw credentials:",
     "description": "The main body text for the confirm_basic_auth dialog"
   },
   "dialogConfirmBasicAuthSelect": {
@@ -160,7 +160,7 @@
     "description": "The main body text for the confirm_basic_auth dialog"
   },
   "dialogConfirmBasicAuthFill": {
-    "message": "Haal credentials op",
+    "message": "Credentials ophalen",
     "description": "The fill option for the confirm_basic_auth dialog"
   },
   "dialogConfirmBasicAuthPage": {
@@ -220,7 +220,7 @@
     "description": "options page: reset all settings"
   },
   "optAssociate": {
-    "message": "Associeer met Keepass",
+    "message": "Met Keepass associëren",
     "description": "options page: text showed on button to associate with Keepass, if not already associated"
   },
   "initSSFailed": {
