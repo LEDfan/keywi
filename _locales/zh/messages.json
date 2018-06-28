@@ -72,7 +72,7 @@
     "description": "What is the DB hash?"
   },
   "statusDBid": {
-    "message": "Keepass database ID",
+    "message": "Keepass database id",
     "description": "What is the DB id?"
   },
   "confirmNotPassField": {
@@ -200,7 +200,7 @@
     "description": "Value"
   },
   "optKeepassHTTPURL": {
-    "message": "KeepassHTTP URL：",
+    "message": "KeepassHTTP url:",
     "description": "options page: KeepassHTTP url"
   },
   "optHashRounds": {
