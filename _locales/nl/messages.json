@@ -180,7 +180,7 @@
     "description": "Warns the user for differing hosts in the confirm_basic_auth dialog"
   },
   "dialogConfirmBasicAuthSSLWarning": {
-    "message": "OPGELET: DE connectie is niet beveiligd, uw gegevens zijn voor iedereen leesbaar:",
+    "message": "OPGELET: De verbinding is niet beveiligd, uw gegevens zijn voor iedereen leesbaar:",
     "description": "Warns the user for lack of https in the confirm_basic_auth dialog"
   },
   "optTitle": {
