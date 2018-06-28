@@ -36,7 +36,7 @@
     "description": "Context menu to fill password"
   },
   "noPassFieldFound": {
-    "message": "Geen paswoordveld gevonden, enkel de gebruikersnaam wordt ingevuld",
+    "message": "Geen paswoordveld gevonden, enkel de gebruikersnaam wordt ingevuld.",
     "description": "Displayed when no password field was found when filling username and password"
   },
   "otherDBOpen": {
@@ -56,7 +56,7 @@
     "description": "Displayed when Keepass doesn't give access"
   },
   "assocFailed": {
-    "message": "Er ging iets mis tijdens de associatie met Keepass",
+    "message": "Er ging iets mis tijdens de associatie met Keepass.",
     "description": "Displayed when something goes wrong during association"
   },
   "statusSSunlocked": {
@@ -144,43 +144,43 @@
     "description": "Unlock"
   },
   "dialogConfirmBasicAuthTitle": {
-    "message": "~~Keywi for HTTP auth",
+    "message": "Keywi voor HTTP auth",
     "description": "The title of the confirm_basic_auth dialog"
   },
   "dialogConfirmBasicAuthHeader": {
-    "message": "~~Use Keywi to supply HTTP credentials?",
+    "message": "Keywi gebruiken om HTTP credentials in te vullen?",
     "description": "The header of the confirm_basic_auth dialog"
   },
   "dialogConfirmBasicAuthBody": {
-    "message": "~~The following page is requesting credentials:",
+    "message": "De volgende pagina vraagt voor uw credentials:",
     "description": "The main body text for the confirm_basic_auth dialog"
   },
   "dialogConfirmBasicAuthSelect": {
-    "message": "~~Select a credential:",
+    "message": "Selecteer een credential:",
     "description": "The main body text for the confirm_basic_auth dialog"
   },
   "dialogConfirmBasicAuthFill": {
-    "message": "~~Fetch credentials",
+    "message": "Haal credentials op",
     "description": "The fill option for the confirm_basic_auth dialog"
   },
   "dialogConfirmBasicAuthPage": {
-    "message": "~~Page:",
+    "message": "Pagina:",
     "description": "Used in the confirm_basic_auth dialog with page information"
   },
   "dialogConfirmBasicAuthHost": {
-    "message": "~~Host:",
+    "message": "Host:",
     "description": "Used in the confirm_basic_auth dialog with page information"
   },
   "dialogConfirmBasicAuthRealm": {
-    "message": "~~Realm:",
+    "message": "Realm:",
     "description": "Used in the confirm_basic_auth dialog with page information"
   },
   "dialogConfirmBasicAuthHostWarning": {
-    "message": "~~WARNING: this host is different from the page you're visiting:",
+    "message": "OPGELET: deze host is verschillend van de pagina die u momenteel bezoekt:",
     "description": "Warns the user for differing hosts in the confirm_basic_auth dialog"
   },
   "dialogConfirmBasicAuthSSLWarning": {
-    "message": "~~WARNING: The connection is not secured, your credentials will be readable for everyone:",
+    "message": "OPGELET: DE connectie is niet beveiligd, uw gegevens zijn voor iedereen leesbaar:",
     "description": "Warns the user for lack of https in the confirm_basic_auth dialog"
   },
   "optTitle": {
@@ -204,7 +204,7 @@
     "description": "options page: KeepassHTTP url"
   },
   "optHashRounds": {
-    "message": "Aantal hashing rounds voor key generating (geavanceerd)",
+    "message": "Aantal hashing rounds voor key generating (geavanceerd):",
     "description": "options page: number of hashing rounds"
   },
   "optDeferUnlockSS": {
@@ -224,7 +224,7 @@
     "description": "options page: text showed on button to associate with Keepass, if not already associated"
   },
   "initSSFailed": {
-    "message": "De Secure Storage kon niet geïnitialiseerd worden.",
+    "message": "De Secure Storage kon niet geïnitialiseerd worden!",
     "description": "Message shown when the secure storage can't be initialized"
   }
 }
