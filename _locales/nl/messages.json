@@ -5,7 +5,7 @@
   },
   "fillUsernamePassDescription": {
     "message": "Gebruikersnaam en paswoord invullen in het actieve invoerveld",
-    "description": "The description for the fill username/password hotkey"
+    "description": "The description for the fill username\/password hotkey"
   },
   "fillPassDescription": {
     "message": "Paswoord invullen in het active invoerveld",
@@ -143,6 +143,46 @@
     "message": "Ontgrendelen",
     "description": "Unlock"
   },
+  "dialogConfirmBasicAuthTitle": {
+    "message": "~~Keywi for HTTP auth",
+    "description": "The title of the confirm_basic_auth dialog"
+  },
+  "dialogConfirmBasicAuthHeader": {
+    "message": "~~Use Keywi to supply HTTP credentials?",
+    "description": "The header of the confirm_basic_auth dialog"
+  },
+  "dialogConfirmBasicAuthBody": {
+    "message": "~~The following page is requesting credentials:",
+    "description": "The main body text for the confirm_basic_auth dialog"
+  },
+  "dialogConfirmBasicAuthSelect": {
+    "message": "~~Select a credential:",
+    "description": "The main body text for the confirm_basic_auth dialog"
+  },
+  "dialogConfirmBasicAuthFill": {
+    "message": "~~Fetch credentials",
+    "description": "The fill option for the confirm_basic_auth dialog"
+  },
+  "dialogConfirmBasicAuthPage": {
+    "message": "~~Page:",
+    "description": "Used in the confirm_basic_auth dialog with page information"
+  },
+  "dialogConfirmBasicAuthHost": {
+    "message": "~~Host:",
+    "description": "Used in the confirm_basic_auth dialog with page information"
+  },
+  "dialogConfirmBasicAuthRealm": {
+    "message": "~~Realm:",
+    "description": "Used in the confirm_basic_auth dialog with page information"
+  },
+  "dialogConfirmBasicAuthHostWarning": {
+    "message": "~~WARNING: this host is different from the page you're visiting:",
+    "description": "Warns the user for differing hosts in the confirm_basic_auth dialog"
+  },
+  "dialogConfirmBasicAuthSSLWarning": {
+    "message": "~~WARNING: The connection is not secured, your credentials will be readable for everyone:",
+    "description": "Warns the user for lack of https in the confirm_basic_auth dialog"
+  },
   "optTitle": {
     "message": "Instellingen voor Keywi",
     "description": "The title for the options page"
@@ -179,52 +219,12 @@
     "message": "Herstel alle instellingen",
     "description": "options page: reset all settings"
   },
-  "initSSFailed": {
-    "message": "De Secure Storage kon niet geïnitialiseerd worden.",
-    "description": "Message shown when the secure storage can't be initialized"
-  },
   "optAssociate": {
     "message": "Associeer met Keepass",
     "description": "options page: text showed on button to associate with Keepass, if not already associated"
   },
-  "dialogConfirmBasicAuthBody": {
-    "description": "The main body text for the confirm_basic_auth dialog",
-    "message": "~~The following page is requesting credentials:"
-  },
-  "dialogConfirmBasicAuthFill": {
-    "description": "The fill option for the confirm_basic_auth dialog",
-    "message": "~~Fetch credentials"
-  },
-  "dialogConfirmBasicAuthHeader": {
-    "description": "The header of the confirm_basic_auth dialog",
-    "message": "~~Use Keywi to supply HTTP credentials?"
-  },
-  "dialogConfirmBasicAuthHost": {
-    "description": "Used in the confirm_basic_auth dialog with page information",
-    "message": "~~Host:"
-  },
-  "dialogConfirmBasicAuthHostWarning": {
-    "description": "Warns the user for differing hosts in the confirm_basic_auth dialog",
-    "message": "~~WARNING: this host is different from the page you're visiting:"
-  },
-  "dialogConfirmBasicAuthPage": {
-    "description": "Used in the confirm_basic_auth dialog with page information",
-    "message": "~~Page:"
-  },
-  "dialogConfirmBasicAuthRealm": {
-    "description": "Used in the confirm_basic_auth dialog with page information",
-    "message": "~~Realm:"
-  },
-  "dialogConfirmBasicAuthSSLWarning": {
-    "description": "Warns the user for lack of https in the confirm_basic_auth dialog",
-    "message": "~~WARNING: The connection is not secured, your credentials will be readable for everyone:"
-  },
-  "dialogConfirmBasicAuthSelect": {
-    "description": "The main body text for the confirm_basic_auth dialog",
-    "message": "~~Select a credential:"
-  },
-  "dialogConfirmBasicAuthTitle": {
-    "description": "The title of the confirm_basic_auth dialog",
-    "message": "~~Keywi for HTTP auth"
+  "initSSFailed": {
+    "message": "De Secure Storage kon niet geïnitialiseerd worden.",
+    "description": "Message shown when the secure storage can't be initialized"
   }
 }
