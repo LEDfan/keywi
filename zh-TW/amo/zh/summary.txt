@@ -1,1 +1,1 @@
-Minimalistic password filler add-on for Keepass. It uses Web Extensions and KeepassHTTP. The extension is only meant to fill in credentials, not to edit the Keepass database in any way. (add or update credentials)
+极简的 Keepass 密码填充扩展，基于 Web Extensions 与 KeepassHTTP。这一扩展功能仅包含填充，不会编辑/添加/更新 Keepass database。 It uses Web Extensions and KeepassHTTP. The extension is only meant to fill in credentials, not to edit the Keepass database in any way. (add or update credentials)
