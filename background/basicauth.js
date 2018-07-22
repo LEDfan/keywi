@@ -101,6 +101,10 @@
       } else {
         pageHost = details.challenger.host;
       }
+      if (details.url.split('/').pop() === 'favicon.ico') {
+        // Workaround for #112
+        return {};
+      }
       return confirmationDialog({'url': details.url, 'host': details.challenger.host, 'realm': details.realm, 'page_host': pageHost}).
         then(function (response) {
 
