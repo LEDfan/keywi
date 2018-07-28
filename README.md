@@ -105,12 +105,12 @@ Follow these steps if you want to contribute
   - Secure Storage
   - hash
 
-Thanks for helping!
-
 The following word should always be capitalized:
  - Keywi
  - Keepass
  - Secure Storage
+
+Thanks for helping!
 
 ### Translation of addons.mozilla.org metadata
  1. fork this repo and clone it into your workspace
