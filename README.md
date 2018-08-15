@@ -17,13 +17,14 @@ Description on addons.mozilla.org starts here.
  - Using the Firefox web extensions API, to support Firefox 57 and later
  - Support Keepass, KeepassXC, later maybe [Pass](https://www.passwordstore.org/)
  - Minimal amount of libraries (aes and cryptohelpers)
- - no automatic form filling, i.e. only when the user wants to. The user has to select the form itself. This is very important because:
+ - No automatic form filling, i.e. only when the user wants to. The user has to select the form itself. This is very important because:
    - credentials can be filled in the wrong site (e.g. a DNS spoofing)
-   - crendetials can be filled in the sign up form
+   - credentials can be filled in the sign up form
    - credentials can be filled in a hidden form
    - you don't want to log in on this website now
    - there are multiple forms on the website (unlikely)
- - no injecting of buttons or icons into forms
+ - No injecting of buttons or icons into forms
+ - Support HTTP basic authentication
 
 ## Usage
 Keywi uses the local storage mechanism of the browser to store some information needed to connect to Keepass. This information includes the key used to authenticate and encrypt the communication with Keepass. The information stored in the local storage of the browser is stored unencrypted.
@@ -34,23 +35,33 @@ This password is asked to the user the first time Keywi is used for encrypting t
 Keywi requires Firefox 51 or later.
 
 ### First time
- 1. Install the KeepassHTTP plugin in Keepass. See: https://github.com/pfn/keepasshttp
+ 1. install the KeepassHTTP plugin in Keepass. See: https://github.com/pfn/keepasshttp
  2. make sure the correct Keepass database is open
  3. install the addon
  4. you'll be asked to enter a password for secure storage. You should **not** use the same password as used in Keepass. Make sure it's a secure and strong password.
 
-![Setup Secure Storage](.github/screenshots/setup-secure-storage.png)
+<p align="center">
+	<img title="Setup Secure Storage" src=".github/screenshots/setup-secure-storage.png">
+</p>
+
  5. keepass will ask to confirm the association
-![Associate With Keepass](.github/screenshots/associate.png)
+
+<p align="center">
+	<img title="Associate With Keepass" src=".github/screenshots/associate.png">
+</p>
 
 ### When Firefox starts
 You will be asked to unlock the Secure Storage using the same password as during the setup.
-![Unlock Secure Storage](.github/screenshots/unlock-secure-storage.png)
+<p align="center">
+	<img title="Unlock Secure Storage" src=".github/screenshots/unlock-secure-storage.png">
+</p>
 
 ### Fill in credentials
  1. select the username input field
  2. right click and choose "Fill username and password" inside the "Keywi" submenu. It's possible to only fill your username or password.
-![Right click to fill in](.github/screenshots/fill-context-menu.png)
+<p align="center">
+  <img src=".github/screenshots/fill-context-menu.png" title="Right click to fill in">
+</p>
  3. Click "Allow" when keepass asks permission for the request to the credentials
  4. the username and password are filled
 
@@ -60,38 +71,46 @@ The following shortcuts are supported:
  - <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>D</kbd> Fill only password in the current active input field
 
 ### Multiple Credentials for one URL
-When Keepass finds multiple Credentials for one URL, it will ask you to select one:
-![Select a password](.github/screenshots/multiple-credentials.png)
+When Keepass finds multiple credentials for one URL, it will ask you to select one:
+<p align="center">
+  <img src=".github/screenshots/multiple-credentials.png" title="Right click to fill in">
+</p>
 
 ### Disable "Remember for logins" in Firefox
 To provide a better user experience we advise to disable the feature in Firefox to remember logins.
+
+### HTTP Basic Auth
+When a website asks for your credentials using basic auth, Keywi will ask you whether you want the credentials to be filled:
+<p align="center">
+  <img src=".github/screenshots/basic-auth-confirm.png" title="Right click to fill in">
+</p>
+Press <kbd>Enter</kbd> or `Fetch credentials` to continue. Confirm the credential you want to fill. Use <kbd>Enter</kbd> when only one credential is available.
+<p align="center">
+	<img src=".github/screenshots/basic-auth-select.png" title="Right click to fill in">
+</p>
+
 
 <!---
 Description on addons.mozilla.org ends here.
 -->
 
 ## Translations
-Currently the following translations are available:
-
-![Translation](https://ci.ledfan.be/artifacts/translation-status.png)
-
-To provide extra translations please open a pull request:
- 1. fork this repo and clone it into your workspace
- 2. copy the `_locales/en/messages.json` file to e.g. `_locales/de/message.json`
- 3. translate all `message` fields inside this file
- 4. remove `~~` at the beginning of every translated `message` field (also remove it when the translation is the same as the English version)
- 5. commit and push to Github
- 6. open a pull request
-
-It's not necessary to translate the following words, if there is no good translation which fits the context:
- - database
- - Secure Storage
- - hash
+This project is translated using Crowdin.
+Follow these steps if you want to contribute
+ 1. Start with the [Keywi project on Crowdin](https://crwd.in/keywi)
+ 2. Continue working on an existing language or [ask us to add a new one](https://github.com/LEDfan/keywi/issues/new)
+ 3. We will put the translations in the next release of Keywi
+ 4. It's not necessary to translate technical terms, like the following words, if there is no good translation which fits the context:
+  - database
+  - Secure Storage
+  - hash
 
 The following word should always be capitalized:
  - Keywi
  - Keepass
  - Secure Storage
+
+Thanks for helping!
 
 ### Translation of addons.mozilla.org metadata
  1. fork this repo and clone it into your workspace
@@ -117,7 +136,7 @@ Some differences between this addon and Passifox:
  - some forms can't be filled (e.g. openmediavault has some problems with it)
  - doesn't uses web extensions, thus not compatible with Electrolysis
  - automatic form filling
- 
+
 ### [KeePassHttp-connector](https://github.com/smorks/keepasshttp-connector)
 This extension is a port of chromeIPass to firefox. Some differences:
  - automatic form filling
@@ -131,8 +150,8 @@ Kee does some things which this addon is designed to not do:
  - Kee injects icons into the form
  - Kee is not compatible with KeepassXC
  - auto detect form fields
- 
- 
+
+
 ## Note about add-on ID's
 To speed up the testing of the add-on we release a signed but self-distributed version of it, this addon has the id `keywi-ff-add-on-ss@ledfan.be`. The add-on distributed using AMO has `keywi-ff-add-on@ledfan.be` as id.
 
