@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [1.3.0] [15/08/2018]
+### Fixed
+ - Remove old translation files [981e7d4](https://github.com/LEDfan/keywi/commit/981e7d4cc9fb610c6509ce7c302cc9aebda2797a)
+
+## [1.3.0] [15/08/2018]
 ### Added
  - Basic Auth support [#103](https://github.com/LEDfan/keywi/pull/103) and [#114](https://github.com/LEDfan/keywi/pull/114). Read the [docs](https://github.com/LEDfan/keywi#http-basic-auth).
 
