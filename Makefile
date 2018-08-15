@@ -1,3 +1,4 @@
+IGNORED_FILES=ci Makefile crowdin.yml
 .PHONY: run lint release-ss deps
 
 run:
@@ -18,11 +19,11 @@ release-ss:
 		false
     endif
 	sed -i 's/keywi-ff-add-on@ledfan.be/keywi-ff-add-on-ss@ledfan.be/g' manifest.json
-	web-ext sign --ignore-files ci Makefile sync_translation.py --api-key ${API_KEY} --api-secret ${API_SECRET}
+	web-ext sign --ignore-files $(IGNORED_FILES) --api-key ${API_KEY} --api-secret ${API_SECRET}
 	sed -i 's/keywi-ff-add-on-ss@ledfan.be/keywi-ff-add-on@ledfan.be/g' manifest.json
 
 build:
-	web-ext build --ignore-files ci Makefile sync_translation.py
+	web-ext build --ignore-files ${IGNORED_FILES}
 
 deps:
 	npm install eslint web-ext
