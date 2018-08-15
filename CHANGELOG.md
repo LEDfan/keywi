@@ -1,8 +1,15 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](http://keepachangelog.com/) 
+The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
+
+## [1.3.0] [15/08/2018]
+### Added
+ - Basic Auth support [#103](https://github.com/LEDfan/keywi/pull/103) and [#114](https://github.com/LEDfan/keywi/pull/114). Read the [docs](https://github.com/LEDfan/keywi#http-basic-auth).
+
+### Changed
+ - Use Crowdin for translations [#115](https://github.com/LEDfan/keywi/pull/115). Read the [docs](https://github.com/LEDfan/keywi#translations).
 
 ## [1.2.0] [01/01/2018]
 ### Fixed
