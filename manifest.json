@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Keywi",
-  "version": "1.3.1",
+  "version": "1.3.2RC1",
   "description": "__MSG_extensionDescription__",
   "icons": {
     "48": "icons/keywi-48.png",
@@ -75,7 +75,7 @@
   "default_locale": "en",
   "applications": {
     "gecko": {
-      "id": "keywi-ff-add-on-ss@ledfan.be",
+      "id": "keywi-ff-add-on@ledfan.be",
       "strict_min_version": "51.0"
     }
   }
