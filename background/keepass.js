@@ -326,9 +326,7 @@ Keepass.associate = function () {
      * If it was done the other way around, then if setting up the secure storage would fail
      * the association request would still be done, but the result couldn't be saved
      */
-    return Keepass._ss.reInitialize().then(function () {
-      return Keepass.associate();
-    });
+    return Keepass._ss.reInitialize().then(Keepass.associate.bind(Keepass));
   }
 
   // test if we are already associated and it's working
