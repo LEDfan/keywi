@@ -99,7 +99,7 @@ Keepass.prompts = {};
  */
 Keepass.prompts._selectCredentials = function (possibleCredentials) {
   return new Promise(function (resolve, reject) {
-    const url = browser.extension.getURL('dialog/select_multiple_passwords.html');
+    const url = browser.extension.getURL('/dialog/select_multiple_passwords.html');
     browser.windows.create({
       // tabId: tab.id,
       'type': 'panel',
@@ -263,7 +263,7 @@ Keepass.getLoginsAndErrorHandler = function (url) {
         browser.notifications.create({
           'type': 'basic',
           'message': browser.i18n.getMessage('noPassFound'),
-          'iconUrl': browser.extension.getURL('icons/keywi-96.png'),
+          'iconUrl': browser.extension.getURL('/icons/keywi-96.png'),
           'title': 'Keywi'
         });
         reject({'code': 'noPassFound'});
@@ -275,7 +275,7 @@ Keepass.getLoginsAndErrorHandler = function (url) {
         browser.notifications.create({
           'type': 'basic',
           'message': browser.i18n.getMessage('cannotConnect'),
-          'iconUrl': browser.extension.getURL('icons/keywi-96.png'),
+          'iconUrl': browser.extension.getURL('/icons/keywi-96.png'),
           'title': 'Keywi'
         });
         reject();
@@ -283,7 +283,7 @@ Keepass.getLoginsAndErrorHandler = function (url) {
         browser.notifications.create({
           'type': 'basic',
           'message': browser.i18n.getMessage('noLogins'),
-          'iconUrl': browser.extension.getURL('icons/keywi-96.png'),
+          'iconUrl': browser.extension.getURL('/icons/keywi-96.png'),
           'title': 'Keywi'
         });
         reject();
@@ -364,7 +364,7 @@ Keepass.associate = function () {
             browser.notifications.create({
               'type': 'basic',
               'message': browser.i18n.getMessage('assocFailed'),
-              'iconUrl': browser.extension.getURL('icons/keywi-96.png'),
+              'iconUrl': browser.extension.getURL('/icons/keywi-96.png'),
               'title': 'Keywi'
             });
           }
@@ -373,7 +373,7 @@ Keepass.associate = function () {
             browser.notifications.create({
               'type': 'basic',
               'message': browser.i18n.getMessage('cannotConnect'),
-              'iconUrl': browser.extension.getURL('icons/keywi-96.png'),
+              'iconUrl': browser.extension.getURL('/icons/keywi-96.png'),
               'title': 'Keywi'
             });
           });
