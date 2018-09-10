@@ -57,16 +57,9 @@
           }
         }
 
-        function _handler(request, sender, sendResponse) {
+        async function _handler(request) {
           if (request.type === 'confirm_basic_auth_fetch') {
-            Keepass.getLoginsAndErrorHandler(config.url).then((resp) => {
-              sendResponse(resp);
-            }, () => {
-              clean(); // eslint-disable-line no-use-before-define
-              reject();
-            });
-
-            return true;
+            return Keepass.getLoginsAndErrorHandler(config.url);
           } else if (request.type === 'confirm_basic_auth_select') {
             clean(); // eslint-disable-line no-use-before-define
             resolve({'code': 'fill', 'username': request.data.selected.Login, 'password': request.data.selected.Password});
@@ -90,7 +83,7 @@
 
   // only supported on FF >= 54, but 52 is an ESR version
   if (typeof browser.webRequest.onAuthRequired !== 'undefined') {
-    browser.webRequest.onAuthRequired.addListener(function(details) {
+    browser.webRequest.onAuthRequired.addListener(function(details, cb) {
       if (details.isProxy) {
         // Don't do proxy's, at least for now
         return;
@@ -109,11 +102,11 @@
         then(function (response) {
 
           if (response.code === 'fill') {
-            return {'authCredentials': {'username': response.username, 'password': response.password}};
+            cb({'authCredentials': {'username': response.username, 'password': response.password}});
           } else if (response.code === 'cancel') {
-            return {};
+            cb({});
           }
         });
-    }, {'urls': ['<all_urls>']}, ['blocking']);
+    }, {'urls': ['<all_urls>']}, ['asyncBlocking']);
   }
 }());

@@ -39,7 +39,7 @@ window.addEventListener('DOMContentLoaded', function () {
     document.getElementById(id).innerText = val;
   }
 
-  browser.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+  browser.runtime.onMessage.addListener(function (request) {
     if (request.type === 'confirm_basic_auth_data') {
       const url = request.data.url;
       const host = request.data.host;
@@ -59,6 +59,7 @@ window.addEventListener('DOMContentLoaded', function () {
         show('ssl-warning');
       }
     }
+    return true;
   });
 });
 
