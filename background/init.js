@@ -18,7 +18,7 @@
  */
 
 function init () {
-  // browser.storage.local.clear(); // uncomment this to test the mechanism to ask the user for a new ke
+  // browser.storage.local.clear(); // uncomment this to test the mechanism to ask the user for a new key
   browser.storage.local.get('defer_unlock_ss').then(function (storage) {
     const unlock = !Number.parseInt(storage.defer_unlock_ss || '0', 10);
     new LocalSecureStorage(unlock).then(function (ss) {

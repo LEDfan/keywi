@@ -30,7 +30,7 @@
       'width': 400,
       'height': 600,
       'url': dialogUrl,
-      'incognito': true
+      // 'incognito': true
     }).then(function (newWindow) {
       const openedWindowId = newWindow.id;
 

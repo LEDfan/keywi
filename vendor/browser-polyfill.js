@@ -11,7 +11,7 @@
     global.browser = mod.exports;
   }
 })(this, function (module) {
-  /* webextension-polyfill - v0.2.1 - Sun May 06 2018 20:56:55 */
+  /* webextension-polyfill - v0.3.1 - Tue Aug 21 2018 10:09:34 */
   /* -*- Mode: indent-tabs-mode: nil; js-indent-level: 2 -*- */
   /* vim: set sts=2 sw=2 et tw=80: */
   /* This Source Code Form is subject to the terms of the Mozilla Public
@@ -19,7 +19,10 @@
    * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
   "use strict";
 
-  if (typeof browser === "undefined") {
+  if (typeof browser === "undefined" || Object.getPrototypeOf(browser) !== Object.prototype) {
+    const CHROME_SEND_MESSAGE_CALLBACK_NO_RESPONSE_MESSAGE = "The message port closed before a response was received.";
+    const SEND_RESPONSE_DEPRECATION_WARNING = "Returning a Promise is the preferred way to send a reply from an onMessage/onMessageExternal listener, as the sendResponse will be removed from the specs (See https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/onMessage)";
+
     // Wrapping the bulk of this polyfill in a one-time-use function is a minor
     // optimization for Firefox. Since Spidermonkey does not fully parse the
     // contents of a function until the first time it's called, and since it will
@@ -53,10 +56,6 @@
             "minArgs": 1,
             "maxArgs": 1
           },
-          "export": {
-            "minArgs": 0,
-            "maxArgs": 0
-          },
           "get": {
             "minArgs": 1,
             "maxArgs": 1
@@ -69,15 +68,11 @@
             "minArgs": 1,
             "maxArgs": 1
           },
-          "getTree": {
-            "minArgs": 0,
-            "maxArgs": 0
-          },
           "getSubTree": {
             "minArgs": 1,
             "maxArgs": 1
           },
-          "import": {
+          "getTree": {
             "minArgs": 0,
             "maxArgs": 0
           },
@@ -103,6 +98,16 @@
           }
         },
         "browserAction": {
+          "disable": {
+            "minArgs": 0,
+            "maxArgs": 1,
+            "fallbackToNoCallback": true
+          },
+          "enable": {
+            "minArgs": 0,
+            "maxArgs": 1,
+            "fallbackToNoCallback": true
+          },
           "getBadgeBackgroundColor": {
             "minArgs": 1,
             "maxArgs": 1
@@ -119,9 +124,75 @@
             "minArgs": 1,
             "maxArgs": 1
           },
+          "openPopup": {
+            "minArgs": 0,
+            "maxArgs": 0
+          },
+          "setBadgeBackgroundColor": {
+            "minArgs": 1,
+            "maxArgs": 1,
+            "fallbackToNoCallback": true
+          },
+          "setBadgeText": {
+            "minArgs": 1,
+            "maxArgs": 1,
+            "fallbackToNoCallback": true
+          },
           "setIcon": {
             "minArgs": 1,
             "maxArgs": 1
+          },
+          "setPopup": {
+            "minArgs": 1,
+            "maxArgs": 1,
+            "fallbackToNoCallback": true
+          },
+          "setTitle": {
+            "minArgs": 1,
+            "maxArgs": 1,
+            "fallbackToNoCallback": true
+          }
+        },
+        "browsingData": {
+          "remove": {
+            "minArgs": 2,
+            "maxArgs": 2
+          },
+          "removeCache": {
+            "minArgs": 1,
+            "maxArgs": 1
+          },
+          "removeCookies": {
+            "minArgs": 1,
+            "maxArgs": 1
+          },
+          "removeDownloads": {
+            "minArgs": 1,
+            "maxArgs": 1
+          },
+          "removeFormData": {
+            "minArgs": 1,
+            "maxArgs": 1
+          },
+          "removeHistory": {
+            "minArgs": 1,
+            "maxArgs": 1
+          },
+          "removeLocalStorage": {
+            "minArgs": 1,
+            "maxArgs": 1
+          },
+          "removePasswords": {
+            "minArgs": 1,
+            "maxArgs": 1
+          },
+          "removePluginData": {
+            "minArgs": 1,
+            "maxArgs": 1
+          },
+          "settings": {
+            "minArgs": 0,
+            "maxArgs": 0
           }
         },
         "commands": {
@@ -131,10 +202,6 @@
           }
         },
         "contextMenus": {
-          "update": {
-            "minArgs": 2,
-            "maxArgs": 2
-          },
           "remove": {
             "minArgs": 1,
             "maxArgs": 1
@@ -142,6 +209,10 @@
           "removeAll": {
             "minArgs": 0,
             "maxArgs": 0
+          },
+          "update": {
+            "minArgs": 2,
+            "maxArgs": 2
           }
         },
         "cookies": {
@@ -182,11 +253,11 @@
           }
         },
         "downloads": {
-          "download": {
+          "cancel": {
             "minArgs": 1,
             "maxArgs": 1
           },
-          "cancel": {
+          "download": {
             "minArgs": 1,
             "maxArgs": 1
           },
@@ -200,7 +271,8 @@
           },
           "open": {
             "minArgs": 1,
-            "maxArgs": 1
+            "maxArgs": 1,
+            "fallbackToNoCallback": true
           },
           "pause": {
             "minArgs": 1,
@@ -220,7 +292,8 @@
           },
           "show": {
             "minArgs": 1,
-            "maxArgs": 1
+            "maxArgs": 1,
+            "fallbackToNoCallback": true
           }
         },
         "extension": {
@@ -238,10 +311,6 @@
             "minArgs": 1,
             "maxArgs": 1
           },
-          "getVisits": {
-            "minArgs": 1,
-            "maxArgs": 1
-          },
           "deleteAll": {
             "minArgs": 0,
             "maxArgs": 0
@@ -251,6 +320,10 @@
             "maxArgs": 1
           },
           "deleteUrl": {
+            "minArgs": 1,
+            "maxArgs": 1
+          },
+          "getVisits": {
             "minArgs": 1,
             "maxArgs": 1
           },
@@ -294,6 +367,10 @@
             "minArgs": 0,
             "maxArgs": 0
           },
+          "setEnabled": {
+            "minArgs": 2,
+            "maxArgs": 2
+          },
           "uninstallSelf": {
             "minArgs": 0,
             "maxArgs": 1
@@ -326,19 +403,9 @@
             "minArgs": 1,
             "maxArgs": 1
           },
-          "setPopup": {
-            "minArgs": 1,
-            "maxArgs": 1,
-            "fallbackToNoCallback": true
-          },
           "getTitle": {
             "minArgs": 1,
             "maxArgs": 1
-          },
-          "setTitle": {
-            "minArgs": 1,
-            "maxArgs": 1,
-            "fallbackToNoCallback": true
           },
           "hide": {
             "minArgs": 1,
@@ -349,14 +416,38 @@
             "minArgs": 1,
             "maxArgs": 1
           },
-          "getIcon": {
+          "setPopup": {
             "minArgs": 1,
-            "maxArgs": 1
+            "maxArgs": 1,
+            "fallbackToNoCallback": true
+          },
+          "setTitle": {
+            "minArgs": 1,
+            "maxArgs": 1,
+            "fallbackToNoCallback": true
           },
           "show": {
             "minArgs": 1,
             "maxArgs": 1,
             "fallbackToNoCallback": true
+          }
+        },
+        "permissions": {
+          "contains": {
+            "minArgs": 1,
+            "maxArgs": 1
+          },
+          "getAll": {
+            "minArgs": 0,
+            "maxArgs": 0
+          },
+          "remove": {
+            "minArgs": 1,
+            "maxArgs": 1
+          },
+          "request": {
+            "minArgs": 1,
+            "maxArgs": 1
           }
         },
         "runtime": {
@@ -390,6 +481,20 @@
           },
           "setUninstallURL": {
             "minArgs": 1,
+            "maxArgs": 1
+          }
+        },
+        "sessions": {
+          "getDevices": {
+            "minArgs": 0,
+            "maxArgs": 1
+          },
+          "getRecentlyClosed": {
+            "minArgs": 0,
+            "maxArgs": 1
+          },
+          "restore": {
+            "minArgs": 0,
             "maxArgs": 1
           }
         },
@@ -450,15 +555,19 @@
           }
         },
         "tabs": {
-          "create": {
-            "minArgs": 1,
-            "maxArgs": 1
-          },
           "captureVisibleTab": {
             "minArgs": 0,
             "maxArgs": 2
           },
+          "create": {
+            "minArgs": 1,
+            "maxArgs": 1
+          },
           "detectLanguage": {
+            "minArgs": 0,
+            "maxArgs": 1
+          },
+          "discard": {
             "minArgs": 0,
             "maxArgs": 1
           },
@@ -498,15 +607,15 @@
             "minArgs": 2,
             "maxArgs": 2
           },
+          "query": {
+            "minArgs": 1,
+            "maxArgs": 1
+          },
           "reload": {
             "minArgs": 0,
             "maxArgs": 2
           },
           "remove": {
-            "minArgs": 1,
-            "maxArgs": 1
-          },
-          "query": {
             "minArgs": 1,
             "maxArgs": 1
           },
@@ -529,6 +638,12 @@
           "update": {
             "minArgs": 1,
             "maxArgs": 2
+          }
+        },
+        "topSites": {
+          "get": {
+            "minArgs": 0,
+            "maxArgs": 0
           }
         },
         "webNavigation": {
@@ -650,13 +765,15 @@
         return (...callbackArgs) => {
           if (chrome.runtime.lastError) {
             promise.reject(chrome.runtime.lastError);
-          } else if (metadata.singleCallbackArg || callbackArgs.length === 1) {
+          } else if (metadata.singleCallbackArg || callbackArgs.length <= 1) {
             promise.resolve(callbackArgs[0]);
           } else {
             promise.resolve(callbackArgs);
           }
         };
       };
+
+      const pluralizeArguments = numArgs => numArgs == 1 ? "argument" : "arguments";
 
       /**
        * Creates a wrapper function for a method with the given name and metadata.
@@ -681,8 +798,6 @@
        *       The generated wrapper function.
        */
       const wrapAsyncFunction = (name, metadata) => {
-        const pluralizeArguments = numArgs => numArgs == 1 ? "argument" : "arguments";
-
         return function asyncFunctionWrapper(target, ...args) {
           if (args.length < metadata.minArgs) {
             throw new Error(`Expected at least ${metadata.minArgs} ${pluralizeArguments(metadata.minArgs)} for ${name}(), got ${args.length}`);
@@ -725,7 +840,7 @@
        * Wraps an existing method of the target object, so that calls to it are
        * intercepted by the given wrapper function. The wrapper function receives,
        * as its first argument, the original `target` object, followed by each of
-       * the arguments passed to the orginal method.
+       * the arguments passed to the original method.
        *
        * @param {object} target
        *        The original target object that the wrapped method belongs to.
@@ -896,6 +1011,9 @@
         }
       });
 
+      // Keep track if the deprecation warning has been logged at least once.
+      let loggedSendResponseDeprecationWarning = false;
+
       const onMessageWrappers = new DefaultWeakMap(listener => {
         if (typeof listener !== "function") {
           return listener;
@@ -919,24 +1037,139 @@
          *        yield a response. False otherwise.
          */
         return function onMessage(message, sender, sendResponse) {
-          let result = listener(message, sender);
+          let didCallSendResponse = false;
 
-          if (isThenable(result)) {
-            result.then(sendResponse, error => {
-              console.error(error);
-              sendResponse(error);
-            });
+          let wrappedSendResponse;
+          let sendResponsePromise = new Promise(resolve => {
+            wrappedSendResponse = function (response) {
+              if (!loggedSendResponseDeprecationWarning) {
+                console.warn(SEND_RESPONSE_DEPRECATION_WARNING, new Error().stack);
+                loggedSendResponseDeprecationWarning = true;
+              }
+              didCallSendResponse = true;
+              resolve(response);
+            };
+          });
 
-            return true;
-          } else if (result !== undefined) {
-            sendResponse(result);
+          let result;
+          try {
+            result = listener(message, sender, wrappedSendResponse);
+          } catch (err) {
+            result = Promise.reject(err);
           }
+
+          const isResultThenable = result !== true && isThenable(result);
+
+          // If the listener didn't returned true or a Promise, or called
+          // wrappedSendResponse synchronously, we can exit earlier
+          // because there will be no response sent from this listener.
+          if (result !== true && !isResultThenable && !didCallSendResponse) {
+            return false;
+          }
+
+          // A small helper to send the message if the promise resolves
+          // and an error if the promise rejects (a wrapped sendMessage has
+          // to translate the message into a resolved promise or a rejected
+          // promise).
+          const sendPromisedResult = promise => {
+            promise.then(msg => {
+              // send the message value.
+              sendResponse(msg);
+            }, error => {
+              // Send a JSON representation of the error if the rejected value
+              // is an instance of error, or the object itself otherwise.
+              let message;
+              if (error && (error instanceof Error || typeof error.message === "string")) {
+                message = error.message;
+              } else {
+                message = "An unexpected error occurred";
+              }
+
+              sendResponse({
+                __mozWebExtensionPolyfillReject__: true,
+                message
+              });
+            }).catch(err => {
+              // Print an error on the console if unable to send the response.
+              console.error("Failed to send onMessage rejected reply", err);
+            });
+          };
+
+          // If the listener returned a Promise, send the resolved value as a
+          // result, otherwise wait the promise related to the wrappedSendResponse
+          // callback to resolve and send it as a response.
+          if (isResultThenable) {
+            sendPromisedResult(result);
+          } else {
+            sendPromisedResult(sendResponsePromise);
+          }
+
+          // Let Chrome know that the listener is replying.
+          return true;
         };
       });
 
+      const wrappedSendMessageCallback = ({ reject, resolve }, reply) => {
+        if (chrome.runtime.lastError) {
+          // Detect when none of the listeners replied to the sendMessage call and resolve
+          // the promise to undefined as in Firefox.
+          // See https://github.com/mozilla/webextension-polyfill/issues/130
+          if (chrome.runtime.lastError.message === CHROME_SEND_MESSAGE_CALLBACK_NO_RESPONSE_MESSAGE) {
+            resolve();
+          } else {
+            reject(chrome.runtime.lastError);
+          }
+        } else if (reply && reply.__mozWebExtensionPolyfillReject__) {
+          // Convert back the JSON representation of the error into
+          // an Error instance.
+          reject(new Error(reply.message));
+        } else {
+          resolve(reply);
+        }
+      };
+
+      const wrappedSendMessage = (name, metadata, apiNamespaceObj, ...args) => {
+        if (args.length < metadata.minArgs) {
+          throw new Error(`Expected at least ${metadata.minArgs} ${pluralizeArguments(metadata.minArgs)} for ${name}(), got ${args.length}`);
+        }
+
+        if (args.length > metadata.maxArgs) {
+          throw new Error(`Expected at most ${metadata.maxArgs} ${pluralizeArguments(metadata.maxArgs)} for ${name}(), got ${args.length}`);
+        }
+
+        return new Promise((resolve, reject) => {
+          const wrappedCb = wrappedSendMessageCallback.bind(null, { resolve, reject });
+          args.push(wrappedCb);
+          apiNamespaceObj.sendMessage(...args);
+        });
+      };
+
       const staticWrappers = {
         runtime: {
-          onMessage: wrapEvent(onMessageWrappers)
+          onMessage: wrapEvent(onMessageWrappers),
+          onMessageExternal: wrapEvent(onMessageWrappers),
+          sendMessage: wrappedSendMessage.bind(null, "sendMessage", { minArgs: 1, maxArgs: 3 })
+        },
+        tabs: {
+          sendMessage: wrappedSendMessage.bind(null, "sendMessage", { minArgs: 2, maxArgs: 3 })
+        }
+      };
+      const settingMetadata = {
+        clear: { minArgs: 1, maxArgs: 1 },
+        get: { minArgs: 1, maxArgs: 1 },
+        set: { minArgs: 1, maxArgs: 1 }
+      };
+      apiMetadata.privacy = {
+        network: {
+          networkPredictionEnabled: settingMetadata,
+          webRTCIPHandlingPolicy: settingMetadata
+        },
+        services: {
+          passwordSavingEnabled: settingMetadata
+        },
+        websites: {
+          hyperlinkAuditingEnabled: settingMetadata,
+          referrersEnabled: settingMetadata
         }
       };
 

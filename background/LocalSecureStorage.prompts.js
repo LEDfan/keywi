@@ -26,7 +26,8 @@ LocalSecureStorage.prompts.setupNewPassword = function () {
       'type': 'panel',
       'width': 400,
       'height': 600,
-      'url': url
+      'url': url,
+      // 'incognito': true
     }).then(function (newWindow) {
       const openedWindowId = newWindow.id;
       const onRemoved = function (removedWindowId) {
@@ -66,7 +67,7 @@ LocalSecureStorage.prompts.unlock = function (verifyFunc) {
       'width': 400,
       'height': 600,
       'url': url,
-      'incognito': true
+      // 'incognito': true
     }).then(function (newWindow) {
       const openedWindowId = newWindow.id;
       const onRemoved = function (removedWindowId) {
@@ -80,7 +81,7 @@ LocalSecureStorage.prompts.unlock = function (verifyFunc) {
           reject();
         }
       };
-      browser.runtime.onMessage.addListener(function _func (request, sender, sendResponse) {
+      browser.runtime.onMessage.addListener(function _func (request, sender) {
         if (request.type === 'ss_unlock_user_input') {
 
           /**
