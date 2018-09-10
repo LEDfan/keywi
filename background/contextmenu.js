@@ -28,22 +28,30 @@ browser.contextMenus.create({
   'contexts': ['editable']
 });
 
-try {
-  browser.runtime.getBrowserInfo().then((info) => {
-    let ctx;
-    if (Number.parseInt(info.version.split('.')[0], 10) >= 53) {
-      ctx = 'password';
-    } else {
-      ctx = 'editable';
-    }
-  })
-} catch (e) {
+(async () => { // wrap in async because we have to use await
+  let ctx;
+  if (typeof browser.runtime.getBrowserInfo === 'undefined') {
+    // Chrome
+    ctx = 'editable';
+  } else {
+    // Firefox
+    ctx = await browser.runtime.getBrowserInfo().then((info) => {
+      if (Number.parseInt(info.version.split('.')[0], 10) >= 53) {
+        return 'password';
+      } else {
+        return 'editable';
+      }
+    });
+  }
+
   browser.contextMenus.create({
     'id': 'password',
     'title': browser.i18n.getMessage('contextFillPass'),
-    'contexts': ['editable']
+    'contexts': [ctx]
   });
-}
+
+})();
+
 
 activeGetLogins = [];
 
