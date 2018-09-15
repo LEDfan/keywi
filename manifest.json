@@ -13,6 +13,7 @@
       "vendor/aes.js",
       "vendor/cryptoHelpers.js",
       "vendor/debounce.js",
+      "background/lib/dialog.js",
       "background/Crypto.js",
       "background/keepass.js",
       "background/securestorage.js",

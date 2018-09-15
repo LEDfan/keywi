@@ -17,98 +17,73 @@
  * along with Keywi.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-LocalSecureStorage.prompts = {};
+class SetupNewPasswordDialog extends Dialog {
 
-LocalSecureStorage.prompts.setupNewPassword = function () {
-  return new Promise(function (resolve, reject) {
-    const url = browser.extension.getURL('dialog/setup_secure_storage.html');
-    browser.windows.create({
-      'type': 'panel',
-      'width': 400,
-      'height': 600,
-      'url': url,
-      'incognito': true
-    }).then(function (newWindow) {
-      const openedWindowId = newWindow.id;
-      const onRemoved = function (removedWindowId) {
-        if (openedWindowId === removedWindowId) {
-          browser.notifications.create('secure-storage-cancelled', {
-            'type': 'basic',
-            'iconUrl': browser.extension.getURL('icons/keywi-96.png'),
-            'title': 'Keywi',
-            'message': browser.i18n.getMessage('SSsetupCancelled')
-          });
-          reject('Aborted!');
-        }
-      };
-      browser.runtime.onMessage.addListener(function _func (request, sender, sendResponse) {
-        if (request.type === 'ss_setup_password_user_input') {
-          resolve(request.data.password);
-          browser.runtime.onMessage.removeListener(_func);
-          browser.windows.onRemoved.removeListener(onRemoved);
-          browser.windows.remove(newWindow.id);
-        } else if (request.type === 'ss_setup_password_cancel') {
-          browser.runtime.onMessage.removeListener(_func);
-          browser.windows.onRemoved.removeListener(onRemoved);
-          browser.windows.remove(newWindow.id);
-          onRemoved(newWindow.id);
-        }
+  constructor() {
+    super('/dialog/setup_secure_storage.html');
+    return this.open();
+  }
+
+  onMessage(request, sender) {
+    if (request.type === 'ss_setup_password_user_input') {
+      this.resolve(request.data.password);
+      this.close();
+    } else if (request.type === 'ss_setup_password_cancel') {
+      this.close();
+      browser.notifications.create('secure-storage-cancelled', {
+        'type': 'basic',
+        'iconUrl': browser.extension.getURL('/icons/keywi-96.png'),
+        'title': 'Keywi',
+        'message': browser.i18n.getMessage('SSsetupCancelled')
       });
-      browser.windows.onRemoved.addListener(onRemoved);
-    });
-  });
-};
+      this.reject('Aborted!');
+    }
+  }
+}
 
-LocalSecureStorage.prompts.unlock = function (verifyFunc) {
-  return new Promise(function (resolve, reject) {
-    const url = browser.extension.getURL('dialog/unlock_secure_storage.html');
-    browser.windows.create({
-      'type': 'panel',
-      'width': 400,
-      'height': 600,
-      'url': url,
-      'incognito': true
-    }).then(function (newWindow) {
-      const openedWindowId = newWindow.id;
-      const onRemoved = function (removedWindowId) {
-        if (openedWindowId === removedWindowId) {
-          browser.notifications.create('secure-storage-cancelled', {
-            'type': 'basic',
-            'iconUrl': browser.extension.getURL('icons/keywi-96.png'),
-            'title': 'Keywi',
-            'message': browser.i18n.getMessage('SSunlockCancelled')
-          });
-          reject();
-        }
-      };
-      browser.runtime.onMessage.addListener(function _func (request, sender, sendResponse) {
-        if (request.type === 'ss_unlock_user_input') {
+class UnlockDialog extends Dialog {
 
-          /**
-           * Call the verifyfunction, this function will verify if the provided password/userKey is correct.
-           * If it's correct the first callback will be called, if it isn't correct the second callback will be called.
-           */
-          verifyFunc(request.data.password, function (key) {
-            // we're done here, cleanup and remove the window
-            browser.runtime.onMessage.removeListener(_func);
-            browser.windows.onRemoved.removeListener(onRemoved);
-            browser.windows.remove(newWindow.id);
-            resolve(key);
-          }, function (reason) {
-            // show an alert to the user
-            browser.tabs.sendMessage(sender.tab.id, {'type': 'ss_unlock_reject', 'msg': reason});
-          });
-        } else if (request.type === 'ss_unlock_cancel') {
-          browser.runtime.onMessage.removeListener(_func);
-          browser.windows.onRemoved.removeListener(onRemoved);
-          browser.windows.remove(newWindow.id);
-          onRemoved(newWindow.id);
-        }
-      });
-      browser.windows.onRemoved.addListener(onRemoved);
+  constructor(verifyFunc) {
+    super('/dialog/unlock_secure_storage.html');
+    this.verifyFunc = verifyFunc;
+    return this.open();
+  }
+
+  onClosedByUser() {
+    browser.notifications.create('secure-storage-cancelled', {
+      'type': 'basic',
+      'iconUrl': browser.extension.getURL('/icons/keywi-96.png'),
+      'title': 'Keywi',
+      'message': browser.i18n.getMessage('SSunlockCancelled')
     });
-  });
-};
+    this.reject();
+  }
+
+  onMessage(request, sender) {
+    let self = this;
+    if (request.type === 'ss_unlock_user_input') {
+
+      /**
+       * Call the verifyfunction, this function will verify if the provided password/userKey is correct.
+       * If it's correct the first callback will be called, if it isn't correct the second callback will be called.
+       */
+      this.verifyFunc(request.data.password,
+        key => {
+          // we're done here, cleanup and close the dialog
+          this.close();
+          self.resolve(key);
+        },
+        reason => {
+          // show an alert to the user
+          browser.tabs.sendMessage(sender.tab.id, {'type': 'ss_unlock_reject', 'msg': reason});
+        }
+      );
+    } else if (request.type === 'ss_unlock_cancel') {
+      this.close();
+      this.onClosedByUser();
+    }
+  }
+}
 
 browser.notifications.onClicked.addListener((notificationId) => {
   if (notificationId === 'secure-storage-cancelled') {
