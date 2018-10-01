@@ -5,7 +5,7 @@ class Dialog {
     this.window = null;
   }
 
-  open() {
+  open(data=null) {
     let self = this;
     this.resolve = null;
     this.reject = null;
@@ -29,8 +29,22 @@ class Dialog {
             self.onClosed();
           }
         });
-      });
 
+        // send data if needed
+        if (data !== null) {
+          browser.tabs.query({'windowId': self.window.id}).then(tabs => {
+            const openedTabId = tabs[0].id;
+            browser.tabs.onUpdated.addListener(function _updateFunc(tabId, changeInfo, tabInfo) {
+              if (tabId === openedTabId && tabInfo.status === 'complete') {
+                setTimeout(function() {
+                  browser.tabs.sendMessage(openedTabId, data);
+                  browser.tabs.onUpdated.removeListener(_updateFunc);
+                }, 300);
+              }
+            });
+          });
+        }
+      });
     });
   }
 
