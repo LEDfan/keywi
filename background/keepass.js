@@ -97,7 +97,7 @@ class SelectCredentialsDialog extends Dialog {
   constructor(possibleCredentials) {
     super('/dialog/select_multiple_passwords.html');
     this.possibleCredentials = possibleCredentials;
-    return this.open({type: "select_mul_pass_data", data: {possibleCredentials: possibleCredentials}});
+    return this.open({'type': 'select_mul_pass_data', 'data': {'possibleCredentials': possibleCredentials}});
   }
 
   onMessage(request, sender) {
@@ -201,7 +201,7 @@ Keepass.getLogins = function(url) {
         let promiseChain = Promise.resolve();
         for (let i = 0; i < resp.Entries.length; i++) {
           promiseChain = promiseChain.then(function() {
-            return Keepass.helpers.decryptEntry(resp.Entries[i], rIv).then((decryptedEntry) => decryptedEntries.push(decryptedEntry));
+            return Keepass.helpers.decryptEntry(resp.Entries[i], rIv).then(decryptedEntry => decryptedEntries.push(decryptedEntry));
           });
         }
         return promiseChain;
@@ -255,7 +255,7 @@ Keepass.getLoginsAndErrorHandler = function (url) {
 };
 
 Keepass.getGUILogins = function(url) {
-  return Keepass.getLoginsAndErrorHandler(url).then((credentials) => {
+  return Keepass.getLoginsAndErrorHandler(url).then(credentials => {
     if (credentials.length === 1) {
       return credentials[0];
     }

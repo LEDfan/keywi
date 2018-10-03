@@ -17,7 +17,7 @@
  * along with Keywi.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-browser.commands.onCommand.addListener((cmd) => {
+browser.commands.onCommand.addListener(cmd => {
   let type;
   if (cmd === 'fill-form') {
     type = 'username-and-password';
@@ -26,8 +26,8 @@ browser.commands.onCommand.addListener((cmd) => {
   } else {
     return;
   }
-  browser.tabs.query({'currentWindow': true, 'active': true}).then((tabs) => {
-    Keepass.getGUILogins(tabs[0].url).then((entries) => {
+  browser.tabs.query({'currentWindow': true, 'active': true}).then(tabs => {
+    Keepass.getGUILogins(tabs[0].url).then(entries => {
       browser.tabs.sendMessage(tabs[0].id, {
         'type': type,
         'suppress_error_on_missing_pw_field': true,

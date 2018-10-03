@@ -28,9 +28,9 @@
  */
 function applyHacks() {
   fetch(browser.extension.getURL('content_scripts/hacks.json')).
-    then((resp) => resp.json()).
-    then((hacks) => {
-      Object.keys(hacks).forEach((pat) => {
+    then(resp => resp.json()).
+    then(hacks => {
+      Object.keys(hacks).forEach(pat => {
         if (window.location.href.search(new RegExp(pat)) !== -1) {
           for (const el of document.querySelectorAll(hacks[pat])) {
             el.style['pointer-events'] = 'none';

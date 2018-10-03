@@ -60,14 +60,15 @@ class UnlockDialog extends Dialog {
   }
 
   onMessage(request, sender) {
-    let self = this;
+    const self = this;
     if (request.type === 'ss_unlock_user_input') {
 
       /**
        * Call the verifyfunction, this function will verify if the provided password/userKey is correct.
        * If it's correct the first callback will be called, if it isn't correct the second callback will be called.
        */
-      this.verifyFunc(request.data.password,
+      this.verifyFunc(
+        request.data.password,
         key => {
           // we're done here, cleanup and close the dialog
           this.close();
@@ -85,7 +86,7 @@ class UnlockDialog extends Dialog {
   }
 }
 
-browser.notifications.onClicked.addListener((notificationId) => {
+browser.notifications.onClicked.addListener(notificationId => {
   if (notificationId === 'secure-storage-cancelled') {
     browser.runtime.openOptionsPage();
   }

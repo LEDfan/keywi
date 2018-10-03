@@ -27,7 +27,7 @@ browser.contextMenus.create({
   'title': browser.i18n.getMessage('contextFillUser'),
   'contexts': ['editable']
 });
-browser.runtime.getBrowserInfo().then((info) => {
+browser.runtime.getBrowserInfo().then(info => {
   let ctx;
   if (Number.parseInt(info.version.split('.')[0], 10) >= 53) {
     ctx = 'password';
@@ -64,7 +64,7 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
   if (activeGetLogins.indexOf(tab.id) === -1) {
     // prevent from simultaneous filling in the credentials
     activeGetLogins.push(tab.id);
-    Keepass.getGUILogins(tab.url).then((entry) => {
+    Keepass.getGUILogins(tab.url).then(entry => {
       browser.tabs.sendMessage(tab.id, {
         'type': type,
         'username': entry.Login,

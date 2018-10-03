@@ -22,7 +22,7 @@ class BasicAuthDialog extends Dialog {
   constructor(config) {
     super('/dialog/confirm_basic_auth.html');
     this.config = config;
-    return this.open({type: "confirm_basic_auth_data", data: config});
+    return this.open({'type': 'confirm_basic_auth_data', 'data': 'config'});
   }
 
   onMessage(request, sender, sendResponse) {
@@ -61,8 +61,8 @@ class BasicAuthDialog extends Dialog {
         // Workaround for #112
         return {};
       }
-      return new BasicAuthDialog({'url': details.url, 'host': details.challenger.host, 'realm': details.realm, 'page_host': pageHost})
-        .then(function (response) {
+      return new BasicAuthDialog({'url': details.url, 'host': details.challenger.host, 'realm': details.realm, 'page_host': pageHost}).
+        then(function (response) {
           if (response.code === 'fill') {
             return {'authCredentials': {'username': response.username, 'password': response.password}};
           } else if (response.code === 'cancel') {

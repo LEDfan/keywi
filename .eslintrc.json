@@ -26,6 +26,10 @@
       "error",
       "always"
     ],
+    "arrow-parens": [
+      "error",
+      "as-needed"
+    ],
     "padded-blocks": "off",
     "capitalized-comments": "off",
     "sort-keys": "off",
@@ -66,7 +70,8 @@
     "no-bitwise": "off",
     "space-before-function-paren": "off",
     "no-loop-func": "warn",
-    "no-undefined": "warn"
+    "no-undefined": "warn",
+    "class-methods-use-this": "off"
   },
   "globals": {
     "cryptoHelpers": true,
@@ -77,6 +82,9 @@
     "activeGetLogins": true,
     "SecureStorage": true,
     "debounce": true,
-    "request": true
+    "request": true,
+    "Dialog": true,
+    "SetupNewPasswordDialog": true,
+    "UnlockDialog": true
   }
 }

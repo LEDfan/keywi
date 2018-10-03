@@ -87,21 +87,21 @@ LocalSecureStorage.prototype._hasEncryptionKey = function () {
  * @private
  */
 LocalSecureStorage.prototype._setupNewPassword = function () {
-  return new SetupNewPasswordDialog().then(userKey => {
-    return Crypto.deriveKey(userKey, true)
-  }).then( encryptionKey => {
-    const verifiers = Crypto.generateVerifier(encryptionKey);
+  return new SetupNewPasswordDialog().
+    then(userKey => Crypto.deriveKey(userKey, true)).
+    then(encryptionKey => {
+      const verifiers = Crypto.generateVerifier(encryptionKey);
 
-    const data = {};
-    data[LocalSecureStorage.prototype._prefix + LocalSecureStorage.prototype._dummyValueKey] = {
-      'nonce': verifiers[0],
-      'verifier': verifiers[1]
-    };
+      const data = {};
+      data[LocalSecureStorage.prototype._prefix + LocalSecureStorage.prototype._dummyValueKey] = {
+        'nonce': verifiers[0],
+        'verifier': verifiers[1]
+      };
 
-    browser.storage.local.set(data);
+      browser.storage.local.set(data);
 
-    LocalSecureStorage.prototype._encryptionkey = encryptionKey;
-  });
+      LocalSecureStorage.prototype._encryptionkey = encryptionKey;
+    });
 };
 
 LocalSecureStorage.prototype._unlockExistingPassword = function () {

@@ -3,12 +3,12 @@ class Dialog {
   constructor(url) {
     this.url = browser.extension.getURL(url);
     this.window = null;
-  }
-
-  open(data=null) {
-    let self = this;
     this.resolve = null;
     this.reject = null;
+  }
+
+  open(data = null) {
+    const self = this;
 
     return new Promise((resolve, reject) => {
       self.resolve = resolve;
@@ -19,7 +19,7 @@ class Dialog {
         'width': 400,
         'height': 600,
         'url': this.url,
-        // 'incognito': true
+        'incognito': true
       }).then(function(newWindow) {
         self.window = newWindow;
         self.onOpen();
