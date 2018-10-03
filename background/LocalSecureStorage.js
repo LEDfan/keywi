@@ -343,3 +343,8 @@ LocalSecureStorage.prototype.reencrypt = function (callback) {
   });
 };
 
+browser.notifications.onClicked.addListener(notificationId => {
+  if (notificationId === 'secure-storage-cancelled') {
+    browser.runtime.openOptionsPage();
+  }
+});

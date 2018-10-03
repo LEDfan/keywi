@@ -18,7 +18,7 @@
       "background/keepass.js",
       "background/securestorage.js",
       "background/LocalSecureStorage.js",
-      "background/LocalSecureStorage.prompts.js",
+      "dialog/background.js",
       "background/contextmenu.js",
       "background/commands.js",
       "background/request.js",

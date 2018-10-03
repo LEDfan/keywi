@@ -85,6 +85,8 @@
     "request": true,
     "Dialog": true,
     "SetupNewPasswordDialog": true,
-    "UnlockDialog": true
+    "UnlockDialog": true,
+    "BasicAuthDialog": true,
+    "SelectCredentialsDialog": true
   }
 }

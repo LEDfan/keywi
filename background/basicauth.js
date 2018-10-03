@@ -17,27 +17,6 @@
  * along with Keywi.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-class BasicAuthDialog extends Dialog {
-
-  constructor(config) {
-    super('/dialog/confirm_basic_auth.html');
-    this.config = config;
-    return this.open({'type': 'confirm_basic_auth_data', 'data': 'config'});
-  }
-
-  onMessage(request, sender, sendResponse) {
-    if (request.type === 'confirm_basic_auth_fetch') {
-      return Keepass.getLoginsAndErrorHandler(this.config.url);
-    } else if (request.type === 'confirm_basic_auth_select') {
-      this.close();
-      this.resolve({'code': 'fill', 'username': request.data.selected.Login, 'password': request.data.selected.Password});
-    } else if (request.type === 'confirm_basic_auth_cancel') {
-      this.close();
-      this.resolve({'code': 'cancel'});
-    }
-  }
-}
-
 (function() {
   function extractHost(url) {
     // Extract host from '<protocol>://<host>/<rest>', includes the port

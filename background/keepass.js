@@ -92,24 +92,6 @@ Keepass.helpers.decryptEntry = function (entry, iv) {
 
 Keepass.prompts = {};
 
-class SelectCredentialsDialog extends Dialog {
-
-  constructor(possibleCredentials) {
-    super('/dialog/select_multiple_passwords.html');
-    this.possibleCredentials = possibleCredentials;
-    return this.open({'type': 'select_mul_pass_data', 'data': {'possibleCredentials': possibleCredentials}});
-  }
-
-  onMessage(request, sender) {
-    this.close();
-    if (request.type === 'select_mul_pass_user_input') {
-      this.resolve(this.possibleCredentials[request.data.selected]);
-    } else if (request.type === 'select_mul_pass_cancel') {
-      this.reject();
-    }
-  }
-}
-
 /**
  * @brief Shows a prompt to the user to select one of multiple credentials.
  * @param possibleCredentials

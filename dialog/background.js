@@ -1,6 +1,6 @@
 /**
- * @copyright (C) 2017 Tobia De Koninck
- * @copyright (C) 2017 Robin Jadoul
+ * @copyright (C) 2018 Tobia De Koninck
+ * @copyright (C) 2018 Robin Jadoul
  *
  * This file is part of Keywi.
  * Keywi is free software: you can redistribute it and/or modify
@@ -17,6 +17,9 @@
  * along with Keywi.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * Dialog to enter a new password for the secure storage.
+ */
 class SetupNewPasswordDialog extends Dialog {
 
   constructor() {
@@ -41,22 +44,15 @@ class SetupNewPasswordDialog extends Dialog {
   }
 }
 
+/**
+ * Dialog to enter the password for the secure storage.
+ */
 class UnlockDialog extends Dialog {
 
   constructor(verifyFunc) {
     super('/dialog/unlock_secure_storage.html');
     this.verifyFunc = verifyFunc;
     return this.open();
-  }
-
-  onClosedByUser() {
-    browser.notifications.create('secure-storage-cancelled', {
-      'type': 'basic',
-      'iconUrl': browser.extension.getURL('/icons/keywi-96.png'),
-      'title': 'Keywi',
-      'message': browser.i18n.getMessage('SSunlockCancelled')
-    });
-    this.reject();
   }
 
   onMessage(request, sender) {
@@ -81,13 +77,60 @@ class UnlockDialog extends Dialog {
       );
     } else if (request.type === 'ss_unlock_cancel') {
       this.close();
-      this.onClosedByUser();
+      browser.notifications.create('secure-storage-cancelled', {
+        'type': 'basic',
+        'iconUrl': browser.extension.getURL('/icons/keywi-96.png'),
+        'title': 'Keywi',
+        'message': browser.i18n.getMessage('SSunlockCancelled')
+      });
+      this.reject();
     }
   }
 }
 
-browser.notifications.onClicked.addListener(notificationId => {
-  if (notificationId === 'secure-storage-cancelled') {
-    browser.runtime.openOptionsPage();
+/**
+ * Dialog to select multiple passwords.
+ */
+class SelectCredentialsDialog extends Dialog {
+
+  constructor(possibleCredentials) {
+    super('/dialog/select_multiple_passwords.html');
+    this.possibleCredentials = possibleCredentials;
+    return this.open({'type': 'select_mul_pass_data', 'data': {'possibleCredentials': possibleCredentials}});
   }
-});
+
+  onMessage(request, sender) {
+    this.close();
+    if (request.type === 'select_mul_pass_user_input') {
+      this.resolve(this.possibleCredentials[request.data.selected]);
+    } else if (request.type === 'select_mul_pass_cancel') {
+      this.reject();
+    }
+  }
+}
+
+
+/**
+ * Dialog to choose whether to use Keywi for basic auth.
+ */
+class BasicAuthDialog extends Dialog {
+
+  constructor(config) {
+    super('/dialog/confirm_basic_auth.html');
+    this.config = config;
+    return this.open({'type': 'confirm_basic_auth_data', 'data': config});
+  }
+
+  onMessage(request, sender, sendResponse) {
+    if (request.type === 'confirm_basic_auth_fetch') {
+      return Keepass.getLoginsAndErrorHandler(this.config.url);
+    } else if (request.type === 'confirm_basic_auth_select') {
+      this.close();
+      this.resolve({'code': 'fill', 'username': request.data.selected.Login, 'password': request.data.selected.Password});
+    } else if (request.type === 'confirm_basic_auth_cancel') {
+      this.close();
+      this.resolve({'code': 'cancel'});
+    }
+  }
+}
+

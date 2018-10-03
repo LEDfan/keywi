@@ -1,5 +1,16 @@
+/**
+ * Abstract base class for implementing a dialog.
+ * Use this class by extending it and overwriting the necessary methods.
+ * @method resolve Resolves the promise returned by open
+ * @method reject Rejects the promise returned by open
+ */
 class Dialog {
 
+  /**
+   * Constructs the dialog, but doesn't open it yet.
+   * Note that normal classes probably will open the dialog in the constructor.
+   * @param url Location of the html file of the dialog
+   */
   constructor(url) {
     this.url = browser.extension.getURL(url);
     this.window = null;
@@ -7,6 +18,15 @@ class Dialog {
     this.reject = null;
   }
 
+  /**
+   * Opens the dialog and returns a promise which should resolve when the dialog is processed by the user and rejected
+   * if the dialog is cancelled by the user.
+   *
+   * When the dialog is opened {@see onOpen} will be called.
+   * When the dialog is closed {@see onClosed} will be called.
+   * @param data The initial data to send to the just opened dialog
+   * @returns {Promise<any>}
+   */
   open(data = null) {
     const self = this;
 
@@ -48,20 +68,31 @@ class Dialog {
     });
   }
 
+  /**
+   * Automatically called when the dialog is opened.
+   */
   onOpen() {
   }
 
+  /**
+   * Automatically called when the dialog is closed.
+   */
   onClosed() {
 
   }
 
-  onClosedByUser() {
-
-  }
-
+  /**
+   * Called when a message is received from the dialog
+   * `this` refers to the current instance of this class.
+   * @see browser.runtime.onMessage.addListener()
+   */
   onMessage(request, sender, sendResponse) {
+
   }
 
+  /**
+   * Closes and cleanups the dialog.
+   */
   close() {
     browser.runtime.onMessage.removeListener(this.onMessage);
     browser.windows.onRemoved.removeListener(this.onClosed);
