@@ -24,24 +24,34 @@ class SetupNewPasswordDialog extends Dialog {
 
   constructor() {
     super('/dialog/setup_secure_storage.html');
+    this.registerMessageHandler('ss_setup_password_user_input', this.onSetupPasswordUserInput);
+    this.registerMessageHandler('ss_setup_password_cancel', this.onSetupPasswordCancel);
     return this.open();
   }
 
-  onMessage(request, sender) {
-    if (request.type === 'ss_setup_password_user_input') {
-      this.resolve(request.data.password);
-      this.close();
-    } else if (request.type === 'ss_setup_password_cancel') {
-      this.close();
-      browser.notifications.create('secure-storage-cancelled', {
-        'type': 'basic',
-        'iconUrl': browser.extension.getURL('/icons/keywi-96.png'),
-        'title': 'Keywi',
-        'message': browser.i18n.getMessage('SSsetupCancelled')
-      });
-      this.reject('Aborted!');
-    }
+  /**
+   * Called when the user submits the form with the new password.
+   * @param request
+   */
+  onSetupPasswordUserInput(request) {
+    this.resolve(request.data.password);
+    this.close();
   }
+
+  /**
+   * Called when the user cancels the form.
+   */
+  onSetupPasswordCancel() {
+    this.close();
+    browser.notifications.create('secure-storage-cancelled', {
+      'type': 'basic',
+      'iconUrl': browser.extension.getURL('/icons/keywi-96.png'),
+      'title': 'Keywi',
+      'message': browser.i18n.getMessage('SSsetupCancelled')
+    });
+    this.reject('Aborted!');
+  }
+
 }
 
 /**
@@ -52,40 +62,49 @@ class UnlockDialog extends Dialog {
   constructor(verifyFunc) {
     super('/dialog/unlock_secure_storage.html');
     this.verifyFunc = verifyFunc;
+    this.registerMessageHandler('ss_unlock_user_input', this.onUnlockUserInput);
+    this.registerMessageHandler('ss_unlock_cancel', this.onUnlockCancel);
     return this.open();
   }
 
-  onMessage(request, sender) {
-    const self = this;
-    if (request.type === 'ss_unlock_user_input') {
-
-      /**
-       * Call the verifyfunction, this function will verify if the provided password/userKey is correct.
-       * If it's correct the first callback will be called, if it isn't correct the second callback will be called.
-       */
-      this.verifyFunc(
-        request.data.password,
-        key => {
-          // we're done here, cleanup and close the dialog
-          this.close();
-          self.resolve(key);
-        },
-        reason => {
-          // show an alert to the user
-          browser.tabs.sendMessage(sender.tab.id, {'type': 'ss_unlock_reject', 'msg': reason});
-        }
-      );
-    } else if (request.type === 'ss_unlock_cancel') {
-      this.close();
-      browser.notifications.create('secure-storage-cancelled', {
-        'type': 'basic',
-        'iconUrl': browser.extension.getURL('/icons/keywi-96.png'),
-        'title': 'Keywi',
-        'message': browser.i18n.getMessage('SSunlockCancelled')
-      });
-      this.reject();
-    }
+  /**
+   * Called when the user submits.
+   * @param request
+   * @param sender
+   */
+  onUnlockUserInput(request, sender) {
+    /**
+     * Call the verifyfunction, this function will verify if the provided password/userKey is correct.
+     * If it's correct the first callback will be called, if it isn't correct the second callback will be called.
+     */
+    this.verifyFunc(
+      request.data.password,
+      key => {
+        // we're done here, cleanup and close the dialog
+        this.close();
+        this.resolve(key);
+      },
+      reason => {
+        // show an alert to the user
+        browser.tabs.sendMessage(sender.tab.id, {'type': 'ss_unlock_reject', 'msg': reason});
+      }
+    );
   }
+
+  /**
+   * Called when the user cancels the form.
+   */
+  onUnlockCancel() {
+    this.close();
+    browser.notifications.create('secure-storage-cancelled', {
+      'type': 'basic',
+      'iconUrl': browser.extension.getURL('/icons/keywi-96.png'),
+      'title': 'Keywi',
+      'message': browser.i18n.getMessage('SSunlockCancelled')
+    });
+    this.reject();
+  }
+
 }
 
 /**
@@ -96,17 +115,28 @@ class SelectCredentialsDialog extends Dialog {
   constructor(possibleCredentials) {
     super('/dialog/select_multiple_passwords.html');
     this.possibleCredentials = possibleCredentials;
+    this.registerMessageHandler('select_mul_pass_user_input', this.onSelectedMultiplePasswords);
+    this.registerMessageHandler('select_mul_pass_cancel', this.onCancel);
     return this.open({'type': 'select_mul_pass_data', 'data': {'possibleCredentials': possibleCredentials}});
   }
 
-  onMessage(request, sender) {
+  /**
+   * Called when the user selects a credential to use.
+   * @param request
+   */
+  onSelectedMultiplePasswords(request) {
     this.close();
-    if (request.type === 'select_mul_pass_user_input') {
-      this.resolve(this.possibleCredentials[request.data.selected]);
-    } else if (request.type === 'select_mul_pass_cancel') {
-      this.reject();
-    }
+    this.resolve(this.possibleCredentials[request.data.selected]);
   }
+
+  /**
+   * Called when the user cancels the dialog.
+   */
+  onCancel() {
+    this.close();
+    this.reject();
+  }
+
 }
 
 
@@ -118,19 +148,35 @@ class BasicAuthDialog extends Dialog {
   constructor(config) {
     super('/dialog/confirm_basic_auth.html');
     this.config = config;
+    this.registerMessageHandler('confirm_basic_auth_fetch', this.onConfirmedFetch);
+    this.registerMessageHandler('confirm_basic_auth_select', this.onConfirmedSelect);
+    this.registerMessageHandler('confirm_basic_auth_cancel', this.onCancel);
     return this.open({'type': 'confirm_basic_auth_data', 'data': config});
   }
 
-  onMessage(request, sender, sendResponse) {
-    if (request.type === 'confirm_basic_auth_fetch') {
-      return Keepass.getLoginsAndErrorHandler(this.config.url);
-    } else if (request.type === 'confirm_basic_auth_select') {
-      this.close();
-      this.resolve({'code': 'fill', 'username': request.data.selected.Login, 'password': request.data.selected.Password});
-    } else if (request.type === 'confirm_basic_auth_cancel') {
-      this.close();
-      this.resolve({'code': 'cancel'});
-    }
+  /**
+   * Called when the user confirms they want to use Keywi for basic auth.
+   */
+  onConfirmedFetch() {
+    return Keepass.getLoginsAndErrorHandler(this.config.url);
   }
+
+  /**
+   * Called when the user selects a credential to use for basic auth.
+   * @param request
+   */
+  onConfirmedSelect(request) {
+    this.close();
+    this.resolve({'code': 'fill', 'username': request.data.selected.Login, 'password': request.data.selected.Password});
+  }
+
+  /**
+   * Called when the user cancels the dialog, i.e. when they want to use the FF dialog.
+   */
+  onCancel() {
+    this.close();
+    this.resolve({'code': 'cancel'});
+  }
+
 }
 

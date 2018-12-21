@@ -16,6 +16,7 @@ class Dialog {
     this.window = null;
     this.resolve = null;
     this.reject = null;
+    this.messageHandlers = {};
   }
 
   /**
@@ -84,10 +85,16 @@ class Dialog {
   /**
    * Called when a message is received from the dialog
    * `this` refers to the current instance of this class.
+   * Can be overwritten in the extending class,
+   * but preferred way is to use registerMessageHandler.
    * @see browser.runtime.onMessage.addListener()
    */
   onMessage(request, sender, sendResponse) {
+    return this.messageHandlers[request.type](request, sender, sendResponse);
+  }
 
+  registerMessageHandler(type, method) {
+    this.messageHandlers[type] = method.bind(this);
   }
 
   /**

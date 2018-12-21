@@ -28,7 +28,6 @@ document.forms[0].onsubmit = function (e) {
       'type': 'ss_setup_password_user_input',
       'data': {'password': password1}
     });
-    // browser.windows.remove(window.windowId);
   }
 };
 
