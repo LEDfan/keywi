@@ -15,6 +15,7 @@
       "vendor/cryptoHelpers.js",
       "vendor/debounce.js",
       "background/lib/dialog.js",
+      "background/lib/polyfill.js",
       "background/Crypto.js",
       "background/keepass.js",
       "background/securestorage.js",

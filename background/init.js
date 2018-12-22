@@ -17,7 +17,9 @@
  * along with Keywi.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-function init () {
+async function init () {
+  await _determineBrowser();
+
   // browser.storage.local.clear(); // uncomment this to test the mechanism to ask the user for a new key
   browser.storage.local.get('defer_unlock_ss').then(function (storage) {
     const unlock = !Number.parseInt(storage.defer_unlock_ss || '0', 10);

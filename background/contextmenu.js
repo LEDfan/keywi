@@ -30,7 +30,7 @@ browser.contextMenus.create({
 
 (async () => { // wrap in async because we have to use await
   let ctx;
-  if (typeof browser.runtime.getBrowserInfo === 'undefined') {
+  if (isChrome()) {
     // Chrome
     ctx = 'editable';
   } else {
