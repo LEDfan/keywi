@@ -64,7 +64,7 @@ window.addEventListener('DOMContentLoaded', function () {
 });
 
 document.getElementById('fetch').onclick = function () {
-  browser.runtime.sendMessage({'type': 'confirm_basic_auth_fetch'}).then((credentials) => {
+  browser.runtime.sendMessage({'type': 'confirm_basic_auth_fetch'}).then(credentials => {
     const length = credentials.length;
     const passwordsEl = document.getElementById('passwords');
 
@@ -91,7 +91,7 @@ document.getElementById('fetch').onclick = function () {
     document.getElementById('passwords').hidden = false;
 
   }).
-    catch((error) => {
+    catch(error => {
       console.log(error);
     });
 

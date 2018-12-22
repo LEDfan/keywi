@@ -87,65 +87,47 @@ LocalSecureStorage.prototype._hasEncryptionKey = function () {
  * @private
  */
 LocalSecureStorage.prototype._setupNewPassword = function () {
-  return new Promise(function (resolve, reject) {
-    LocalSecureStorage.prompts.setupNewPassword().
-      then(function (userKey) {
-        Crypto.deriveKey(userKey, true).then(function (encryptionKey) {
-          const verifiers = Crypto.generateVerifier(encryptionKey);
+  return new SetupNewPasswordDialog().
+    then(userKey => Crypto.deriveKey(userKey, true)).
+    then(encryptionKey => {
+      const verifiers = Crypto.generateVerifier(encryptionKey);
 
-          const data = {};
-          data[LocalSecureStorage.prototype._prefix + LocalSecureStorage.prototype._dummyValueKey] = {
-            'nonce': verifiers[0],
-            'verifier': verifiers[1]
-          };
+      const data = {};
+      data[LocalSecureStorage.prototype._prefix + LocalSecureStorage.prototype._dummyValueKey] = {
+        'nonce': verifiers[0],
+        'verifier': verifiers[1]
+      };
 
-          browser.storage.local.set(data);
+      browser.storage.local.set(data);
 
-          LocalSecureStorage.prototype._encryptionkey = encryptionKey;
-          resolve();
-        }).
-          catch(function (err) {
-            console.error(err);
-            reject(err);
-          });
-      }).
-      catch(function (err) {
-        console.error(err);
-        reject(err);
-      });
-  });
+      LocalSecureStorage.prototype._encryptionkey = encryptionKey;
+    });
 };
 
 LocalSecureStorage.prototype._unlockExistingPassword = function () {
-  return new Promise(function (resolve, reject) {
-    LocalSecureStorage.prompts.unlock(function (userKey, iaccept, ireject) {
-      // This function works as a verifier which can be called by the unlock() prompt to verify the correctness of the key
-      Crypto.deriveKey(userKey).then(function (encryptionKey) {
-        browser.storage.local.get(LocalSecureStorage.prototype._prefix + LocalSecureStorage.prototype._dummyValueKey).then(function (data) {
-          const actualData = data[LocalSecureStorage.prototype._prefix + LocalSecureStorage.prototype._dummyValueKey];
-          const iv = actualData.nonce;
-          const verifier = actualData.verifier;
+  return new UnlockDialog((userKey, acceptKey, rejectKey) => {
+    // This function works as a verifier which can be called by the unlock() prompt to verify the correctness of the key
+    Crypto.deriveKey(userKey).then(encryptionKey => {
+      browser.storage.local.get(LocalSecureStorage.prototype._prefix + LocalSecureStorage.prototype._dummyValueKey).then(function (data) {
+        const actualData = data[LocalSecureStorage.prototype._prefix + LocalSecureStorage.prototype._dummyValueKey];
+        const iv = actualData.nonce;
+        const verifier = actualData.verifier;
 
-          /**
-           * First verify that the provided key to the LocalSecureStorage is correct.
-           */
-          const checkIvStr = Crypto.decryptAsString(verifier, encryptionKey, iv);
+        /**
+         * First verify that the provided key to the LocalSecureStorage is correct.
+         */
+        const checkIvStr = Crypto.decryptAsString(verifier, encryptionKey, iv);
 
-          if (checkIvStr !== iv) {
-            ireject(browser.i18n.getMessage('SSwrongUnlockKey'));
-          } else {
-            iaccept(encryptionKey);
-          }
-        });
+        if (checkIvStr !== iv) {
+          rejectKey(browser.i18n.getMessage('SSwrongUnlockKey'));
+        } else {
+          acceptKey(encryptionKey);
+        }
       });
-    }).then(function (encryptionKey) {
-      // the prompts.unlock will resolve the Promise when it's done cleaning up the prompt
-      LocalSecureStorage.prototype._encryptionkey = encryptionKey;
-      resolve();
-    }).
-      catch(function (err) {
-        reject(err);
-      });
+    });
+  }).then(encryptionKey => {
+    // the prompts.unlock will resolve the Promise when it's done cleaning up the prompt
+    LocalSecureStorage.prototype._encryptionkey = encryptionKey;
   });
 };
 
@@ -362,3 +344,8 @@ LocalSecureStorage.prototype.reencrypt = function (callback) {
   });
 };
 
+browser.notifications.onClicked.addListener(notificationId => {
+  if (notificationId === 'secure-storage-cancelled') {
+    browser.runtime.openOptionsPage();
+  }
+});

@@ -98,58 +98,7 @@ Keepass.prompts = {};
  * @private
  */
 Keepass.prompts._selectCredentials = function (possibleCredentials) {
-  return new Promise(function (resolve, reject) {
-    const url = browser.extension.getURL('/dialog/select_multiple_passwords.html');
-    browser.windows.create({
-      // tabId: tab.id,
-      'type': 'panel',
-      'width': 400,
-      'height': 600,
-      // 'incognito': true,
-      'url': url
-    }).then(function (newWindow) {
-      const openedWindowId = newWindow.id;
-      const onRemoved = function (removedWindowId) {
-        if (openedWindowId === removedWindowId) {
-          reject();
-        }
-      };
-
-      browser.tabs.query({'windowId': openedWindowId}).then(function (tabs) {
-        const openedTabId = tabs[0].id;
-
-        browser.tabs.onUpdated.addListener(function _updateFunc (tabId, changeInfo, tabInfo) {
-          if (tabId === openedTabId) {
-            if (tabInfo.status === 'complete') {
-              setTimeout(function () {
-                browser.tabs.sendMessage(openedTabId, {
-                  'type': 'select_mul_pass_data',
-                  'data': {'possibleCredentials': possibleCredentials}
-                });
-                browser.tabs.onUpdated.removeListener(_updateFunc);
-              }, 300);
-            }
-          }
-        });
-        browser.runtime.onMessage.addListener(function _func (request) {
-          if (request.type === 'select_mul_pass_user_input') {
-            const selCred = possibleCredentials[request.data.selected];
-            browser.runtime.onMessage.removeListener(_func);
-            browser.windows.onRemoved.removeListener(onRemoved);
-            browser.windows.remove(newWindow.id);
-            resolve(selCred);
-          } else if (request.type === 'select_mul_pass_cancel') {
-            browser.runtime.onMessage.removeListener(_func);
-            browser.windows.onRemoved.removeListener(onRemoved);
-            browser.windows.remove(newWindow.id);
-            onRemoved(openedWindowId);
-            reject();
-          }
-        });
-        browser.windows.onRemoved.addListener(onRemoved);
-      });
-    });
-  });
+  return new SelectCredentialsDialog(possibleCredentials);
 };
 
 Keepass.ready = function () {
@@ -159,12 +108,6 @@ Keepass.ready = function () {
 Keepass.setSecureStorage = function (ss) {
   Keepass._ss = ss;
 };
-
-/*
- * Keepass.isAssociated = function() {
- *     return Keepass.state.associated;
- * };
- */
 
 Keepass.reCheckAssociated = function () {
   return new Promise(function (resolve, reject) {
@@ -240,7 +183,7 @@ Keepass.getLogins = function(url) {
         let promiseChain = Promise.resolve();
         for (let i = 0; i < resp.Entries.length; i++) {
           promiseChain = promiseChain.then(function() {
-            return Keepass.helpers.decryptEntry(resp.Entries[i], rIv).then((decryptedEntry) => decryptedEntries.push(decryptedEntry));
+            return Keepass.helpers.decryptEntry(resp.Entries[i], rIv).then(decryptedEntry => decryptedEntries.push(decryptedEntry));
           });
         }
         return promiseChain;
@@ -294,7 +237,7 @@ Keepass.getLoginsAndErrorHandler = function (url) {
 };
 
 Keepass.getGUILogins = function(url) {
-  return Keepass.getLoginsAndErrorHandler(url).then((credentials) => {
+  return Keepass.getLoginsAndErrorHandler(url).then(credentials => {
     if (credentials.length === 1) {
       return credentials[0];
     }
