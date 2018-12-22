@@ -1,21 +1,25 @@
-let browserName = null;
+window.browserName = null;
 
-function isChrome() {
-  return browserName === "Chrome";
-}
-
-function isFirefox() {
-  return browserName === "Firefox";
-}
-
-async function _determineBrowser() {
-
+async function _setBrowserName() {
   if (typeof browser.runtime.getBrowserInfo === 'undefined') {
-    browserName = "Chrome";
+    window.browserName = "Chrome";
+  } else {
+    let info = await browser.runtime.getBrowserInfo();
+    window.browserName = info.name;
   }
-
-  let info = await browser.runtime.getBrowserInfo();
-  browserName = info.name;
-
-  return browserName;
 }
+
+async function isChrome() {
+  if (window.browserName == null) {
+    await _setBrowserName();
+  }
+  return window.browserName === "Chrome";
+}
+
+async function isFirefox() {
+  if (window.browserName == null) {
+    await _setBrowserName();
+  }
+  return window.browserName === "Firefox";
+}
+

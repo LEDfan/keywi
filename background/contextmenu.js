@@ -29,8 +29,9 @@ browser.contextMenus.create({
 });
 
 (async () => { // wrap in async because we have to use await
+  // console.log("Contextmenu....");
   let ctx;
-  if (isChrome()) {
+  if (await isChrome()) {
     // Chrome
     ctx = 'editable';
   } else {

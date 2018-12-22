@@ -31,7 +31,7 @@ class Dialog {
   open(data = null) {
     const self = this;
 
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       self.resolve = resolve;
       self.reject = reject;
 
@@ -42,7 +42,7 @@ class Dialog {
         'url': this.url,
       };
 
-      if (isFirefox()) {
+      if (await isFirefox()) {
         options.incognito = true;
       }
 
