@@ -17,37 +17,38 @@
  * along with Keywi.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-(function() {
+(async () => {
   function extractHost(url) {
     // Extract host from '<protocol>://<host>/<rest>', includes the port
     return (/:\/\/([^/]+)\//).exec(url)[1];
   }
 
-  // only supported on FF >= 54, but 52 is an ESR version
-  if (typeof browser.webRequest.onAuthRequired !== 'undefined') {
-    browser.webRequest.onAuthRequired.addListener(function(details, cb) {
-      if (details.isProxy) {
-        // Don't do proxy's, at least for now
-        return;
-      }
-      let pageHost;
-      if (typeof details.originUrl !== 'undefined') {
-        pageHost = extractHost(details.originUrl);
-      } else {
-        pageHost = details.challenger.host;
-      }
-      if (details.url.split('/').pop() === 'favicon.ico') {
-        // Workaround for #112
+  await addOnAuthRequiredListener(details => {
+    if (details.isProxy) {
+      // Don't do proxy's, at least for now
+      return;
+    }
+    let pageHost;
+    if (typeof details.originUrl !== 'undefined') {
+      pageHost = extractHost(details.originUrl);
+    } else {
+      pageHost = details.challenger.host;
+    }
+    if (details.url.split('/').pop() === 'favicon.ico') {
+      // Workaround for #112
+      return {};
+    }
+    return new BasicAuthDialog({
+      'url': details.url,
+      'host': details.challenger.host,
+      'realm': details.realm,
+      'page_host': pageHost
+    }).then(function(response) {
+      if (response.code === 'fill') {
+        return {'authCredentials': {'username': response.username, 'password': response.password}};
+      } else if (response.code === 'cancel') {
         return {};
       }
-      return new BasicAuthDialog({'url': details.url, 'host': details.challenger.host, 'realm': details.realm, 'page_host': pageHost}).
-        then(function (response) {
-          if (response.code === 'fill') {
-            cb({'authCredentials': {'username': response.username, 'password': response.password}});
-          } else if (response.code === 'cancel') {
-            cb({});
-          }
-        });
-    }, {'urls': ['<all_urls>']}, ['asyncBlocking']);
-  }
-}());
+    });
+  });
+})();

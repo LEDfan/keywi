@@ -23,3 +23,23 @@ async function isFirefox() {
   return window.browserName === "Firefox";
 }
 
+async function addOnAuthRequiredListener(outerCb) {
+  if (typeof browser.webRequest.onAuthRequired == 'undefined') {
+    return;
+  }
+
+  if (await isChrome()) {
+
+    browser.webRequest.onAuthRequired.addListener(function(details, innerCb) {
+      outerCb(details).then(innerCb);
+    }, {'urls': ['<all_urls>']}, ['asyncBlocking']);
+
+  } else if (await isFirefox()) {
+
+    browser.webRequest.onAuthRequired.addListener(function(details) {
+      return outerCb(details);
+    }, {'urls': ['<all_urls>']}, ['blocking']);
+
+  }
+}
+
