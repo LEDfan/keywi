@@ -65,5 +65,11 @@
       "description": "__MSG_fillPassDescription__"
     }
   },
+  "applications": {
+    "gecko": {
+      "id": "keywi-ff-add-on@ledfan.be",
+      "strict_min_version": "51.0"
+    }
+  },
   "default_locale": "en"
 }
