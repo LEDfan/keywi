@@ -4,3 +4,4 @@ web-ext-artifacts
 .web-extension-id
 *.pyc
 translation-status.png
+vendor/browser-polyfill.js

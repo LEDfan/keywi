@@ -29,5 +29,6 @@ build:
 	web-ext build --ignore-files ${IGNORED_FILES}
 
 deps:
-	npm install eslint web-ext
+	npm install
+	cp node_modules/webextension-polyfill/dist/browser-polyfill.js vendor/browser-polyfill.js
 
