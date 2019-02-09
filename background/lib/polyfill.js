@@ -1,4 +1,5 @@
 window.browserName = null;
+window.firefoxVersion = null;
 
 async function _setBrowserName() {
   if (typeof browser.runtime.getBrowserInfo === 'undefined') {
@@ -21,6 +22,14 @@ async function isFirefox() {
     await _setBrowserName();
   }
   return window.browserName === "Firefox";
+}
+
+async function getFirefoxVersion() {
+  if (window.firefoxVersion == null) {
+    let info = await browser.runtime.getBrowserInfo();
+    window.firefoxVersion = Number.parseInt(info.version.split('.')[0], 10);
+  }
+  return window.firefoxVersion;
 }
 
 async function addOnAuthRequiredListener(outerCb) {

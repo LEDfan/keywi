@@ -29,20 +29,18 @@ browser.contextMenus.create({
 });
 
 (async () => { // wrap in async because we have to use await
-  // console.log("Contextmenu....");
+               // console.log("Contextmenu....");
   let ctx;
   if (await isChrome()) {
     // Chrome
     ctx = 'editable';
   } else {
     // Firefox
-    ctx = await browser.runtime.getBrowserInfo().then((info) => {
-      if (Number.parseInt(info.version.split('.')[0], 10) >= 53) {
-        return 'password';
-      } else {
-        return 'editable';
-      }
-    });
+    if (await getFirefoxVersion() >= 53) {
+      ctx = 'password';
+    } else {
+      ctx = 'editable';
+    }
   }
 
   browser.contextMenus.create({
