@@ -24,14 +24,6 @@ async function isFirefox() {
   return window.browserName === "Firefox";
 }
 
-async function getFirefoxVersion() {
-  if (window.firefoxVersion == null) {
-    let info = await browser.runtime.getBrowserInfo();
-    window.firefoxVersion = Number.parseInt(info.version.split('.')[0], 10);
-  }
-  return window.firefoxVersion;
-}
-
 async function addOnAuthRequiredListener(outerCb) {
   if (typeof browser.webRequest.onAuthRequired == 'undefined') {
     return;

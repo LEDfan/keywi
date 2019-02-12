@@ -36,11 +36,7 @@ browser.contextMenus.create({
     ctx = 'editable';
   } else {
     // Firefox
-    if (await getFirefoxVersion() >= 53) {
-      ctx = 'password';
-    } else {
-      ctx = 'editable';
-    }
+    ctx = 'password';
   }
 
   browser.contextMenus.create({
