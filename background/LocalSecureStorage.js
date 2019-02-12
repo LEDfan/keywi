@@ -165,8 +165,9 @@ LocalSecureStorage.prototype._unlockStorage = function () {
 };
 
 LocalSecureStorage.prototype.has = function (key) {
+  // TODO remove new Promise
   return new Promise(function (resolve, reject) {
-    browser.storage.local.get(LocalSecureStorage.prototype._prefix + key, function (data) {
+    return browser.storage.local.get(LocalSecureStorage.prototype._prefix + key).then( function (data) {
       if (Object.keys(data).length === 0) {
         reject('No such key!');
       } else {

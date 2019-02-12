@@ -206,7 +206,7 @@ Keepass.getLoginsAndErrorHandler = function (url) {
         browser.notifications.create({
           'type': 'basic',
           'message': browser.i18n.getMessage('noPassFound'),
-          'iconUrl': browser.extension.getURL('icons/keywi-96.png'),
+          'iconUrl': browser.extension.getURL('/icons/keywi-96.png'),
           'title': 'Keywi'
         });
         reject({'code': 'noPassFound'});
@@ -218,7 +218,7 @@ Keepass.getLoginsAndErrorHandler = function (url) {
         browser.notifications.create({
           'type': 'basic',
           'message': browser.i18n.getMessage('cannotConnect'),
-          'iconUrl': browser.extension.getURL('icons/keywi-96.png'),
+          'iconUrl': browser.extension.getURL('/icons/keywi-96.png'),
           'title': 'Keywi'
         });
         reject();
@@ -226,7 +226,7 @@ Keepass.getLoginsAndErrorHandler = function (url) {
         browser.notifications.create({
           'type': 'basic',
           'message': browser.i18n.getMessage('noLogins'),
-          'iconUrl': browser.extension.getURL('icons/keywi-96.png'),
+          'iconUrl': browser.extension.getURL('/icons/keywi-96.png'),
           'title': 'Keywi'
         });
         reject();
@@ -307,7 +307,7 @@ Keepass.associate = function () {
             browser.notifications.create({
               'type': 'basic',
               'message': browser.i18n.getMessage('assocFailed'),
-              'iconUrl': browser.extension.getURL('icons/keywi-96.png'),
+              'iconUrl': browser.extension.getURL('/icons/keywi-96.png'),
               'title': 'Keywi'
             });
           }
@@ -316,7 +316,7 @@ Keepass.associate = function () {
             browser.notifications.create({
               'type': 'basic',
               'message': browser.i18n.getMessage('cannotConnect'),
-              'iconUrl': browser.extension.getURL('icons/keywi-96.png'),
+              'iconUrl': browser.extension.getURL('/icons/keywi-96.png'),
               'title': 'Keywi'
             });
           });
@@ -334,28 +334,24 @@ browser.storage.onChanged.addListener(function (changes, areaName) {
   }
 });
 
-browser.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+browser.runtime.onMessage.addListener(function (request) {
   if (request.type === 're-encrypt_local_secure_storage') {
-    Keepass._ss.reencrypt(function () {
-      sendResponse();
-    });
+    return Keepass._ss.reencrypt();
   } else if (request.type === 'reset') {
-    Keepass._ss.clear().then(function () {
+    return Keepass._ss.clear().then(function () {
       return Keepass._ss.reInitialize();
     }).
       then(function () {
-        Keepass.associate(function () {
-          sendResponse();
-        });
+        return Keepass.associate();
       }).
-      catch(function () {
-        sendResponse();
+      catch(function (err) {
+        console.log(err);
       });
   } else if (request.type === 'options_user_info') {
     let hash = null;
     if (Keepass._ss.ready()) {
       // if Secure Storage is unlocked
-      Keepass._ss.get('database.hash').then(function (data) {
+      return Keepass._ss.get('database.hash').then(function (data) {
         hash = data;
         return Keepass._ss.get('database.id');
       }).
@@ -366,18 +362,18 @@ browser.runtime.onMessage.addListener(function (request, sender, sendResponse) {
           response.table[browser.i18n.getMessage('statusDBassoc')] = true;
           response.table[browser.i18n.getMessage('statusDBhash')] = hash;
           response.table[browser.i18n.getMessage('statusDBid')] = id;
-          sendResponse(response);
+          return response;
         }).
         catch(function () {
           // database id or hash are not available we are not associated with Keepass
           const response = {'table': {}, 'associated': false};
           response.table[browser.i18n.getMessage('statusSSunlocked')] = true;
           response.table[browser.i18n.getMessage('statusDBassoc')] = false;
-          sendResponse(response);
+          return response;
         });
     } else {
       // Secure Storage is locked so only check if hash and id are available
-      Keepass._ss.has('database.hash').then(function (data) {
+      return Keepass._ss.has('database.hash').then(function (data) {
         hash = data;
         return Keepass._ss.has('database.id');
       }).
@@ -386,20 +382,18 @@ browser.runtime.onMessage.addListener(function (request, sender, sendResponse) {
           const response = {'table': {}, 'associated': true};
           response.table[browser.i18n.getMessage('statusSSunlocked')] = false;
           response.table[browser.i18n.getMessage('statusDBassoc')] = true;
-          sendResponse(response);
+          return response;
         }).
         catch(function () {
           // hash or id are not available
           const response = {'table': {}, 'associated': false};
           response.table[browser.i18n.getMessage('statusSSunlocked')] = false;
           response.table[browser.i18n.getMessage('statusDBassoc')] = false;
-          sendResponse(response);
+          return response;
         });
     }
   } else if (request.type === 'associate') {
-    Keepass.associate(function () {
-      sendResponse();
-    });
+    return Keepass.associate();
   }
   return true; // http://stackoverflow.com/a/40773823
 });

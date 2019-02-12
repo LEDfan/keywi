@@ -17,6 +17,8 @@ class Dialog {
     this.resolve = null;
     this.reject = null;
     this.messageHandlers = {};
+    this.onMessageHandler = null;
+    this.onClosedHandler = null;
   }
 
   /**
@@ -31,25 +33,37 @@ class Dialog {
   open(data = null) {
     const self = this;
 
-    return new Promise((resolve, reject) => {
+    return new Promise( async (resolve, reject) => {
       self.resolve = resolve;
       self.reject = reject;
 
-      browser.windows.create({
+      let options = {
         'type': 'panel',
         'width': 400,
         'height': 600,
         'url': this.url,
-        'incognito': true
-      }).then(function(newWindow) {
+      };
+
+      if (await isFirefox()) {
+        options.incognito = true;
+      }
+
+      browser.windows.create(options).then(function(newWindow) {
         self.window = newWindow;
         self.onOpen();
-        browser.runtime.onMessage.addListener(self.onMessage.bind(self));
-        browser.windows.onRemoved.addListener(removedWindowId => {
+
+        // (..).bind() will each time return a new instance of the method, thus when trying to remove the onMessage
+        // listener, it will do nothing. Hence onMessageHandler keeps track of the method instance to remove it.
+        self.onMessageHandler = self.onMessage.bind(self);
+        browser.runtime.onMessage.addListener(self.onMessageHandler);
+
+        // idem...
+        self.onClosedHandler = removedWindowId => {
           if (self.window.id === removedWindowId) {
             self.onClosed();
           }
-        });
+        };
+        browser.windows.onRemoved.addListener(self.onClosedHandler);
 
         // send data if needed
         if (data !== null) {
@@ -101,8 +115,8 @@ class Dialog {
    * Closes and cleanups the dialog.
    */
   close() {
-    browser.runtime.onMessage.removeListener(this.onMessage);
-    browser.windows.onRemoved.removeListener(this.onClosed);
+    browser.runtime.onMessage.removeListener(this.onMessageHandler);
+    browser.windows.onRemoved.removeListener(this.onClosedHandler);
     browser.windows.remove(this.window.id);
   }
 

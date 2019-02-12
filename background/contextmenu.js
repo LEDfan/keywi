@@ -27,19 +27,26 @@ browser.contextMenus.create({
   'title': browser.i18n.getMessage('contextFillUser'),
   'contexts': ['editable']
 });
-browser.runtime.getBrowserInfo().then(info => {
+
+(async () => { // wrap in async because we have to use await
+               // console.log("Contextmenu....");
   let ctx;
-  if (Number.parseInt(info.version.split('.')[0], 10) >= 53) {
-    ctx = 'password';
-  } else {
+  if (await isChrome()) {
+    // Chrome
     ctx = 'editable';
+  } else {
+    // Firefox
+    ctx = 'password';
   }
+
   browser.contextMenus.create({
     'id': 'password',
     'title': browser.i18n.getMessage('contextFillPass'),
     'contexts': [ctx]
   });
-});
+
+})();
+
 
 activeGetLogins = [];
 
@@ -48,7 +55,7 @@ browser.runtime.onMessage.addListener((request, sender, sendresponse) => {
     browser.notifications.create({
       'type': 'basic',
       'message': browser.i18n.getMessage('noPassFieldFound'),
-      'iconUrl': browser.extension.getURL('icons/keywi-96.png'),
+      'iconUrl': browser.extension.getURL('/icons/keywi-96.png'),
       'title': 'Keywi'
     });
   }
