@@ -33,17 +33,22 @@ class Dialog {
   open(data = null) {
     const self = this;
 
-    return new Promise((resolve, reject) => {
+    return new Promise( async (resolve, reject) => {
       self.resolve = resolve;
       self.reject = reject;
 
-      browser.windows.create({
+      let options = {
         'type': 'panel',
         'width': 400,
         'height': 600,
         'url': this.url,
-        'incognito': true
-      }).then(function(newWindow) {
+      };
+
+      if (await isFirefox()) {
+        options.incognito = true;
+      }
+
+      browser.windows.create(options).then(function(newWindow) {
         self.window = newWindow;
         self.onOpen();
 

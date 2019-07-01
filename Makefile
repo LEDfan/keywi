@@ -1,8 +1,11 @@
 IGNORED_FILES=ci Makefile crowdin.yml
-.PHONY: run lint release-ss deps
+.PHONY: run run-chromium lint release-ss deps
 
 run:
 	web-ext run --no-reload
+
+run-chromium:
+	chromium --load-extension=`pwd`
 
 lint:
 	./node_modules/.bin/eslint . || true
@@ -26,5 +29,6 @@ build:
 	web-ext build --ignore-files ${IGNORED_FILES}
 
 deps:
-	npm install eslint web-ext
+	npm install
+	cp node_modules/webextension-polyfill/dist/browser-polyfill.js vendor/browser-polyfill.js
 
