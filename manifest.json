@@ -19,7 +19,7 @@
       "background/lib/dialog.js",
       "background/lib/polyfill.js",
       "background/Crypto.js",
-      "background/keepass.js",
+      "background/Keywi.js",
       "background/lib/PasswordBackend.js",
       "background/lib/KeepassLegacyBackend.js",
       "background/securestorage.js",

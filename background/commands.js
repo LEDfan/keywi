@@ -27,8 +27,9 @@ browser.commands.onCommand.addListener(cmd => {
     return;
   }
   browser.tabs.query({'currentWindow': true, 'active': true}).then(tabs => {
-    Keepass.getGUILogins(tabs[0].url).then(entries => {
+    Keywi.getGUILogins(tabs[0].url).then(entries => {
       console.log(entries);
+      console.log(tabs[0]);
       browser.tabs.sendMessage(tabs[0].id, {
         'type': type,
         'suppress_error_on_missing_pw_field': true,

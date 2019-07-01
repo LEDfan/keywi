@@ -30,7 +30,7 @@ function init() {
     backend = new KeepassLegacyBackend(ss);
     return backend.init()
   }).then( () => {
-    Keepass.setBackend(backend);
+    Keywi.setBackend(backend);
 
     //     Keepass.setSecureStorage(ss);
     //     console.log('Initialized the Secure Storage, associating with keepass now.');
@@ -63,7 +63,7 @@ function init() {
       'iconUrl': browser.extension.getURL('icons/keywi-96.png'),
       'title': 'Keywi'
     });
-    Keepass.setSecureStorage(ss);
+    Keywi.setSecureStorage(ss);
   });
 }
 

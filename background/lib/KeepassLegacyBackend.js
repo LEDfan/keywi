@@ -3,6 +3,7 @@ class KeepassLegacyBackend extends PasswordBackend {
 
   constructor(secureStorage) {
     super('KeepassLegacy', secureStorage);
+    this._nativeHostName = 'org.keepassxc.keepassxc_browser';
     this._currentKeePassXC = ''; // version
     this.associated = {'value': false, 'hash': null};
     this._keyRing = {};
@@ -226,7 +227,7 @@ class KeepassLegacyBackend extends PasswordBackend {
   };
 
   _connectToNative() {
-    this._nativePort = browser.runtime.connectNative(Keepass.nativeHostName);
+    this._nativePort = browser.runtime.connectNative(this._nativeHostName);
     this._nativePort.onDisconnect.addListener((p) => {
       if (p.error) {
         console.log(`Disconnected due to an error: ${p.error.message}`);
@@ -495,7 +496,7 @@ class KeepassLegacyBackend extends PasswordBackend {
           // Keepass.setcurrentKeePassXCVersion(parsed.version);
           this._databaseHash = parsed.hash || '';
 
-          if (oldDatabaseHash && oldDatabaseHash != Keepass.databaseHash) {
+          if (oldDatabaseHash && oldDatabaseHash !== this._databaseHash) {
             this.associated.value = false;
             this.associated.hash = null;
           }

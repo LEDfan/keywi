@@ -272,7 +272,7 @@ LocalSecureStorage.prototype.clear = function () {
     }
 
     LocalSecureStorage.prototype._encryptionkey = null;
-    Keepass.state.associated = false;
+    Keywi.state.associated = false; // TODO
 
     return promiseChain;
 

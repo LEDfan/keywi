@@ -158,7 +158,7 @@ class BasicAuthDialog extends Dialog {
    * Called when the user confirms they want to use Keywi for basic auth.
    */
   onConfirmedFetch() {
-    return Keepass.getLoginsAndErrorHandler(this.config.url);
+    return Keywi.getLoginsAndErrorHandler(this.config.url);
   }
 
   /**
