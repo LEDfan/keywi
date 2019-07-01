@@ -32,7 +32,7 @@ window.addEventListener('DOMContentLoaded', function () {
    * browser.windows.create won't show contents unless resized.
    * See https://bugzilla.mozilla.org/show_bug.cgi?id=1402110
    */
-  browser.windows.getCurrent().then(win => {
+  browser.windows.getCurrent(win => {
     browser.windows.update(win.id, {'width': win.width + 1});
   });
 });

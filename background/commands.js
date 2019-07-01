@@ -28,11 +28,12 @@ browser.commands.onCommand.addListener(cmd => {
   }
   browser.tabs.query({'currentWindow': true, 'active': true}).then(tabs => {
     Keepass.getGUILogins(tabs[0].url).then(entries => {
+      console.log(entries);
       browser.tabs.sendMessage(tabs[0].id, {
         'type': type,
         'suppress_error_on_missing_pw_field': true,
-        'username': entries.Login,
-        'password': entries.Password
+        'username': entries.login,
+        'password': entries.password // TODO make compatible; extra conversion?
       });
     });
   });
