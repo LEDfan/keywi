@@ -1,4 +1,4 @@
-class KeepassLegacyBackend extends PasswordBackend {
+class KeepassXCBackend extends PasswordBackend {
 
 
   constructor(secureStorage) {

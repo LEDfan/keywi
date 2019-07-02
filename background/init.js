@@ -27,7 +27,7 @@ function init() {
     return new LocalSecureStorage(unlock)
   }).then(function(ss) {
     console.log("unlocked!");
-    backend = new KeepassLegacyBackend(ss);
+    backend = new KeepassXCBackend(ss);
     return backend.init()
   }).then( () => {
     Keywi.setBackend(backend);
