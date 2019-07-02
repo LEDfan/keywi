@@ -44,9 +44,9 @@ class Dialog {
         'url': this.url,
       };
 
-      if (await isFirefox()) {
-        options.incognito = true;
-      }
+      // if (await isFirefox()) {
+      //   options.incognito = true;
+      // }
 
       browser.windows.create(options).then(function(newWindow) {
         self.window = newWindow;
