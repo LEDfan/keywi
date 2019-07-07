@@ -9,14 +9,6 @@ class PasswordBackend {
 
   }
 
-  /**
-   * Checks if this Backend is connected to the datastore.
-   * @return boolean whether connected
-   */
-  async reCheckAssociated() {
-
-  }
-
   async deAssociate() {
 
   }

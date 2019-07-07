@@ -1,5 +1,10 @@
 class KeepassXCBackend extends PasswordBackend {
 
+  /**
+   *
+   * PUBLIC INTERFACE
+   *
+   */
 
   constructor(secureStorage) {
     super('KeepassLegacy', secureStorage);
@@ -28,9 +33,9 @@ class KeepassXCBackend extends PasswordBackend {
       this._generateNewKeyPair();
       await this._changePublicKeys();
       await this._getDatabaseHash();
-      const associated = await this.testAssociation();
+      const associated = await this._testAssociation();
 
-      if (associated && await this.isConfigured()) {
+      if (associated && await this._isConfigured()) {
         // done
       } else {
         await this.associate();
@@ -92,50 +97,27 @@ class KeepassXCBackend extends PasswordBackend {
     });
   }
 
-  async isConfigured() {
-    if (this._databaseHash !== null) {
-      const hash = await this._getDatabaseHash();
-      return hash in this._keyRing;
-    } else {
-      return this._databaseHash in this._keyRing;
-    }
-  };
 
-  async testAssociation(enableTimeout = false, triggerUnlock = false) {
-
-    let dbHash = await this._getDatabaseHash();
-    if (!dbHash) {
-      return false;
-    }
-
-    if (this._isDatabaseClosed || !this._isKeePassXCAvailable) {
-      return false;
-    }
-
-    if (this.isAssociated()) {
-      return true;
-    }
-
-    if (!this._serverPublicKey) {
-      // if (tab && page.tabs[tab.id]) {
-      //   keepass.handleError(tab, kpErrors.PUBLIC_KEY_NOT_FOUND);
-      // }
-      return false;
-    }
-
-    const kpAction = 'test-associate';
+  async getLogins(url) {
+    let entries = [];
+    let keys = [];
+    const kpAction = 'get-logins';
     const nonce = this._getNonce();
     const incrementedNonce = this._incrementedNonce(nonce);
-    const {dbid, dbkey} = this._getCryptoKey();
+    const {dbid} = this._getCryptoKey();
 
-    if (dbkey === null || dbid === null) {
-      return false;
+    for (const keyHash of Object.keys(this._keyRing)) {
+      keys.push({
+        id: this._keyRing[keyHash].id,
+        key: this._keyRing[keyHash].key
+      });
     }
 
     const messageData = {
       action: kpAction,
       id: dbid,
-      key: dbkey
+      url: url,
+      keys: keys
     };
 
     const request = {
@@ -145,37 +127,52 @@ class KeepassXCBackend extends PasswordBackend {
       clientID: this._clientID
     };
 
-    const response = await this._sendNativeMessage(request, enableTimeout);
-    if (response.message && response.nonce) {
-      const res = this._decrypt(response.message, response.nonce);
-      if (!res) {
-        return;
-      }
+    return this._sendNativeMessage(request).then((response) => {
+      if (response.message && response.nonce) {
+        const res = this._decrypt(response.message, response.nonce);
+        if (!res) {
+          // keepass.handleError(tab, kpErrors.CANNOT_DECRYPT_MESSAGE);
+          return [];
+        }
 
-      const message = nacl.util.encodeUTF8(res);
-      const parsed = JSON.parse(message);
-      if (parsed.version) {
-        this._currentKeePassXC = parsed.version;
-      }
-      this._isEncryptionKeyUnrecognized = false;
+        const message = nacl.util.encodeUTF8(res);
+        const parsed = JSON.parse(message);
+        if (parsed.version) {
+          this._currentKeePassXC = parsed.version;
+        }
 
-      if (!this._verifyResponse(parsed, incrementedNonce)) {
-        const hash = response.hash || 0;
-        this._deleteKey(hash);
-        this.isEncryptionKeyUnrecognized = true;
-        // thi.handleError(tab, kpErrors.ENCRYPTION_KEY_UNRECOGNIZED);
-        this._associated.value = false;
-        this._associated.hash = null;
-      } else if (!this.isAssociated()) {
-        // keepass.handleError(tab, kpErrors.ASSOCIATION_FAILED);
+        if (this._verifyResponse(parsed, incrementedNonce)) {
+          entries = parsed.entries;
+          // keepass.updateLastUsed(keepass.databaseHash);
+          // if (entries.length === 0) {
+          //   // Questionmark-icon is not triggered, so we have to trigger for the normal symbol
+          //   browserAction.showDefault(null, tab);
+          // }
+          // callback(entries);
+          return entries;
+        } else {
+          console.log('RetrieveCredentials for ' + url + ' rejected');
+        }
+        // page.debug('keepass.retrieveCredentials() => entries.length = {1}', entries.length);
+      } else if (response.error && response.errorCode) {
+        console.log("error", response);
+        // keepass.handleError(tab, response.errorCode, response.error);
+        return [];
+      } else {
+        console.log("error unkown");
+        // browserAction.showDefault(null, tab);
+        return [];
       }
-    } else if (response.error && response.errorCode) {
-      // keepass.handleError(tab, response.errorCode, response.error);
-    }
-    return this.isAssociated();
+    });
   }
 
-  isAssociated() {
+  /**
+   *
+   * PRIVATE INTERFACE
+   *
+   */
+
+  _isAssociated() {
     return (this._associated.value && this._associated.hash && this._associated.hash === this._databaseHash);
   }
 
@@ -223,7 +220,7 @@ class KeepassXCBackend extends PasswordBackend {
     }
 
     this._associated.hash = (this._associated.value) ? this._databaseHash : null;
-    return this.isAssociated();
+    return this._isAssociated();
   }
 
 
@@ -374,73 +371,7 @@ class KeepassXCBackend extends PasswordBackend {
     return nacl.util.encodeBase64(nacl.randomBytes(this._keySize));
   }
 
-  async getLogins(url) {
-    let entries = [];
-    let keys = [];
-    const kpAction = 'get-logins';
-    const nonce = this._getNonce();
-    const incrementedNonce = this._incrementedNonce(nonce);
-    const {dbid} = this._getCryptoKey();
 
-    for (const keyHash of Object.keys(this._keyRing)) {
-      keys.push({
-        id: this._keyRing[keyHash].id,
-        key: this._keyRing[keyHash].key
-      });
-    }
-
-    const messageData = {
-      action: kpAction,
-      id: dbid,
-      url: url,
-      keys: keys
-    };
-
-    const request = {
-      action: kpAction,
-      message: this._encrypt(messageData, nonce),
-      nonce: nonce,
-      clientID: this._clientID
-    };
-
-    return this._sendNativeMessage(request).then((response) => {
-      if (response.message && response.nonce) {
-        const res = this._decrypt(response.message, response.nonce);
-        if (!res) {
-          // keepass.handleError(tab, kpErrors.CANNOT_DECRYPT_MESSAGE);
-          return [];
-        }
-
-        const message = nacl.util.encodeUTF8(res);
-        const parsed = JSON.parse(message);
-        if (parsed.version) {
-          this._currentKeePassXC = parsed.version;
-        }
-
-        if (this._verifyResponse(parsed, incrementedNonce)) {
-          entries = parsed.entries;
-          // keepass.updateLastUsed(keepass.databaseHash);
-          // if (entries.length === 0) {
-          //   // Questionmark-icon is not triggered, so we have to trigger for the normal symbol
-          //   browserAction.showDefault(null, tab);
-          // }
-          // callback(entries);
-          return entries;
-        } else {
-          console.log('RetrieveCredentials for ' + url + ' rejected');
-        }
-        // page.debug('keepass.retrieveCredentials() => entries.length = {1}', entries.length);
-      } else if (response.error && response.errorCode) {
-        console.log("error", response);
-        // keepass.handleError(tab, response.errorCode, response.error);
-        return [];
-      } else {
-        console.log("error unkown");
-        // browserAction.showDefault(null, tab);
-        return [];
-      }
-    });
-  }
 
   _getCryptoKey() {
     let dbkey = null;
@@ -588,5 +519,89 @@ class KeepassXCBackend extends PasswordBackend {
     const cur = current.split('.', 3).map(s => s.padStart(4, '0')).join('.');
     return (canBeEqual ? (min <= cur) : (min < cur));
   };
+
+  async _isConfigured() {
+    if (this._databaseHash !== null) {
+      const hash = await this._getDatabaseHash();
+      return hash in this._keyRing;
+    } else {
+      return this._databaseHash in this._keyRing;
+    }
+  };
+
+
+  async _testAssociation(enableTimeout = false, triggerUnlock = false) {
+
+    let dbHash = await this._getDatabaseHash();
+    if (!dbHash) {
+      return false;
+    }
+
+    if (this._isDatabaseClosed || !this._isKeePassXCAvailable) {
+      return false;
+    }
+
+    if (this._isAssociated()) {
+      return true;
+    }
+
+    if (!this._serverPublicKey) {
+      // if (tab && page.tabs[tab.id]) {
+      //   keepass.handleError(tab, kpErrors.PUBLIC_KEY_NOT_FOUND);
+      // }
+      return false;
+    }
+
+    const kpAction = 'test-associate';
+    const nonce = this._getNonce();
+    const incrementedNonce = this._incrementedNonce(nonce);
+    const {dbid, dbkey} = this._getCryptoKey();
+
+    if (dbkey === null || dbid === null) {
+      return false;
+    }
+
+    const messageData = {
+      action: kpAction,
+      id: dbid,
+      key: dbkey
+    };
+
+    const request = {
+      action: kpAction,
+      message: this._encrypt(messageData, nonce),
+      nonce: nonce,
+      clientID: this._clientID
+    };
+
+    const response = await this._sendNativeMessage(request, enableTimeout);
+    if (response.message && response.nonce) {
+      const res = this._decrypt(response.message, response.nonce);
+      if (!res) {
+        return;
+      }
+
+      const message = nacl.util.encodeUTF8(res);
+      const parsed = JSON.parse(message);
+      if (parsed.version) {
+        this._currentKeePassXC = parsed.version;
+      }
+      this._isEncryptionKeyUnrecognized = false;
+
+      if (!this._verifyResponse(parsed, incrementedNonce)) {
+        const hash = response.hash || 0;
+        this._deleteKey(hash);
+        this.isEncryptionKeyUnrecognized = true;
+        // thi.handleError(tab, kpErrors.ENCRYPTION_KEY_UNRECOGNIZED);
+        this._associated.value = false;
+        this._associated.hash = null;
+      } else if (!this._isAssociated()) {
+        // keepass.handleError(tab, kpErrors.ASSOCIATION_FAILED);
+      }
+    } else if (response.error && response.errorCode) {
+      // keepass.handleError(tab, response.errorCode, response.error);
+    }
+    return this._isAssociated();
+  }
 
 }
