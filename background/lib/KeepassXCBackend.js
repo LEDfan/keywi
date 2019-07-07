@@ -26,8 +26,12 @@ class KeepassXCBackend extends PasswordBackend {
 
   async init() {
     try {
-      const item = await browser.storage.local.get({'keyRing': {}});
-      this._keyRing = item.keyRing;
+      try {
+        let data  = await this.secureStorage.get('keyRing');
+        this._keyRing = JSON.parse(data);
+      } catch {
+        this._keyRing = {};
+      }
 
       this._connectToNative();
       this._generateNewKeyPair();
@@ -243,12 +247,12 @@ class KeepassXCBackend extends PasswordBackend {
       this._keyRing[hash].key = key;
       this._keyRing[hash].hash = hash;
     }
-    browser.storage.local.set({'keyRing': this._keyRing});
+    this.secureStorage.set('keyRing', JSON.stringify(this._keyRing));
   }
 
   _deleteKey(hash) {
     delete this._keyRing[hash];
-    browser.storage.local.set({'keyRing': this._keyRing});
+    this.secureStorage.set('keyRing', JSON.stringify(this._keyRing));
   }
 
   _sendNativeMessage(request, enableTimeout = false) {
