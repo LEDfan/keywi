@@ -316,35 +316,6 @@ class KeepassXCBackend extends PasswordBackend {
     });
   }
 
-  _migrateKeyRing() {
-    return new Promise((resolve, reject) => {
-      browser.storage.local.get('keyRing').then((item) => {
-        const keyring = item.keyRing;
-        // Change dates to numbers, for compatibilty with Chromium based browsers
-        if (keyring) {
-          let num = 0;
-          for (let keyHash in keyring) {
-            let key = keyring[keyHash];
-            ['created', 'lastUsed'].forEach((fld) => {
-              let v = key[fld];
-              if (v instanceof Date && v.valueOf() >= 0) {
-                key[fld] = v.valueOf();
-                num++;
-              } else if (typeof v !== 'number') {
-                key[fld] = Date.now().valueOf();
-                num++;
-              }
-            });
-          }
-          if (num > 0) {
-            browser.storage.local.set({keyRing: keyring});
-          }
-        }
-        resolve();
-      });
-    });
-  }
-
   _connectToNative() {
     this._nativePort = browser.runtime.connectNative(this._nativeHostName);
     this._nativePort.onDisconnect.addListener((p) => {
