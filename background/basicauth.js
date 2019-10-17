@@ -25,16 +25,15 @@
 
   async function getBlacklist() {
     // I thought about caching this, but then cache invalidation on updated settings would become annoying
-    const key = "basic-auth-blacklist"
+    const key = "basic-auth-blacklist";
     let raw = await browser.storage.local.get(key);
     if (raw[key] !== null && raw[key] !== undefined) {
       let lines = raw[key].split(/[\r\n]/);
       let pat = "";
       for (const line of lines) {
-        if (pat === '') continue; // skip empty lines
+        if (line === '') continue; // skip empty lines
         pat += "|(" + line + ")";
       }
-      console.log(pat);
       return new RegExp("^(" + pat.substr(1) + ")$");
     } else {
       return new RegExp("^$");
@@ -57,7 +56,7 @@
       return {};
     }
     return getBlacklist().then((blacklist) => {
-      if (blacklist.text(details.url)) {
+      if (blacklist.test(details.url)) {
         return {'code': 'cancel'}; // Perhaps not the cleanest way to do this
       }
       return new BasicAuthDialog({
@@ -72,6 +71,8 @@
       } else if (response.code === 'cancel') {
         return {};
       }
-    });
+    }).catch((err) => {
+      console.log(err);
+    })
   });
 })();
