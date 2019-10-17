@@ -23,6 +23,24 @@
     return (/:\/\/([^/]+)\//).exec(url)[1];
   }
 
+  async function getBlacklist() {
+    // I thought about caching this, but then cache invalidation on updated settings would become annoying
+    const key = "basic-auth-blacklist"
+    let raw = await browser.storage.local.get(key);
+    if (raw[key] !== null && raw[key] !== undefined) {
+      let lines = raw[key].split(/[\r\n]/);
+      let pat = "";
+      for (const line of lines) {
+        if (pat === '') continue; // skip empty lines
+        pat += "|(" + line + ")";
+      }
+      console.log(pat);
+      return new RegExp("^(" + pat.substr(1) + ")$");
+    } else {
+      return new RegExp("^$");
+    }
+  }
+
   await addOnAuthRequiredListener(details => {
     if (details.isProxy) {
       // Don't do proxy's, at least for now
@@ -38,11 +56,16 @@
       // Workaround for #112
       return {};
     }
-    return new BasicAuthDialog({
-      'url': details.url,
-      'host': details.challenger.host,
-      'realm': details.realm,
-      'page_host': pageHost
+    return getBlacklist().then((blacklist) => {
+      if (blacklist.text(details.url)) {
+        return {'code': 'cancel'}; // Perhaps not the cleanest way to do this
+      }
+      return new BasicAuthDialog({
+        'url': details.url,
+        'host': details.challenger.host,
+        'realm': details.realm,
+        'page_host': pageHost
+      });
     }).then(function(response) {
       if (response.code === 'fill') {
         return {'authCredentials': {'username': response.username, 'password': response.password}};
