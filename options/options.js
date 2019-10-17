@@ -48,7 +48,7 @@ window.addEventListener('DOMContentLoaded', function () {
       e.innerText = browser.i18n.getMessage(e.dataset.i18n);
     }
   }
-  const inputs = document.querySelectorAll('#options input');
+  const inputs = document.querySelectorAll('#options input,#options textarea');
   for (const input of inputs) {
     browser.storage.local.get(input.name).then(function (val) {
       input.value = val[input.name] || '';
