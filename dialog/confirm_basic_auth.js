@@ -74,8 +74,9 @@ document.getElementById('fetch').onclick = function () {
     }
 
     for (let i = 0; i < length; i++) {
-      const el = generateButtonRow(credentials[i].Name, credentials[i].Login);
+      const el = generateButtonRow(credentials[i].name, credentials[i].login);
       el.addEventListener('click', function() {
+        console.log(credentials[i]);
         browser.runtime.sendMessage({
           'type': 'confirm_basic_auth_select',
           'data': {'selected': credentials[i]}

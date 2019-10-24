@@ -167,7 +167,7 @@ class BasicAuthDialog extends Dialog {
    */
   onConfirmedSelect(request) {
     this.close();
-    this.resolve({'code': 'fill', 'username': request.data.selected.Login, 'password': request.data.selected.Password});
+    this.resolve({'code': 'fill', 'username': request.data.selected.login, 'password': request.data.selected.password});
   }
 
   /**

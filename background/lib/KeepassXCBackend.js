@@ -27,7 +27,7 @@ class KeepassXCBackend extends PasswordBackend {
   async init() {
     try {
       try {
-        let data  = await this.secureStorage.get('keyRing');
+        let data = await this.secureStorage.get('keyRing');
         this._keyRing = JSON.parse(data);
       } catch {
         this._keyRing = {};
@@ -36,21 +36,28 @@ class KeepassXCBackend extends PasswordBackend {
       this._connectToNative();
       this._generateNewKeyPair();
       await this._changePublicKeys();
-      await this._getDatabaseHash();
+      if (!await this._getDatabaseHash()) {
+        console.log("Error during getDatabaseHash!");
+        return false;
+      }
       const associated = await this._testAssociation();
 
       if (associated && await this._isConfigured()) {
         // done
       } else {
-        await this.associate();
+        if (!await this.associate()) {
+          console.log("Error during assocation!");
+          return false;
+        }
       }
     } catch (e) {
       console.log(e);
+      return false;
     }
+    return true;
   }
 
   async associate() {
-    const kpAction = 'associate';
     const key = nacl.util.encodeBase64(this._keyPair.publicKey);
     const nonce = this._getNonce();
     const incrementedNonce = this._incrementedNonce(nonce);
@@ -58,47 +65,37 @@ class KeepassXCBackend extends PasswordBackend {
     const idKey = nacl.util.encodeBase64(idKeyPair.publicKey);
 
     const messageData = {
-      action: kpAction,
+      action: 'associate',
       key: key,
       idKey: idKey
     };
 
     const request = {
-      action: kpAction,
+      action: 'associate',
       message: this._encrypt(messageData, nonce),
       nonce: nonce,
       clientID: this._clientID,
       triggerUnlock: 'true'
     };
 
-    this._sendNativeMessage(request).then((response) => {
-      if (response.message && response.nonce) {
-        const res = this._decrypt(response.message, response.nonce);
-        if (!res) {
-          // keepass.handleError(tab, kpErrors.CANNOT_DECRYPT_MESSAGE);
-          return;
-        }
-
-        const message = nacl.util.encodeUTF8(res);
-        const parsed = JSON.parse(message);
-        this._currentKeePassXC = parsed.version;
+    let response = await this._sendNativeMessage(request);
+    if (response.message && response.nonce) {
+      let parsed = this._decryptAdnVerify(response, incrementedNonce);
+      console.log("associated response:", parsed);
+      if (parsed) {
+        const savedKey = this._compareVersion('2.3.4', this._currentKeePassXC) ? idKey : key;
         const id = parsed.id;
-
-        if (!this._verifyResponse(parsed, incrementedNonce)) {
-          // eepass.handleError(tab, kpErrors.ASSOCIATION_FAILED);
-        } else {
-          // Use public key as identification key with older KeePassXC releases
-          const savedKey = this._compareVersion('2.3.4', this._currentKeePassXC) ? idKey : key;
-          this._setCryptoKey(id, savedKey); // Save the new identification public key as id key for the database
-          this._associated.value = true;
-          this._associated.hash = parsed.hash || 0;
-        }
-
-        // browserAction.show(callback, tab);
-      } else if (response.error && response.errorCode) {
-        // keepass.handleError(tab, response.errorCode, response.error);
+        this._setCryptoKey(id, savedKey); // Save the new identification public key as id key for the database
+        this._associated.value = true;
+        this._associated.hash = parsed.hash || 0;
+        return true;
       }
-    });
+      return false;
+    } else if (response.error && response.errorCode) {
+      return false;
+    } else {
+      return false;
+    }
   }
 
 
@@ -376,7 +373,6 @@ class KeepassXCBackend extends PasswordBackend {
   }
 
 
-
   _getCryptoKey() {
     let dbkey = null;
     let dbid = null;
@@ -432,11 +428,33 @@ class KeepassXCBackend extends PasswordBackend {
     return nacl.box.open(m, n, this._serverPublicKey, this._keyPair.secretKey);
   }
 
-  async _getDatabaseHash(enableTimeout = false, triggerUnlock = false) {
+  _decryptAdnVerify(response, incrementedNonce) {
+    const res = this._decrypt(response.message, response.nonce);
+    if (!res) {
+      return false;
+    }
+
+    const message = nacl.util.encodeUTF8(res);
+    const parsed = JSON.parse(message);
+    if (parsed.version) {
+      this._currentKeePassXC = parsed.version;
+    }
+
+    if (!this._verifyResponse(parsed, incrementedNonce)) {
+      const hash = response.hash || 0;
+      this._deleteKey(hash);
+      this._associated.value = false;
+      this._associated.hash = null;
+
+      return false;
+    }
+
+    return parsed;
+  }
+
+  async _getDatabaseHash() {
     if (!this._isConnected) {
-      // Keepass.handleError(tab, kpErrors.TIMEOUT_OR_NOT_CONNECTED);
-      // callback([]);
-      return;
+      return false;
     }
 
     if (!this._serverPublicKey) {
@@ -453,8 +471,6 @@ class KeepassXCBackend extends PasswordBackend {
 
     const encrypted = this._encrypt(messageData, nonce);
     if (encrypted.length <= 0) {
-      // Keepass.handleError(tab, kpErrors.PUBLIC_KEY_NOT_FOUND);
-      // callback(this._databaseHash);
       return this._databaseHash;
     }
 
@@ -465,54 +481,47 @@ class KeepassXCBackend extends PasswordBackend {
       clientID: this._clientID
     };
 
-    if (triggerUnlock === true) {
-      request.triggerUnlock = 'true';
-    }
+    let response = await this._sendNativeMessage(request);
+    if (response.message && response.nonce) {
+      const res = this._decrypt(response.message, response.nonce);
+      if (!res) {
+        return false;
+      }
 
-    return this._sendNativeMessage(request, enableTimeout).then((response) => {
-      if (response.message && response.nonce) {
-        const res = this._decrypt(response.message, response.nonce);
-        if (!res) {
-          // Keepass.handleError(tab, kpErrors.CANNOT_DECRYPT_MESSAGE);
-          return '';
+      const message = nacl.util.encodeUTF8(res);
+      const parsed = JSON.parse(message);
+
+      // use  _verifyDatabaseResponse instead of verifyAndDecrypt
+      if (this._verifyDatabaseResponse(parsed, incrementedNonce) && parsed.hash) {
+        const oldDatabaseHash = this._databaseHash;
+        if (parsed.version) {
+          this._currentKeePassXC = parsed.version;
+        }
+        this._databaseHash = parsed.hash || '';
+
+        if (oldDatabaseHash && oldDatabaseHash !== this._databaseHash) {
+          this._associated.value = false;
+          this._associated.hash = null;
         }
 
-        const message = nacl.util.encodeUTF8(res);
-        const parsed = JSON.parse(message);
-        if (this._verifyDatabaseResponse(parsed, incrementedNonce) && parsed.hash) {
-          const oldDatabaseHash = this._databaseHash;
-          if (parsed.version) {
-            this._currentKeePassXC = parsed.version;
-          }
-          this._databaseHash = parsed.hash || '';
-
-          if (oldDatabaseHash && oldDatabaseHash !== this._databaseHash) {
-            this._associated.value = false;
-            this._associated.hash = null;
-          }
-
-          this._isDatabaseClosed = false;
-          this._isKeePassXCAvailable = true;
-          return parsed.hash;
-        } else if (parsed.errorCode) {
-          this._databaseHash = '';
-          this._isDatabaseClosed = true;
-          // Keepass.handleError(tab, kpErrors.DATABASE_NOT_OPENED);
-          return this._databaseHash;
-        }
-      } else {
+        this._isDatabaseClosed = false;
+        this._isKeePassXCAvailable = true;
+        return parsed.hash;
+      } else if (parsed.errorCode) {
         this._databaseHash = '';
         this._isDatabaseClosed = true;
-        if (response.message && response.message === '') {
-          this._isKeePassXCAvailable = false;
-          // keepass.handleError(tab, kpErrors.TIMEOUT_OR_NOT_CONNECTED);
-        } else {
-          // keepass.handleError(tab, response.errorCode, response.error);
-        }
-        return this._databaseHash;
+        return false;
       }
-    });
+    } else {
+      this._databaseHash = '';
+      this._isDatabaseClosed = true;
+      if (response.message && response.message === '') {
+        this._isKeePassXCAvailable = false;
+      }
+      return false;
+    }
   }
+
 
   _compareVersion(minimum, current, canBeEqual = true) {
     if (!minimum || !current) {
@@ -522,22 +531,27 @@ class KeepassXCBackend extends PasswordBackend {
     const min = minimum.split('.', 3).map(s => s.padStart(4, '0')).join('.');
     const cur = current.split('.', 3).map(s => s.padStart(4, '0')).join('.');
     return (canBeEqual ? (min <= cur) : (min < cur));
-  };
+  }
 
   async _isConfigured() {
     if (this._databaseHash !== null) {
       const hash = await this._getDatabaseHash();
+      if (!hash) {
+        console.log("_getDatabaseHash failed");
+        return false;
+      }
       return hash in this._keyRing;
     } else {
       return this._databaseHash in this._keyRing;
     }
-  };
+  }
 
 
   async _testAssociation(enableTimeout = false, triggerUnlock = false) {
 
     let dbHash = await this._getDatabaseHash();
     if (!dbHash) {
+      console.log("_getDatabaseHash failed");
       return false;
     }
 
@@ -550,9 +564,6 @@ class KeepassXCBackend extends PasswordBackend {
     }
 
     if (!this._serverPublicKey) {
-      // if (tab && page.tabs[tab.id]) {
-      //   keepass.handleError(tab, kpErrors.PUBLIC_KEY_NOT_FOUND);
-      // }
       return false;
     }
 
@@ -579,33 +590,15 @@ class KeepassXCBackend extends PasswordBackend {
     };
 
     const response = await this._sendNativeMessage(request, enableTimeout);
+
     if (response.message && response.nonce) {
-      const res = this._decrypt(response.message, response.nonce);
-      if (!res) {
-        return;
-      }
-
-      const message = nacl.util.encodeUTF8(res);
-      const parsed = JSON.parse(message);
-      if (parsed.version) {
-        this._currentKeePassXC = parsed.version;
-      }
-      this._isEncryptionKeyUnrecognized = false;
-
-      if (!this._verifyResponse(parsed, incrementedNonce)) {
-        const hash = response.hash || 0;
-        this._deleteKey(hash);
-        this.isEncryptionKeyUnrecognized = true;
-        // thi.handleError(tab, kpErrors.ENCRYPTION_KEY_UNRECOGNIZED);
-        this._associated.value = false;
-        this._associated.hash = null;
-      } else if (!this._isAssociated()) {
-        // keepass.handleError(tab, kpErrors.ASSOCIATION_FAILED);
-      }
+      const res = this._decryptAdnVerify(response, incrementedNonce);
+      return !!res;
     } else if (response.error && response.errorCode) {
-      // keepass.handleError(tab, response.errorCode, response.error);
+      return false;
+    } else {
+      return false;
     }
-    return this._isAssociated();
   }
 
 }
