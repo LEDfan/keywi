@@ -31,4 +31,6 @@ build:
 deps:
 	npm install
 	cp node_modules/webextension-polyfill/dist/browser-polyfill.js vendor/browser-polyfill.js
+	cp node_modules/tweetnacl/nacl-fast.js vendor/nacl.js
+	cp node_modules/tweetnacl-util/nacl-util.js vendor/nacl-util.js
 

@@ -44,7 +44,7 @@ class Dialog {
         'url': this.url,
       };
 
-      if (await isFirefox()) {
+      if (await isIncognitoAvailable()) {
         options.incognito = true;
       }
 

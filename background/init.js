@@ -17,47 +17,29 @@
  * along with Keywi.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-function init () {
-
-  // browser.storage.local.clear(); // uncomment this to test the mechanism to ask the user for a new key
-  browser.storage.local.get('defer_unlock_ss').then(function (storage) {
-    const unlock = !Number.parseInt(storage.defer_unlock_ss || '0', 10);
-    new LocalSecureStorage(unlock).then(function (ss) {
-      Keepass.setSecureStorage(ss);
-      console.log('Initialized the Secure Storage, associating with keepass now.');
-      if (unlock) {
-        Keepass.reCheckAssociated().then(function (associated) {
-          if (!associated) {
-            Keepass._ss.has('database.key').then(function () {
-              browser.notifications.create({
-                'type': 'basic',
-                'message': browser.i18n.getMessage('otherDBOpen'),
-                'iconUrl': browser.extension.getURL('/icons/keywi-96.png'),
-                'title': 'Keywi'
-              });
-            }).
-              catch(function () {
-                Keepass.associate(function () {
-                  console.log('Associated! 1');
-                });
-              });
-          } else {
-            console.log('Associated! 2');
-          }
-        });
-      }
-    }).
-      catch(function (ss) {
-        console.log('Failed to initialize Secure Storage, not associating with keepass!');
-        browser.notifications.create({
-          'type': 'basic',
-          'message': browser.i18n.getMessage('initSSFailed'),
-          'iconUrl': browser.extension.getURL('/icons/keywi-96.png'),
-          'title': 'Keywi'
-        });
-        Keepass.setSecureStorage(ss);
-      });
-  });
+async function init() {
+  let storage = await browser.storage.local.get('defer_unlock_ss');
+  const unlock = !Number.parseInt(storage.defer_unlock_ss || '0', 10);
+  // setup and unlock SecureStorage
+  try {
+    Keywi.setSecureStorage(await new LocalSecureStorage(unlock))
+  } catch (ss) {
+    // }).catch(function(ss) {
+    console.log(ss);
+    console.log('Failed to initialize Secure Storage, not associating with keepass!');
+    browser.notifications.create({
+      'type': 'basic',
+      'message': browser.i18n.getMessage('initSSFailed'),
+      'iconUrl': browser.extension.getURL('icons/keywi-96.png'),
+      'title': 'Keywi'
+    });
+    Keywi.setSecureStorage(ss); // set locked/invalid SS
+  }
+  let backend = new KeepassXCBackend(Keywi._ss);
+  if (!await backend.init()) {
+    console.log("error in init of backend!");
+  }
+  Keywi.setBackend(backend); // even set backend if error
 }
 
 setTimeout(init, 1000);

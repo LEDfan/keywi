@@ -42,7 +42,7 @@ window.addEventListener('DOMContentLoaded', function () {
       }
 
       for (let i = 0; i < length; i++) {
-        const el = generateButtonRow(request.data.possibleCredentials[i].Name, request.data.possibleCredentials[i].Login);
+        const el = generateButtonRow(request.data.possibleCredentials[i].name, request.data.possibleCredentials[i].login);
         el.addEventListener('click', function () {
           browser.runtime.sendMessage({
             'type': 'select_mul_pass_user_input',

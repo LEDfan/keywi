@@ -71,11 +71,11 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
   if (activeGetLogins.indexOf(tab.id) === -1) {
     // prevent from simultaneous filling in the credentials
     activeGetLogins.push(tab.id);
-    Keepass.getGUILogins(tab.url).then(entry => {
+    Keywi.getGUILogins(tab.url).then(entry => {
       browser.tabs.sendMessage(tab.id, {
         'type': type,
-        'username': entry.Login,
-        'password': entry.Password
+        'username': entry.login,
+        'password': entry.password
       });
       activeGetLogins.splice(activeGetLogins.indexOf(tab.id), 1);
     }, function() {

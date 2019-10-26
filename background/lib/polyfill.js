@@ -24,6 +24,10 @@ async function isFirefox() {
   return window.browserName === "Firefox";
 }
 
+async function isIncognitoAvailable() {
+  return await isFirefox() && await browser.extension.isAllowedIncognitoAccess();
+}
+
 async function addOnAuthRequiredListener(outerCb) {
   if (typeof browser.webRequest.onAuthRequired == 'undefined') {
     return;

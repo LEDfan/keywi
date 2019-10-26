@@ -13,11 +13,15 @@
       "vendor/utf8.js",
       "vendor/aes.js",
       "vendor/cryptoHelpers.js",
+      "vendor/nacl.js",
+      "vendor/nacl-util.js",
       "vendor/debounce.js",
       "background/lib/dialog.js",
       "background/lib/polyfill.js",
       "background/Crypto.js",
-      "background/keepass.js",
+      "background/Keywi.js",
+      "background/lib/PasswordBackend.js",
+      "background/lib/KeepassXCBackend.js",
       "background/securestorage.js",
       "background/LocalSecureStorage.js",
       "dialog/background.js",
@@ -36,8 +40,10 @@
     "storage",
     "notifications",
     "webRequest",
-    "webRequestBlocking"
+    "webRequestBlocking",
+    "nativeMessaging"
   ],
+  "incognito": "spanning",
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
