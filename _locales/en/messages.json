@@ -224,7 +224,7 @@
     "description": "options page: text showed on button to associate with Keepass, if not already associated"
   },
   "optBasicAuthBlacklist": {
-    "message": "Don't trigger basic authentication filling on (list of regular expressions, use '.*example.com.*' to completely match 'example.com'","):",
+    "message": "Don't trigger basic authentication filling on (list of regular expressions, use '.*example.com.*' to completely match 'example.com'\",\"):",
     "description": "options page: text showed with textarea of the basic auth blacklist"
   },
   "initSSFailed": {
