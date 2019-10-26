@@ -6,11 +6,11 @@
   "dependencies": {
     "tweetnacl": "^1.0.1",
     "tweetnacl-util": "^0.15.0",
-    "webextension-polyfill": "^0.4.0"
+    "webextension-polyfill": "^0.5.0"
   },
   "devDependencies": {
     "eslint": "^5.13.0",
-    "web-ext": "^2.9.3"
+    "web-ext": "^3.2.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
