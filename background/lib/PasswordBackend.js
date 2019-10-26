@@ -9,7 +9,7 @@ class PasswordBackend {
 
   }
 
-  async deAssociate() {
+  async reAssociate() {
 
   }
 

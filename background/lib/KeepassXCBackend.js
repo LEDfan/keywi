@@ -27,8 +27,13 @@ class KeepassXCBackend extends PasswordBackend {
   async init() {
     try {
       try {
-        let data = await this.secureStorage.get('keyRing');
-        this._keyRing = JSON.parse(data);
+        if (this.secureStorage.ready()) {
+          let data = await this.secureStorage.get('keyRing');
+          this._keyRing = JSON.parse(data);
+        } else {
+          console.log("Can't init backend because SS is not ready!");
+          return false;
+        }
       } catch {
         this._keyRing = {};
       }
@@ -98,6 +103,11 @@ class KeepassXCBackend extends PasswordBackend {
     }
   }
 
+
+  async reAssociate() {
+    this._associated = {'value': false, 'hash': null};
+    this.init()
+  }
 
   async getLogins(url) {
     let keys = [];

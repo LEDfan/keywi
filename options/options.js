@@ -30,7 +30,7 @@ function readAndUpdateUserInfo () {
       row.insertCell(1).innerText = data.table[key];
     }
 
-    if (data.associated === true) {
+    if (data.associated === true || data.ssUnlocked === false) {
       document.getElementById('btn-associate').style.display = 'none';
     } else {
       // just to be sure when the function is called after the user updates.

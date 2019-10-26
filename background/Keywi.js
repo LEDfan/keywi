@@ -38,6 +38,7 @@ class Keywi_ {
 
   setSecureStorage(ss) {
     this._ss = ss;
+    console.log("SS setup!");
   }
 
   setBackend(backend) {
@@ -88,78 +89,51 @@ window.Keywi = new Keywi_();
 
 browser.storage.onChanged.addListener(function(changes, areaName) {
   if (changes.hasOwnProperty('keepass-server-url')) {
-    // Keywi.state.associated = false;
-    // TODO
+    Keywi._backend.reAssociate();
   }
   if (changes.hasOwnProperty('password-hash-rounds')) {
-    // Keepass._ss.reencrypt();
-    // TODO
+    Keywi._ss.reencrypt();
   }
 });
-//
-// browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-//   if (request.type === 're-encrypt_local_secure_storage') {
-//     // TODO
-//     // Keepass._ss.reencrypt(function() {
-//     //   sendResponse();
-//     // });
-//   } else if (request.type === 'reset') {
-//     // TODO
-//     // Keepass._ss.clear().then(function() {
-//     //   return Keepass._ss.reInitialize();
-//     // }).then(function() {
-//     //   Keepass.associate(function() {
-//     //     sendResponse();
-//     //   });
-//     // }).catch(function() {
-//     //   sendResponse();
-//     // });
-//   } else if (request.type === 'options_user_info') {
-//     let hash = null;
-//     if (Keywi.ready()) {
-//       // if Secure Storage is unlocked
-//       Keywi._ss.get('database.hash').then(function(data) {
-//         hash = data;
-//         return Keywi._ss.get('database.id');
-//       }).then(function(id) {
-//         // if database id and hash are available we are associated with Keepass
-//         const response = {'table': {}, 'associated': true};
-//         response.table[browser.i18n.getMessage('statusSSunlocked')] = true;
-//         response.table[browser.i18n.getMessage('statusDBassoc')] = true;
-//         response.table[browser.i18n.getMessage('statusDBhash')] = hash;
-//         response.table[browser.i18n.getMessage('statusDBid')] = id;
-//         sendResponse(response);
-//       }).catch(function() {
-//         // database id or hash are not available we are not associated with Keepass
-//         const response = {'table': {}, 'associated': false};
-//         response.table[browser.i18n.getMessage('statusSSunlocked')] = true;
-//         response.table[browser.i18n.getMessage('statusDBassoc')] = false;
-//         sendResponse(response);
-//       });
-//     } else if (Keywi._ss !== null) {
-//       // Secure Storage is locked so only check if hash and id are available
-//       Keywi._ss.has('database.hash').then(function(data) {
-//         hash = data;
-//         return Keywi._ss.has('database.id');
-//       }).then(function(id) {
-//         // hash and id are available
-//         const response = {'table': {}, 'associated': true};
-//         response.table[browser.i18n.getMessage('statusSSunlocked')] = false;
-//         response.table[browser.i18n.getMessage('statusDBassoc')] = true;
-//         sendResponse(response);
-//       }).catch(function() {
-//         // hash or id are not available
-//         const response = {'table': {}, 'associated': false};
-//         response.table[browser.i18n.getMessage('statusSSunlocked')] = false;
-//         response.table[browser.i18n.getMessage('statusDBassoc')] = false;
-//         sendResponse(response);
-//       });
-//     }
-//   } else if (request.type === 'associate') {
-//     Keywi._backend.init().then(() => {
-//       // TODO test
-//       sendResponse();
-//     });
-//   }
-//   return true; // http://stackoverflow.com/a/40773823
-// });
+
+browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+    if (request.type === 're-encrypt_local_secure_storage') {
+      Keywi._ss.reencrypt()
+        .then(() => sendResponse());
+    } else if (request.type === 'reset') {
+      Keywi._ss.clear()
+        .then(() => init())
+        .then(() => sendResponse())
+        .catch(() => sendResponse())
+    } else if (request.type === 'options_user_info') {
+      if (Keywi.ready()) {
+        (async function() {
+          let associated = !!await Keywi._backend._testAssociation();
+          if (!associated) {
+            const response = {'table': {}, 'associated': false, 'ssUnlocked': true};
+            response.table[browser.i18n.getMessage('statusSSunlocked')] = true;
+            response.table[browser.i18n.getMessage('statusDBassoc')] = false;
+            sendResponse(response);
+            return;
+          }
+
+          let hash = await Keywi._backend._getDatabaseHash();
+          const response = {'table': {}, 'associated': true, 'ssUnlocked': true};
+          response.table[browser.i18n.getMessage('statusSSunlocked')] = true;
+          response.table[browser.i18n.getMessage('statusDBassoc')] = true;
+          response.table[browser.i18n.getMessage('statusDBhash')] = hash;
+          sendResponse(response);
+        })();
+      } else {
+        const response = {'table': {}, 'associated': false, 'ssUnlocked': false};
+        response.table[browser.i18n.getMessage('statusSSunlocked')] = false;
+        sendResponse(response);
+      }
+    } else if (request.type === 'associate') {
+      init()
+        .then(() => sendResponse())
+        .catch(() => sendResponse())
+    }
+    return true; // http://stackoverflow.com/a/40773823
+  }
+);
