@@ -49,48 +49,33 @@ class Keywi_ {
     return this._backend.getLogins(url);
   }
 
-  getLoginsAndErrorHandler(url) {
-    return new Promise((resolve, reject) => {
-      this.getLogins(url).then(function(credentials) {
-        if (credentials.length === 0) {
-          browser.notifications.create({
-            'type': 'basic',
-            'message': browser.i18n.getMessage('noPassFound'),
-            'iconUrl': browser.extension.getURL('icons/keywi-96.png'),
-            'title': 'Keywi'
-          });
-          reject({'code': 'noPassFound'});
-        } else {
-          resolve(credentials);
-        }
-      }, function(data) {
-        if (data.code === 'cannotConnect') {
-          browser.notifications.create({
-            'type': 'basic',
-            'message': browser.i18n.getMessage('cannotConnect'),
-            'iconUrl': browser.extension.getURL('icons/keywi-96.png'),
-            'title': 'Keywi'
-          });
-          reject();
-        } else if (data.code === 'noLogins') {
-          browser.notifications.create({
-            'type': 'basic',
-            'message': browser.i18n.getMessage('noLogins'),
-            'iconUrl': browser.extension.getURL('icons/keywi-96.png'),
-            'title': 'Keywi'
-          });
-          reject();
-        }
-        console.log(data);
-      }).catch(err => {
-        console.log(err);
-      })
-
-    });
+  async getLoginsAndErrorHandler(url) {
+    let credentials = await this.getLogins(url);
+    console.log(credentials);
+    if (credentials.code === "noLogins") {
+      browser.notifications.create({
+        'type': 'basic',
+        'message': browser.i18n.getMessage('noPassFound'),
+        'iconUrl': browser.extension.getURL('icons/keywi-96.png'),
+        'title': 'Keywi'
+      });
+      return false;
+    } else if (credentials.code !== "ok") {
+      browser.notifications.create({
+        'type': 'basic',
+        'message': browser.i18n.getMessage('cannotConnect'),
+        'iconUrl': browser.extension.getURL('icons/keywi-96.png'),
+        'title': 'Keywi'
+      });
+      return false;
+    } else {
+      return credentials.credentials;
+    }
   }
 
   getGUILogins(url) {
     return this.getLoginsAndErrorHandler(url).then(credentials => {
+      if (!credentials) return false;
       if (credentials.length === 1) {
         return credentials[0];
       }

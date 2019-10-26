@@ -100,7 +100,6 @@ class KeepassXCBackend extends PasswordBackend {
 
 
   async getLogins(url) {
-    let entries = [];
     let keys = [];
     const kpAction = 'get-logins';
     const nonce = this._getNonce();
@@ -128,43 +127,24 @@ class KeepassXCBackend extends PasswordBackend {
       clientID: this._clientID
     };
 
-    return this._sendNativeMessage(request).then((response) => {
-      if (response.message && response.nonce) {
-        const res = this._decrypt(response.message, response.nonce);
-        if (!res) {
-          // keepass.handleError(tab, kpErrors.CANNOT_DECRYPT_MESSAGE);
-          return [];
-        }
-
-        const message = nacl.util.encodeUTF8(res);
-        const parsed = JSON.parse(message);
-        if (parsed.version) {
-          this._currentKeePassXC = parsed.version;
-        }
-
-        if (this._verifyResponse(parsed, incrementedNonce)) {
-          entries = parsed.entries;
-          // keepass.updateLastUsed(keepass.databaseHash);
-          // if (entries.length === 0) {
-          //   // Questionmark-icon is not triggered, so we have to trigger for the normal symbol
-          //   browserAction.showDefault(null, tab);
-          // }
-          // callback(entries);
-          return entries;
-        } else {
-          console.log('RetrieveCredentials for ' + url + ' rejected');
-        }
-        // page.debug('keepass.retrieveCredentials() => entries.length = {1}', entries.length);
-      } else if (response.error && response.errorCode) {
-        console.log("error", response);
-        // keepass.handleError(tab, response.errorCode, response.error);
-        return [];
-      } else {
-        console.log("error unkown");
-        // browserAction.showDefault(null, tab);
-        return [];
+    let response = await this._sendNativeMessage(request);
+    if (response.message && response.nonce) {
+      const parsed = this._decryptAdnVerify(response, incrementedNonce);
+      if (!parsed) {
+        return {code: "unknown", credentials: []};
       }
-    });
+      console.log(parsed);
+      return {code: "ok", credentials: parsed.entries};
+    } else if (response.error && response.errorCode) {
+      console.log("error", response);
+      if (response.error === "No logins found" || response.errorCode === 15) {
+        return {code: "noLogins", credentials: []};
+      }
+      return false;
+    } else {
+      console.log("error unknown");
+      return {code: "unknown", credentials: []};
+    }
   }
 
   /**
