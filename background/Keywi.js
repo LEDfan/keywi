@@ -46,13 +46,13 @@ class Keywi_ {
     this._backend = backend;
   }
 
-  getLogins(url) {
+  async getLogins(url) {
+    await this._ss._unlockStorage();
     return this._backend.getLogins(url);
   }
 
   async getLoginsAndErrorHandler(url) {
     let credentials = await this.getLogins(url);
-    console.log(credentials);
     if (credentials.code === "noLogins") {
       browser.notifications.create({
         'type': 'basic',

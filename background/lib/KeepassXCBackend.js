@@ -135,6 +135,7 @@ class KeepassXCBackend extends PasswordBackend {
   }
 
   async getLogins(url) {
+    await this.ensureNativePortReady();
     let keys = [];
     const kpAction = 'get-logins';
     const nonce = this._getNonce();
@@ -168,10 +169,9 @@ class KeepassXCBackend extends PasswordBackend {
       if (!parsed) {
         return {code: "unknown", credentials: []};
       }
-      console.log(parsed);
       return {code: "ok", credentials: parsed.entries};
     } else if (response.error && response.errorCode) {
-      console.log("error", response);
+      console.log("error");
       if (response.error === "No logins found" || response.errorCode === 15) {
         return {code: "noLogins", credentials: []};
       }
@@ -265,6 +265,14 @@ class KeepassXCBackend extends PasswordBackend {
   _deleteKey(hash) {
     delete this._keyRing[hash];
     this.secureStorage.set('keyRing', JSON.stringify(this._keyRing));
+  }
+
+  async ensureNativePortReady() {
+    if (this._nativePort === null) {
+      await this.init();
+      return true;
+    }
+    return true;
   }
 
   _sendNativeMessage(request, enableTimeout = false) {
