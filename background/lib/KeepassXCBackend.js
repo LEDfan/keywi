@@ -171,6 +171,7 @@ class KeepassXCBackend extends PasswordBackend {
       }
       return {code: "ok", credentials: parsed.entries};
     } else if (response.error && response.errorCode) {
+      console.log(response);
       console.log("error");
       if (response.error === "No logins found" || response.errorCode === 15) {
         return {code: "noLogins", credentials: []};
