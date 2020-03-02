@@ -36,9 +36,7 @@ async function init() {
     Keywi.setSecureStorage(ss); // set locked/invalid SS
   }
   let backend = new KeepassXCBackend(Keywi._ss);
-  if (!await backend.init()) {
-    console.log("error in init of backend!");
-  }
+  await backend.init();
   Keywi.setBackend(backend); // even set backend if error
 }
 

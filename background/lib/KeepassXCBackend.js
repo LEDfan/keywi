@@ -128,7 +128,7 @@ class KeepassXCBackend extends PasswordBackend {
   }
 
   async getLogins(url) {
-    if (!this._state.isConnectedToNativePort()) {
+    if (!this._state.isConnectedToNativePort() || !this._state.isAssociatedWithCorrectDatabase()) {
       if (!await this.init()) {
         return {code: "unknown", credentials: []};
       }
