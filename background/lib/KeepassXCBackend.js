@@ -30,40 +30,29 @@ class KeepassXCBackend extends PasswordBackend {
    * PUBLIC INTERFACE
    *
    */
-
   constructor(secureStorage) {
     super('KeepassLegacy', secureStorage);
-    this._nativeHostName = 'org.keepassxc.keepassxc_browser';
-    this._currentKeePassXC = ''; // version
-    this._associated = {'value': false, 'hash': null};
-    this._keyRing = {};
-    this._keyPair = {};
-    this._nativePort = null;
-    this._messageTimeout = 0;
-    this._isConnected = false;
-    this._clientID = null;
-    this._keySize = 24;
-    this._isKeePassXCAvailable = false;
-    this._serverPublicKey = null;
-    this._databaseHash = null;
-    this._isDatabaseClosed = null;
+    this._state = new State();
+    Object.freeze(this._state);
   }
+
 
   async init() {
     try {
       try {
         if (this.secureStorage.ready()) {
           let data = await this.secureStorage.get('keyRing');
-          this._keyRing = JSON.parse(data);
+          this._state = this._state.setKeyRing(JSON.parse(data));
         } else {
           console.log("Can't init backend because SS is not ready!");
           return false;
         }
       } catch {
-        this._keyRing = {};
+        this._state = this._state.resetKeyRing();
       }
 
-      this._connectToNative();
+      this._connectToNative(); // connect
+
       this._generateNewKeyPair();
       await this._changePublicKeys();
       if (!await this._getDatabaseHash()) {
@@ -72,11 +61,12 @@ class KeepassXCBackend extends PasswordBackend {
       }
       const associated = await this._testAssociation();
 
-      if (associated && await this._isConfigured()) {
+      if (associated && await this._state.hasHashInKeyRing(this._state.getDatabaseHash())) {
+        console.log("Init done")
         // done
       } else {
         if (!await this.associate()) {
-          console.log("Error during assocation!");
+          console.log("Error during association!");
           return false;
         }
       }
@@ -88,7 +78,7 @@ class KeepassXCBackend extends PasswordBackend {
   }
 
   async associate() {
-    const key = nacl.util.encodeBase64(this._keyPair.publicKey);
+    const key = nacl.util.encodeBase64(this._state._keyPair.publicKey);
     const nonce = this._getNonce();
     const incrementedNonce = this._incrementedNonce(nonce);
     const idKeyPair = nacl.box.keyPair();
@@ -104,48 +94,57 @@ class KeepassXCBackend extends PasswordBackend {
       action: 'associate',
       message: this._encrypt(messageData, nonce),
       nonce: nonce,
-      clientID: this._clientID,
+      clientID: this._state.getClientID(),
       triggerUnlock: 'true'
     };
 
-    let response = await this._sendNativeMessage(request);
+    let response = await this._sendNativeMessage(request, true);
     if (response.message && response.nonce) {
       let parsed = this._decryptAdnVerify(response, incrementedNonce);
       console.log("associated response:", parsed);
       if (parsed) {
-        const savedKey = this._compareVersion('2.3.4', this._currentKeePassXC) ? idKey : key;
+        const savedKey = this._compareVersion('2.3.4', this._state.getCurrentKeepassXCVersion()) ? idKey : key;
         const id = parsed.id;
         this._setCryptoKey(id, savedKey); // Save the new identification public key as id key for the database
-        this._associated.value = true;
-        this._associated.hash = parsed.hash || 0;
+        this._state = this._state.setAssociated(parsed.hash || 0);
         return true;
       }
+      this._state = this._state.disAssociated();
       return false;
     } else if (response.error && response.errorCode) {
+      this._state = this._state.disAssociated();
       return false;
     } else {
+      this._state = this._state.disAssociated();
       return false;
     }
   }
 
 
   async reAssociate() {
-    this._associated = {'value': false, 'hash': null};
-    this.init()
+    this._state = new State();
+    Object.freeze(this._state);
+    await this.init()
   }
 
   async getLogins(url) {
-    await this.ensureNativePortReady();
+    if (!this._state.isConnectedToNativePort()) {
+      if (!await this.init()) {
+        return {code: "unknown", credentials: []};
+      }
+    }
+
     let keys = [];
     const kpAction = 'get-logins';
     const nonce = this._getNonce();
     const incrementedNonce = this._incrementedNonce(nonce);
     const {dbid} = this._getCryptoKey();
 
-    for (const keyHash of Object.keys(this._keyRing)) {
+    let keyRing = this._state.getKeyRing();
+    for (const keyHash of Object.keys(this._state.getKeyRing())) {
       keys.push({
-        id: this._keyRing[keyHash].id,
-        key: this._keyRing[keyHash].key
+        id: keyRing[keyHash].id,
+        key: keyRing[keyHash].key
       });
     }
 
@@ -160,7 +159,7 @@ class KeepassXCBackend extends PasswordBackend {
       action: kpAction,
       message: this._encrypt(messageData, nonce),
       nonce: nonce,
-      clientID: this._clientID
+      clientID: this._state.getClientID()
     };
 
     let response = await this._sendNativeMessage(request);
@@ -171,14 +170,14 @@ class KeepassXCBackend extends PasswordBackend {
       }
       return {code: "ok", credentials: parsed.entries};
     } else if (response.error && response.errorCode) {
-      console.log(response);
-      console.log("error");
+      if (response.error === "Database not opened" || response.errorCode === 1) {
+        return {code: "unknown", credentials: []};
+      }
       if (response.error === "No logins found" || response.errorCode === 15) {
         return {code: "noLogins", credentials: []};
       }
-      return false;
+      return {code: "unknown", credentials: []};
     } else {
-      console.log("error unknown");
       return {code: "unknown", credentials: []};
     }
   }
@@ -188,11 +187,6 @@ class KeepassXCBackend extends PasswordBackend {
    * PRIVATE INTERFACE
    *
    */
-
-  _isAssociated() {
-    return (this._associated.value && this._associated.hash && this._associated.hash === this._databaseHash);
-  }
-
 
   _incrementedNonce(nonce) {
     const oldNonce = nacl.util.decodeBase64(nonce);
@@ -212,83 +206,57 @@ class KeepassXCBackend extends PasswordBackend {
 
 
   _generateNewKeyPair() {
-    this._keyPair = nacl.box.keyPair();
-    console.log("Generated new key pair: pub, priv", nacl.util.encodeBase64(this._keyPair.publicKey) + ' ' + nacl.util.encodeBase64(this._keyPair.secretKey));
+    this._state = this._state.newKeyPair(nacl.box.keyPair());
+    console.log("Generated new key pair: pub, priv", nacl.util.encodeBase64(this._state._keyPair.publicKey) + ' ' + nacl.util.encodeBase64(this._state._keyPair.secretKey));
   }
 
 
   _verifyResponse(response, nonce) {
-    this._associated.value = response.success;
     if (response.success !== 'true') {
-      this._associated.hash = null;
+      this._state = this._state.disAssociated();
       return false;
     }
-
-    this._associated.hash = this._databaseHash;
 
     if (!this._checkNonceLength(response.nonce)) {
+      this._state = this._state.disAssociated();
       return false;
     }
 
-    this._associated.value = (response.nonce === nonce);
-    if (this._associated.value === false) {
-      console.log('Error: Nonce compare failed');
+    if (response.nonce !== nonce) {
+      this._state = this._state.disAssociated();
       return false;
     }
 
-    this._associated.hash = (this._associated.value) ? this._databaseHash : null;
-    return this._isAssociated();
+    this._state = this._state.setAssociatedHash(this._state.getDatabaseHash());
+    return this._state.isAssociatedWithCorrectDatabase();
   }
 
 
   _setCryptoKey(id, key) {
-    this._saveKey(this._databaseHash, id, key);
+    this._saveKey(this._state._databaseHash, id, key);
   }
 
-
   _saveKey(hash, id, key) {
-    if (!(hash in this._keyRing)) {
-      this._keyRing[hash] = {
-        id: id,
-        key: key,
-        hash: hash,
-        created: new Date().valueOf(),
-        lastUsed: new Date().valueOf()
-      };
-    } else {
-      this._keyRing[hash].id = id;
-      this._keyRing[hash].key = key;
-      this._keyRing[hash].hash = hash;
-    }
-    this.secureStorage.set('keyRing', JSON.stringify(this._keyRing));
+    this._state = this._state.saveKeyInKeyring(hash, id, key);
+    this.secureStorage.set('keyRing', JSON.stringify(this._state.getKeyRing()));
   }
 
   _deleteKey(hash) {
-    delete this._keyRing[hash];
-    this.secureStorage.set('keyRing', JSON.stringify(this._keyRing));
+    this._state.deleteKeyFromKeyRing(hash);
+    this.secureStorage.set('keyRing', JSON.stringify(this._state.getKeyRing()));
   }
 
-  async ensureNativePortReady() {
-    if (this._nativePort === null) {
-      await this.init();
-      return true;
-    }
-    return true;
-  }
-
-  _sendNativeMessage(request, enableTimeout = false) {
+  _sendNativeMessage(request, bigTimeout = false) {
     return new Promise((resolve, reject) => {
       let timeout;
       let action = request.action;
-      let ev = this._nativePort.onMessage;
+      let ev = this._state._nativePort.onMessage;
 
       let listener = ((port, action) => {
         let handler = (msg) => {
           if (msg && msg.action === action) {
             port.removeListener(handler);
-            if (enableTimeout) {
-              clearTimeout(timeout);
-            }
+            clearTimeout(timeout);
             resolve(msg);
           }
         };
@@ -296,19 +264,24 @@ class KeepassXCBackend extends PasswordBackend {
       })(ev, action);
       ev.addListener(listener);
 
-
-      // Handle timeouts
-      if (enableTimeout) {
-        timeout = setTimeout(() => {
-          this._isKeePassXCAvailable = false;
-          ev.removeListener(listener.handler);
-          reject('timeout');
-        }, this._messageTimeout);
+      let timeoutDuration = 125;
+      if (bigTimeout) {
+        // when associating, a bigger timeout is required
+        timeoutDuration = 10000;
       }
 
+      // Handle timeouts
+      timeout = setTimeout(() => {
+        ev.removeListener(listener.handler);
+        this._state = new State();
+        console.log("Disconnected by timeout");
+        Object.freeze(this._state);
+        reject('timeout');
+      }, timeoutDuration);
+
       // Send the request
-      if (this._nativePort) {
-        this._nativePort.postMessage(request);
+      if (this._state._nativePort) {
+        this._state._nativePort.postMessage(request);
       } else {
         reject('NativePort not ready');
       }
@@ -316,72 +289,61 @@ class KeepassXCBackend extends PasswordBackend {
   }
 
   _connectToNative() {
-    this._nativePort = browser.runtime.connectNative(this._nativeHostName);
-    this._nativePort.onDisconnect.addListener((p) => {
+    this._state = this._state.connectToNativePort((p) => {
       if (p.error) {
         console.log(`Disconnected due to an error: ${p.error.message}`);
       } else {
         console.log(p);
       }
-      this._nativePort = null;
-      this._isConnected = false;
-      this._isDatabaseClosed = true;
-      this._isKeePassXCAvailable = false;
-      this._associated.value = false;
-      this._associated.hash = null;
-      this._databaseHash = '';
+      this._state = new State();
+      console.log("Disconnected");
+      Object.freeze(this._state);
     });
-    this._isConnected = true;
   }
 
-  async _changePublicKeys(enableTimeout = false) {
-    if (!this._isConnected) {
-      // keepass.handleError(tab, kpErrors.TIMEOUT_OR_NOT_CONNECTED);
-      // reject(false);
+  async _changePublicKeys() {
+    if (!this._state.isConnectedToNativePort()) {
       return false;
     }
 
     const kpAction = 'change-public-keys';
-    const key = nacl.util.encodeBase64(this._keyPair.publicKey);
+    const key = nacl.util.encodeBase64(this._state._keyPair.publicKey);
     const nonce = this._getNonce();
     const incrementedNonce = this._incrementedNonce(nonce);
-    this._clientID = nacl.util.encodeBase64(nacl.randomBytes(this._keySize));
+    this._state = this._state.setClientID(nacl.util.encodeBase64(nacl.randomBytes(this._state._keySize)));
 
     const request = {
       action: kpAction,
       publicKey: key,
       nonce: nonce,
-      clientID: this._clientID
+      clientID: this._state.getClientID()
     };
 
-
-    const response = await this._sendNativeMessage(request, enableTimeout);
-    this._currentKeePassXC = response.version;
+    const response = await this._sendNativeMessage(request);
 
     if (!this._verifyKeyResponse(response, key, incrementedNonce)) {
       return false;
     } else {
-      this._isKeePassXCAvailable = true;
-      console.log('Server public key: ' + nacl.util.encodeBase64(this._serverPublicKey));
+      console.log('Server public key: ' + nacl.util.encodeBase64(this._state._serverPublicKey));
       return true;
     }
   }
 
   _verifyKeyResponse(response, key, nonce) {
     if (!response.success || !response.publicKey) {
-      this._associated.hash = null;
+      this._state = this._state.disAssociated();
       return false;
     }
 
     if (!this._checkNonceLength(response.nonce)) {
-      console.log('Error: Invalid nonce length');
+      this._state = this._state.disAssociated();
       return false;
     }
 
     let reply = (response.nonce === nonce);
 
     if (response.publicKey) {
-      this._serverPublicKey = nacl.util.decodeBase64(response.publicKey);
+      this._state = this._state.setServerPublicKey(nacl.util.decodeBase64(response.publicKey));
       reply = true;
     }
 
@@ -393,63 +355,56 @@ class KeepassXCBackend extends PasswordBackend {
   }
 
   _getNonce() {
-    return nacl.util.encodeBase64(nacl.randomBytes(this._keySize));
+    return nacl.util.encodeBase64(nacl.randomBytes(this._state._keySize));
   }
 
-
   _getCryptoKey() {
-    let dbkey = null;
-    let dbid = null;
-    if (!(this._databaseHash in this._keyRing)) {
-      return {dbid, dbkey};
-    }
-
-    dbid = this._keyRing[this._databaseHash].id;
-
-    if (dbid) {
-      dbkey = this._keyRing[this._databaseHash].key;
-    }
-
-    return {dbid, dbkey};
+    return this._state.getKeyFromKeyRing(this._state.getDatabaseHash());
   }
 
   _encrypt(input, nonce) {
     const messageData = nacl.util.decodeUTF8(JSON.stringify(input));
     const messageNonce = nacl.util.decodeBase64(nonce);
 
-    if (this._serverPublicKey) {
-      const message = nacl.box(messageData, messageNonce, this._serverPublicKey, this._keyPair.secretKey);
+    // if (this._state.hasServerPublicKey()) {
+
+    // }
+    if (this._state.hasServerPublicKey()) {
+      const message = nacl.box(messageData, messageNonce,
+        this._state.getServerPublicKey(),
+        this._state._keyPair.secretKey);
       if (message) {
         return nacl.util.encodeBase64(message);
       }
     }
-    return '';
+    console.trace();
+    throw new Error("Encryption not working!")
   }
 
   _verifyDatabaseResponse(response, nonce) {
     if (response.success !== 'true') {
-      this._associated.hash = null;
+      this._state = this._state.resetDatabaseHash();
       return false;
     }
 
     if (!this._checkNonceLength(response.nonce)) {
-      console.log('Error: Invalid nonce length');
+      this._state = this._state.disAssociated();
       return false;
     }
 
     if (response.nonce !== nonce) {
-      console.log('Error: Nonce compare failed');
+      this._state = this._state.disAssociated();
       return false;
     }
 
-    this._associated.hash = response.hash;
+    this._state = this._state.setAssociatedHash(response.hash);
     return response.hash !== '' && response.success === 'true';
   }
 
   _decrypt(input, nonce) {
     const m = nacl.util.decodeBase64(input);
     const n = nacl.util.decodeBase64(nonce);
-    return nacl.box.open(m, n, this._serverPublicKey, this._keyPair.secretKey);
+    return nacl.box.open(m, n, this._state._serverPublicKey, this._state._keyPair.secretKey);
   }
 
   _decryptAdnVerify(response, incrementedNonce) {
@@ -461,15 +416,13 @@ class KeepassXCBackend extends PasswordBackend {
     const message = nacl.util.encodeUTF8(res);
     const parsed = JSON.parse(message);
     if (parsed.version) {
-      this._currentKeePassXC = parsed.version;
+      this._state = this._state.setKeepassXCVersion(parsed.version);
     }
 
     if (!this._verifyResponse(parsed, incrementedNonce)) {
       const hash = response.hash || 0;
       this._deleteKey(hash);
-      this._associated.value = false;
-      this._associated.hash = null;
-
+      this._state = this._state.disAssociated();
       return false;
     }
 
@@ -477,11 +430,11 @@ class KeepassXCBackend extends PasswordBackend {
   }
 
   async _getDatabaseHash() {
-    if (!this._isConnected) {
+    if (!this._state.isConnectedToNativePort()) {
       return false;
     }
 
-    if (!this._serverPublicKey) {
+    if (!this._state.hasServerPublicKey()) {
       await this._changePublicKeys();
     }
 
@@ -494,54 +447,43 @@ class KeepassXCBackend extends PasswordBackend {
     };
 
     const encrypted = this._encrypt(messageData, nonce);
-    if (encrypted.length <= 0) {
-      return this._databaseHash;
-    }
 
     const request = {
       action: kpAction,
       message: encrypted,
       nonce: nonce,
-      clientID: this._clientID
+      clientID: this._state.getClientID()
     };
 
     let response = await this._sendNativeMessage(request);
     if (response.message && response.nonce) {
       const res = this._decrypt(response.message, response.nonce);
       if (!res) {
+        this._state = this._state.disAssociated();
         return false;
       }
 
       const message = nacl.util.encodeUTF8(res);
       const parsed = JSON.parse(message);
 
-      // use  _verifyDatabaseResponse instead of verifyAndDecrypt
       if (this._verifyDatabaseResponse(parsed, incrementedNonce) && parsed.hash) {
-        const oldDatabaseHash = this._databaseHash;
+        const oldDatabaseHash = this._state.getDatabaseHash();
         if (parsed.version) {
-          this._currentKeePassXC = parsed.version;
+          this._state = this._state.setKeepassXCVersion(parsed.version);
         }
-        this._databaseHash = parsed.hash || '';
+        this._state = this._state.newDatabaseHash(parsed.hash || '');
 
-        if (oldDatabaseHash && oldDatabaseHash !== this._databaseHash) {
-          this._associated.value = false;
-          this._associated.hash = null;
+        if (oldDatabaseHash && oldDatabaseHash !== this._state.getDatabaseHash()) {
+          this._state = this._state.disAssociated();
         }
 
-        this._isDatabaseClosed = false;
-        this._isKeePassXCAvailable = true;
         return parsed.hash;
       } else if (parsed.errorCode) {
-        this._databaseHash = '';
-        this._isDatabaseClosed = true;
+        this._state = this._state.resetDatabaseHash();
         return false;
       }
     } else {
-      this._databaseHash = '';
-      this._isDatabaseClosed = true;
-      if (response.message && response.message === '') {
-        this._isKeePassXCAvailable = false;
-      }
+      this._state = this._state.resetDatabaseHash();
       return false;
     }
   }
@@ -557,37 +499,24 @@ class KeepassXCBackend extends PasswordBackend {
     return (canBeEqual ? (min <= cur) : (min < cur));
   }
 
-  async _isConfigured() {
-    if (this._databaseHash !== null) {
-      const hash = await this._getDatabaseHash();
-      if (!hash) {
-        console.log("_getDatabaseHash failed");
-        return false;
-      }
-      return hash in this._keyRing;
-    } else {
-      return this._databaseHash in this._keyRing;
-    }
-  }
-
-
-  async _testAssociation(enableTimeout = false, triggerUnlock = false) {
+  /**
+   * Must happen before trying to do getLogins()
+   * @param triggerUnlock
+   * @returns {Promise<boolean>}
+   * @private
+   */
+  async _testAssociation(triggerUnlock = false) {
 
     let dbHash = await this._getDatabaseHash();
     if (!dbHash) {
-      console.log("_getDatabaseHash failed");
       return false;
     }
 
-    if (this._isDatabaseClosed || !this._isKeePassXCAvailable) {
+    if (!this._state.isAssociatedWithCorrectDatabase()) {
       return false;
     }
 
-    if (this._isAssociated()) {
-      return true;
-    }
-
-    if (!this._serverPublicKey) {
+    if (!this._state.hasServerPublicKey()) {
       return false;
     }
 
@@ -610,10 +539,10 @@ class KeepassXCBackend extends PasswordBackend {
       action: kpAction,
       message: this._encrypt(messageData, nonce),
       nonce: nonce,
-      clientID: this._clientID
+      clientID: this._state.getClientID()
     };
 
-    const response = await this._sendNativeMessage(request, enableTimeout);
+    const response = await this._sendNativeMessage(request);
 
     if (response.message && response.nonce) {
       const res = this._decryptAdnVerify(response, incrementedNonce);
