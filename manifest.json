@@ -21,6 +21,7 @@
       "background/Crypto.js",
       "background/Keywi.js",
       "background/lib/PasswordBackend.js",
+      "background/lib/KeepassXCState.js",
       "background/lib/KeepassXCBackend.js",
       "background/securestorage.js",
       "background/LocalSecureStorage.js",
