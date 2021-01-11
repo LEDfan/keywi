@@ -61,9 +61,6 @@ function writeValueToInputElement(element, value) {
   });
   element.dispatchEvent(event);
   element.dispatchEvent(inputEvent);
-  if (element.type === 'email' || element.type === 'tel') {
-    element.removeAttribute('contenteditable');
-  }
 }
 
 browser.runtime.onMessage.addListener(function _func (request, sender, sendResponse) {
