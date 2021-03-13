@@ -21,6 +21,8 @@
  * This file holds the main API to the Keepass Database
  */
 
+const ALWAYS_CONFIRM_CREDENTIALS = true;
+
 class Keywi_ {
 
   constructor() {
@@ -69,15 +71,15 @@ class Keywi_ {
         'title': 'Keywi'
       });
       return false;
-    } 
+    }
     return credentials.credentials;
-    
+
   }
 
-  getGUILogins(url) {
+  getGUILogins(url, always_confirm_credential) {
     return this.getLoginsAndErrorHandler(url).then(credentials => {
       if (!credentials) return false;
-      if (credentials.length === 1) {
+      if (!always_confirm_credential && credentials.length === 1) {
         return credentials[0];
       }
       return new SelectCredentialsDialog(credentials);

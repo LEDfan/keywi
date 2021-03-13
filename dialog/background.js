@@ -149,7 +149,6 @@ class BasicAuthDialog extends Dialog {
     super('/dialog/confirm_basic_auth.html');
     this.config = config;
     this.registerMessageHandler('confirm_basic_auth_fetch', this.onConfirmedFetch);
-    this.registerMessageHandler('confirm_basic_auth_select', this.onConfirmedSelect);
     this.registerMessageHandler('confirm_basic_auth_cancel', this.onCancel);
     return this.open({'type': 'confirm_basic_auth_data', 'data': config});
   }
@@ -158,22 +157,13 @@ class BasicAuthDialog extends Dialog {
    * Called when the user confirms they want to use Keywi for basic auth.
    */
   async onConfirmedFetch() {
-    const resp = await Keywi.getLoginsAndErrorHandler(this.config.url);
+    this.close();
+    const resp = await Keywi.getGUILogins(this.config.url, ALWAYS_CONFIRM_CREDENTIALS);
     if (resp === false) {
-      this.close();
       this.resolve({'code': 'cancel'});
     } else {
-      return resp;
+      this.resolve({'code': 'fill', 'username': resp.login, 'password': resp.password});
     }
-  }
-
-  /**
-   * Called when the user selects a credential to use for basic auth.
-   * @param request
-   */
-  onConfirmedSelect(request) {
-    this.close();
-    this.resolve({'code': 'fill', 'username': request.data.selected.login, 'password': request.data.selected.password});
   }
 
   /**

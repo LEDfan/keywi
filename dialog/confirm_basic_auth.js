@@ -17,19 +17,6 @@
  * along with Keywi.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const generateButtonRow = function (name, login) {
-  const div = document.createElement('div');
-  div.classList.add('password-container');
-
-  const button = document.createElement('button');
-  button.classList.add('password-choose-btn');
-  button.innerText = `${login} (${name})`;
-
-  div.appendChild(button);
-
-  return div;
-};
-
 window.addEventListener('DOMContentLoaded', function () {
   document.getElementById('passwords').hidden = true;
   function show(id) {
@@ -64,38 +51,7 @@ window.addEventListener('DOMContentLoaded', function () {
 });
 
 document.getElementById('fetch').onclick = function () {
-  browser.runtime.sendMessage({'type': 'confirm_basic_auth_fetch'}).then(credentials => {
-    const length = credentials.length;
-    const passwordsEl = document.getElementById('passwords');
-
-    // clear previous entries
-    while (passwordsEl.hasChildNodes()) {
-      passwordsEl.removeChild(passwordsEl.lastChild);
-    }
-
-    for (let i = 0; i < length; i++) {
-      const el = generateButtonRow(credentials[i].name, credentials[i].login);
-      el.addEventListener('click', function() {
-        console.log(credentials[i]);
-        browser.runtime.sendMessage({
-          'type': 'confirm_basic_auth_select',
-          'data': {'selected': credentials[i]}
-        });
-      }, false);
-      passwordsEl.appendChild(el);
-    }
-
-    document.getElementById('fetch').hidden = true;
-    document.getElementsByClassName('dialogConfirmBasicAuthBody')[0].hidden = true;
-    document.getElementsByClassName('dialogConfirmBasicAuthSelect')[0].hidden = false;
-    document.querySelector('#text ul').hidden = true;
-    document.getElementById('passwords').hidden = false;
-
-  }).
-    catch(error => {
-      console.log(error);
-    });
-
+  browser.runtime.sendMessage({'type': 'confirm_basic_auth_fetch'});
 };
 
 document.getElementById('cancel').onclick = function () {
@@ -104,10 +60,6 @@ document.getElementById('cancel').onclick = function () {
 
 document.addEventListener('keyup', function (ev) {
   if (ev.key === 'Accept' || ev.key === 'Execute' || ev.key === 'Enter') {
-    if (!document.getElementById('fetch').hidden) {
       document.getElementById('fetch').click();
-    } else if (document.getElementById('passwords').children.length === 1) {
-      document.getElementById('passwords').children[0].click();
-    }
   }
 });

@@ -52,6 +52,13 @@ window.addEventListener('DOMContentLoaded', function () {
         passwordsEl.appendChild(el);
       }
 
+      if (length === 1) {
+        document.addEventListener('keyup', function(ev) {
+          if (document.getElementById('passwords').children.length === 1) {
+            document.getElementById('passwords').children[0].click();
+          }
+        });
+      }
     }
   });
 });
@@ -62,3 +69,4 @@ document.getElementById('cancel').onclick = function () {
     'data': {}
   });
 };
+
