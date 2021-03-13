@@ -157,8 +157,14 @@ class BasicAuthDialog extends Dialog {
   /**
    * Called when the user confirms they want to use Keywi for basic auth.
    */
-  onConfirmedFetch() {
-    return Keywi.getLoginsAndErrorHandler(this.config.url);
+  async onConfirmedFetch() {
+    const resp = await Keywi.getLoginsAndErrorHandler(this.config.url);
+    if (resp === false) {
+      this.close();
+      this.resolve({'code': 'cancel'});
+    } else {
+      return resp;
+    }
   }
 
   /**

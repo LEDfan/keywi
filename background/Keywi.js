@@ -52,8 +52,8 @@ class Keywi_ {
   }
 
   async getLoginsAndErrorHandler(url) {
-    let credentials = await this.getLogins(url);
-    if (credentials.code === "noLogins") {
+    const credentials = await this.getLogins(url);
+    if (credentials.code === 'noLogins') {
       browser.notifications.create({
         'type': 'basic',
         'message': browser.i18n.getMessage('noPassFound'),
@@ -61,7 +61,7 @@ class Keywi_ {
         'title': 'Keywi'
       });
       return false;
-    } else if (credentials.code !== "ok") {
+    } else if (credentials.code !== 'ok') {
       browser.notifications.create({
         'type': 'basic',
         'message': browser.i18n.getMessage('cannotConnect'),
@@ -69,9 +69,9 @@ class Keywi_ {
         'title': 'Keywi'
       });
       return false;
-    } else {
-      return credentials.credentials;
-    }
+    } 
+    return credentials.credentials;
+    
   }
 
   getGUILogins(url) {

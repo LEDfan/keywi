@@ -30,6 +30,8 @@
       "error",
       "as-needed"
     ],
+    "max-lines-per-function": "off",
+    "max-classes-per-file": "off",
     "padded-blocks": "off",
     "capitalized-comments": "off",
     "sort-keys": "off",
@@ -78,6 +80,7 @@
     "slowAES": true,
     "UTF8": true,
     "Keepass": true,
+    "Keywi": true,
     "LocalSecureStorage": true,
     "activeGetLogins": true,
     "SecureStorage": true,
