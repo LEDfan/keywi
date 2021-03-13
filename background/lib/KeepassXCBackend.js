@@ -23,7 +23,10 @@
  *
  */
 
+const USE_LARGE_TIMEOUT = true;
+
 class KeepassXCBackend extends PasswordBackend {
+
 
   /**
    *
@@ -98,7 +101,7 @@ class KeepassXCBackend extends PasswordBackend {
       triggerUnlock: 'true'
     };
 
-    let response = await this._sendNativeMessage(request, true);
+    let response = await this._sendNativeMessage(request, USE_LARGE_TIMEOUT);
     if (response.message && response.nonce) {
       let parsed = this._decryptAdnVerify(response, incrementedNonce);
       console.log("associated response:", parsed);
@@ -162,7 +165,7 @@ class KeepassXCBackend extends PasswordBackend {
       clientID: this._state.getClientID()
     };
 
-    let response = await this._sendNativeMessage(request);
+    let response = await this._sendNativeMessage(request, USE_LARGE_TIMEOUT);
     if (response.message && response.nonce) {
       const parsed = this._decryptAdnVerify(response, incrementedNonce);
       if (!parsed) {
