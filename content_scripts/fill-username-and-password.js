@@ -90,11 +90,7 @@ browser.runtime.onMessage.addListener(function _func (request, sender, sendRespo
     writeValueToInputElement(document.activeElement, request.username);
 
     const passwordField = searchForPasswordInput(document.activeElement);
-
-    if (passwordField === null && !request.suppress_error_on_missing_pw_field) {
-      // TODO
-      browser.runtime.sendMessage({'type': 'no-password-field-found'});
-    } else if (passwordField !== null) {
+    if (passwordField !== null) {
       writeValueToInputElement(passwordField, request.password);
     }
   } else if (request.type === 'username') {

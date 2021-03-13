@@ -27,14 +27,13 @@ browser.commands.onCommand.addListener(cmd => {
     return;
   }
   browser.tabs.query({'currentWindow': true, 'active': true}).then(tabs => {
-    Keywi.getGUILogins(tabs[0].url).then(entries => {
-      if (!entries) return;
+    Keywi.getGUILogins(tabs[0].url).then(entry => {
+      if (!entry) return;
       browser.tabs.sendMessage(tabs[0].id, {
         'type': type,
-        'suppress_error_on_missing_pw_field': true,
-        'username': entries.login,
-        'password': entries.password,
-        'stringFields': entries.stringFields
+        'username': entry.login,
+        'password': entry.password,
+        'stringFields': entry.stringFields
       });
     });
   });
