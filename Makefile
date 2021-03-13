@@ -2,10 +2,10 @@ IGNORED_FILES=ci Makefile crowdin.yml
 .PHONY: run run-chromium lint release-ss deps
 
 run:
-	web-ext run --no-reload
+	./node_modules/.bin/web-ext run --no-reload
 
 run-chromium:
-	chromium --load-extension=`pwd`
+	./node_modules/.bin/web-ext run --no-reload -t chromium
 
 lint:
 	./node_modules/.bin/eslint . || true
@@ -22,11 +22,11 @@ release-ss:
 		false
     endif
 	sed -i 's/keywi-ff-add-on@ledfan.be/keywi-ff-add-on-ss@ledfan.be/g' manifest.json
-	web-ext sign --ignore-files $(IGNORED_FILES) --api-key ${API_KEY} --api-secret ${API_SECRET}
+	./node_modules/.bin/web-ext sign --ignore-files $(IGNORED_FILES) --api-key ${API_KEY} --api-secret ${API_SECRET}
 	sed -i 's/keywi-ff-add-on-ss@ledfan.be/keywi-ff-add-on@ledfan.be/g' manifest.json
 
 build:
-	web-ext build --ignore-files ${IGNORED_FILES}
+	./node_modules/.bin/web-ext build --ignore-files ${IGNORED_FILES}
 
 deps:
 	npm install
