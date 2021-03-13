@@ -75,7 +75,8 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
       browser.tabs.sendMessage(tab.id, {
         'type': type,
         'username': entry.login,
-        'password': entry.password
+        'password': entry.password,
+        'stringFields': entry.stringFields
       });
       activeGetLogins.splice(activeGetLogins.indexOf(tab.id), 1);
     }, function() {

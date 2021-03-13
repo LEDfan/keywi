@@ -33,7 +33,8 @@ browser.commands.onCommand.addListener(cmd => {
         'type': type,
         'suppress_error_on_missing_pw_field': true,
         'username': entries.login,
-        'password': entries.password
+        'password': entries.password,
+        'stringFields': entries.stringFields
       });
     });
   });

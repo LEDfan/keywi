@@ -64,33 +64,42 @@ function writeValueToInputElement(element, value) {
 }
 
 browser.runtime.onMessage.addListener(function _func (request, sender, sendResponse) {
-  if (request.type === 'username-and-password') {
-    // Only useful for input elements
-    if (document.activeElement.tagName !== 'INPUT') {
+  if (document.activeElement.tagName !== 'INPUT') {
+    return;
+  }
+  if (window.location.host.includes("aws.amazon.com")) {
+    if (document.activeElement.id === "resolving_input") {
+      // fill in AWS account id
+      let accountId = null;
+      for (let stringField of request.stringFields) {
+        for (const [key, value] of Object.entries(stringField)) {
+          if (key.toLowerCase().replaceAll(' ', '') === "kph:awsaccountid") {
+            accountId = value;
+          }
+        }
+      }
+
+      if (accountId != null) {
+        writeValueToInputElement(document.activeElement, accountId);
+      }
       return;
     }
-
+  }
+  if (request.type === 'username-and-password') {
+    // Only useful for input elements
     writeValueToInputElement(document.activeElement, request.username);
 
     const passwordField = searchForPasswordInput(document.activeElement);
 
     if (passwordField === null && !request.suppress_error_on_missing_pw_field) {
+      // TODO
       browser.runtime.sendMessage({'type': 'no-password-field-found'});
     } else if (passwordField !== null) {
       writeValueToInputElement(passwordField, request.password);
     }
   } else if (request.type === 'username') {
-    // Only useful for input elements
-    if (document.activeElement.tagName !== 'INPUT') {
-      return;
-    }
     writeValueToInputElement(document.activeElement, request.username);
   } else if (request.type === 'password') {
-    // Only useful for input elements
-    if (document.activeElement.tagName !== 'INPUT') {
-      return;
-    }
-
     if (document.activeElement.type !== 'password') {
       if (confirm(browser.i18n.getMessage('confirmNotPassField'))) {
         writeValueToInputElement(document.activeElement, request.password);
