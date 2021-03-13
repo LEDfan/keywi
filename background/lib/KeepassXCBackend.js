@@ -130,7 +130,7 @@ class KeepassXCBackend extends PasswordBackend {
     await this.init()
   }
 
-  async getLogins(url) {
+  async getLogins(url, is_basic_auth) {
     if (!this._state.isConnectedToNativePort() || !this._state.isAssociatedWithCorrectDatabase()) {
       if (!await this.init()) {
         return {code: "unknown", credentials: []};
@@ -157,6 +157,11 @@ class KeepassXCBackend extends PasswordBackend {
       url: url,
       keys: keys
     };
+
+    if (is_basic_auth) {
+      // Inform KeepassXC that this is a basic auth request
+      messageData["httpAuth"] = "true";
+    }
 
     const request = {
       action: kpAction,

@@ -21,7 +21,7 @@
  * This file holds the main API to the Keepass Database
  */
 
-const ALWAYS_CONFIRM_CREDENTIALS = true;
+const IS_BASIC_AUTH = true;
 
 class Keywi_ {
 
@@ -48,13 +48,15 @@ class Keywi_ {
     this._backend = backend;
   }
 
-  async getLogins(url) {
+  async getLogins(url, is_basic_auth) {
+    // TODO can be removes
     await this._ss._unlockStorage();
-    return this._backend.getLogins(url);
+    return this._backend.getLogins(url, is_basic_auth);
   }
 
-  async getLoginsAndErrorHandler(url) {
-    const credentials = await this.getLogins(url);
+  async getLoginsAndErrorHandler(url, is_basic_auth) {
+    // TODO can be removed
+    const credentials = await this.getLogins(url, is_basic_auth);
     if (credentials.code === 'noLogins') {
       browser.notifications.create({
         'type': 'basic',
@@ -76,10 +78,11 @@ class Keywi_ {
 
   }
 
-  getGUILogins(url, always_confirm_credential) {
-    return this.getLoginsAndErrorHandler(url).then(credentials => {
+  getGUILogins(url, is_basic_auth=false,) {
+    return this.getLoginsAndErrorHandler(url, is_basic_auth).then(credentials => {
+      console.log(credentials);
       if (!credentials) return false;
-      if (!always_confirm_credential && credentials.length === 1) {
+      if (!is_basic_auth && credentials.length === 1) {
         return credentials[0];
       }
       return new SelectCredentialsDialog(credentials);
