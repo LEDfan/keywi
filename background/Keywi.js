@@ -48,16 +48,11 @@ class Keywi_ {
     this._backend = backend;
   }
 
-  async getLogins(url, is_basic_auth) {
-    // TODO can be removes
+  async getLogins(url, is_basic_auth= false) {
     await this._ss._unlockStorage();
-    return this._backend.getLogins(url, is_basic_auth);
-  }
+    const resp = await this._backend.getLogins(url, is_basic_auth);
 
-  async getLoginsAndErrorHandler(url, is_basic_auth) {
-    // TODO can be removed
-    const credentials = await this.getLogins(url, is_basic_auth);
-    if (credentials.code === 'noLogins') {
+    if (resp.code === 'noLogins') {
       browser.notifications.create({
         'type': 'basic',
         'message': browser.i18n.getMessage('noPassFound'),
@@ -65,7 +60,7 @@ class Keywi_ {
         'title': 'Keywi'
       });
       return false;
-    } else if (credentials.code !== 'ok') {
+    } else if (resp.code !== 'ok') {
       browser.notifications.create({
         'type': 'basic',
         'message': browser.i18n.getMessage('cannotConnect'),
@@ -74,19 +69,12 @@ class Keywi_ {
       });
       return false;
     }
-    return credentials.credentials;
 
-  }
+    if (!is_basic_auth && resp.credentials.length === 1) {
+      return resp.credentials[0];
+    }
 
-  getGUILogins(url, is_basic_auth=false,) {
-    return this.getLoginsAndErrorHandler(url, is_basic_auth).then(credentials => {
-      console.log(credentials);
-      if (!credentials) return false;
-      if (!is_basic_auth && credentials.length === 1) {
-        return credentials[0];
-      }
-      return new SelectCredentialsDialog(credentials);
-    });
+    return new SelectCredentialsDialog(resp.credentials);
   }
 }
 

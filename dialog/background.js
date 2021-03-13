@@ -158,7 +158,7 @@ class BasicAuthDialog extends Dialog {
    */
   async onConfirmedFetch() {
     this.close();
-    const resp = await Keywi.getGUILogins(this.config.url, IS_BASIC_AUTH);
+    const resp = await Keywi.getLogins(this.config.url, IS_BASIC_AUTH);
     if (resp === false) {
       this.resolve({'code': 'cancel'});
     } else {
