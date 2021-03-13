@@ -70,7 +70,7 @@ class Keywi_ {
       return false;
     }
 
-    if (!is_basic_auth && resp.credentials.length === 1) {
+    if (resp.credentials.length === 1) {
       return resp.credentials[0];
     }
 
