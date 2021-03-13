@@ -9,7 +9,7 @@
     "webextension-polyfill": "^0.7.0"
   },
   "devDependencies": {
-    "eslint": "^5.13.0",
+    "eslint": "^7.22.0",
     "web-ext": "^6.0.0"
   },
   "scripts": {
