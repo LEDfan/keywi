@@ -114,6 +114,8 @@ class SelectCredentialsDialog extends Dialog {
 
   constructor(possibleCredentials) {
     super('/dialog/select_multiple_passwords.html');
+    this.setWidth(700);
+    this.setHeight(800);
     this.possibleCredentials = possibleCredentials;
     this.registerMessageHandler('select_mul_pass_user_input', this.onSelectedMultiplePasswords);
     this.registerMessageHandler('select_mul_pass_cancel', this.onCancel);

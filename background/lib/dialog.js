@@ -19,6 +19,16 @@ class Dialog {
     this.messageHandlers = {};
     this.onMessageHandler = null;
     this.onClosedHandler = null;
+    this.width = 400;
+    this.height = 600;
+  }
+
+  setWidth(newWidth) {
+    this.width = newWidth;
+  }
+
+  setHeight(newHeight) {
+    this.height = newHeight;
   }
 
   /**
@@ -39,8 +49,8 @@ class Dialog {
 
       let options = {
         'type': 'panel',
-        'width': 400,
-        'height': 600,
+        'width': this.width,
+        'height': this.height,
         'url': this.url,
       };
 

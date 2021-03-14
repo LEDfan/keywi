@@ -17,17 +17,31 @@
  * along with Keywi.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const generateButtonRow = function (name, login) {
-  const div = document.createElement('div');
-  div.classList.add('password-container');
+const generateButtonRow = function (group, name, username) {
+  const tr = document.createElement('tr');
+  tr.classList.add('password-container');
 
-  const button = document.createElement('button');
-  button.classList.add('password-choose-btn');
-  button.innerText = `${login} (${name})`;
+  const groupTd = document.createElement('td');
+  const groupSpan = document.createElement('span');
+  groupSpan.innerText = group;
+  groupTd.appendChild(groupSpan);
 
-  div.appendChild(button);
+  const nameTd = document.createElement('td');
+  const nameSpan = document.createElement('span');
+  nameSpan.innerText = name;
+  nameTd.appendChild(nameSpan);
 
-  return div;
+  const usernameTd = document.createElement('td');
+  const usernameSpan = document.createElement('span');
+  usernameSpan.innerText = username;
+  usernameTd.appendChild(usernameSpan);
+
+
+  tr.appendChild(groupTd);
+  tr.appendChild(nameTd);
+  tr.appendChild(usernameTd);
+
+  return tr;
 };
 
 window.addEventListener('DOMContentLoaded', function () {
@@ -42,7 +56,11 @@ window.addEventListener('DOMContentLoaded', function () {
       }
 
       for (let i = 0; i < length; i++) {
-        const el = generateButtonRow(request.data.possibleCredentials[i].name, request.data.possibleCredentials[i].login);
+        const el = generateButtonRow(
+          request.data.possibleCredentials[i].group,
+          request.data.possibleCredentials[i].name,
+          request.data.possibleCredentials[i].login);
+
         el.addEventListener('click', function () {
           browser.runtime.sendMessage({
             'type': 'select_mul_pass_user_input',

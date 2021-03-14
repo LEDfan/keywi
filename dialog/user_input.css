@@ -116,43 +116,36 @@ footer p {
 
 #text, #form {
     box-sizing: border-box;
-    width: 340px;
+    min-width: 340px;
 }
 
 #text {
-  margin: auto auto;
+  margin-left: 15px;
+  margin-right: 15px;
+}
+
+#text p {
+  margin-left: 0;
+  margin-right: 0;
 }
 
 #form {
   position: absolute;
   bottom: 15px;
-  left: 0;
-  right: 0;
-  margin: auto auto;
+  margin-left: 15px;
+  margin-right: 15px;
+  left: 15px;
+  right: 15px;
+
 }
 
 button {
     cursor:pointer;
 }
 
-.password-choose-btn {
-  color: #fff;
-  background-color: #5cb85c;
-  border: 1px solid transparent;
-  border-radius: 4px;
-  width: 340px;
-  padding: 5px;
-  margin-top: 5px;
-  margin-bottom: 5px;
-  box-sizing: border-box;
-}
-
-#passwords {
-  height: 190px;
-  overflow-y: auto;
-}
 
 #cancel-container {
   height: 60px;
   padding-top: 10px;
+  text-align: center;
 }
