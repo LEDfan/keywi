@@ -6,7 +6,7 @@
   "dependencies": {
     "tweetnacl": "^1.0.1",
     "tweetnacl-util": "^0.15.0",
-    "webextension-polyfill": "^0.7.0"
+    "webextension-polyfill": "^0.8.0"
   },
   "devDependencies": {
     "eslint": "^7.22.0",
