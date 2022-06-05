@@ -94,10 +94,22 @@ class Keywi_ {
     for (let credential of resp.credentials) {
       let credentialContainerName = Keywi._getCredentialStringField(credential, "kph:containername");
       let skipBasicAuth = Keywi._getCredentialStringField(credential, "kph:skipbasicauth");
+      let skipNonBasicAuth = Keywi._getCredentialStringField(credential, "kph:skipnonbasicauth");
       if ((credentialContainerName === null || credentialContainerName.toLowerCase() === containerTabName)
-          && !(is_basic_auth && skipBasicAuth === "true")) {
-        filteredCredentials.push(credential);
+          && !(is_basic_auth && skipBasicAuth === "true")
+          && !(!is_basic_auth && skipNonBasicAuth === "true")) {
+          filteredCredentials.push(credential);
       }
+    }
+
+    if (filteredCredentials.length === 0) {
+      browser.notifications.create({
+        'type': 'basic',
+        'message': browser.i18n.getMessage('noPassFound'),
+        'iconUrl': browser.extension.getURL('icons/keywi-96.png'),
+        'title': 'Keywi'
+      });
+      return false;
     }
 
     if (!is_basic_auth && filteredCredentials.length === 1) {
