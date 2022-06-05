@@ -48,11 +48,11 @@ class Keywi_ {
     this._backend = backend;
   }
 
-  _getContainerNameProperty(credential) {
+  _getCredentialStringField(credential, fieldName) {
     for (let stringField of credential.stringFields) {
       for (const [key, value] of Object.entries(stringField)) {
-        if (key.toLowerCase().replaceAll(' ', '') === "kph:containername") {
-          return value;
+        if (key.toLowerCase().replaceAll(' ', '') === fieldName) {
+          return value.trim();
         }
       }
     }
@@ -92,9 +92,10 @@ class Keywi_ {
 
     let filteredCredentials = []
     for (let credential of resp.credentials) {
-      let credentialContainerName = Keywi._getContainerNameProperty(credential);
-      if (credentialContainerName === null
-        || credentialContainerName.toLowerCase() === containerTabName) {
+      let credentialContainerName = Keywi._getCredentialStringField(credential, "kph:containername");
+      let skipBasicAuth = Keywi._getCredentialStringField(credential, "kph:skipbasicauth");
+      if ((credentialContainerName === null || credentialContainerName.toLowerCase() === containerTabName)
+          && !(is_basic_auth && skipBasicAuth === "true")) {
         filteredCredentials.push(credential);
       }
     }
