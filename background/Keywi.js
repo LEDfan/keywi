@@ -48,7 +48,18 @@ class Keywi_ {
     this._backend = backend;
   }
 
-  async getLogins(url, is_basic_auth= false) {
+  _getContainerNameProperty(credential) {
+    for (let stringField of credential.stringFields) {
+      for (const [key, value] of Object.entries(stringField)) {
+        if (key.toLowerCase().replaceAll(' ', '') === "kph:containername") {
+          return value;
+        }
+      }
+    }
+    return null;
+  }
+
+  async getLogins(url, is_basic_auth = false, cookieStoreId = null) {
     await this._ss._unlockStorage();
     const resp = await this._backend.getLogins(url, is_basic_auth);
 
@@ -70,17 +81,36 @@ class Keywi_ {
       return false;
     }
 
-    if (resp.credentials.length === 1) {
-      return resp.credentials[0];
+    let containerTabName = null;
+    if (cookieStoreId !== undefined && cookieStoreId !== null) {
+      try {
+        const contextualIdentity = await browser.contextualIdentities.get(cookieStoreId);
+        containerTabName = contextualIdentity.name.toLowerCase();
+      } catch (e) {
+      }
     }
 
-    return new SelectCredentialsDialog(resp.credentials);
+
+    let filteredCredentials = []
+    for (let credential of resp.credentials) {
+      let credentialContainerName = Keywi._getContainerNameProperty(credential);
+      if (credentialContainerName === null
+        || credentialContainerName.toLowerCase() === containerTabName) {
+        filteredCredentials.push(credential);
+      }
+    }
+
+    if (filteredCredentials.length === 1) {
+      return filteredCredentials[0];
+    }
+
+    return new SelectCredentialsDialog(filteredCredentials);
   }
 }
 
 window.Keywi = new Keywi_();
 
-browser.storage.onChanged.addListener(function(changes, areaName) {
+browser.storage.onChanged.addListener(function (changes, areaName) {
   if (changes.hasOwnProperty('keepass-server-url')) {
     Keywi._backend.reAssociate();
   }
@@ -89,7 +119,7 @@ browser.storage.onChanged.addListener(function(changes, areaName) {
   }
 });
 
-browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+browser.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     if (request.type === 're-encrypt_local_secure_storage') {
       Keywi._ss.reencrypt()
         .then(() => sendResponse());
@@ -100,7 +130,7 @@ browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         .catch(() => sendResponse())
     } else if (request.type === 'options_user_info') {
       if (Keywi.ready()) {
-        (async function() {
+        (async function () {
           let associated = !!await Keywi._backend._testAssociation();
           if (!associated) {
             const response = {'table': {}, 'associated': false, 'ssUnlocked': true};

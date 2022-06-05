@@ -27,7 +27,8 @@ browser.commands.onCommand.addListener(cmd => {
     return;
   }
   browser.tabs.query({'currentWindow': true, 'active': true}).then(tabs => {
-    Keywi.getLogins(tabs[0].url).then(entry => {
+    console.log(tabs);
+    Keywi.getLogins(tabs[0].url, false, tabs[0].cookieStoreId).then(entry => {
       if (!entry) return;
       browser.tabs.sendMessage(tabs[0].id, {
         'type': type,

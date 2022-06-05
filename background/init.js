@@ -24,7 +24,6 @@ async function init() {
   try {
     Keywi.setSecureStorage(await new LocalSecureStorage(unlock))
   } catch (ss) {
-    // }).catch(function(ss) {
     console.log(ss);
     console.log('Failed to initialize Secure Storage, not associating with keepass!');
     browser.notifications.create({

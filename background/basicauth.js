@@ -59,8 +59,10 @@
       if (blacklist.test(details.url)) {
         return {'code': 'cancel'}; // Perhaps not the cleanest way to do this
       }
+      // TODO cookieStoreId
       return new BasicAuthDialog({
         'url': details.url,
+        'cookieStoreId': details.cookieStoreId,
         'host': details.challenger.host,
         'realm': details.realm,
         'page_host': pageHost

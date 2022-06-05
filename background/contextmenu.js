@@ -71,7 +71,8 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
   if (activeGetLogins.indexOf(tab.id) === -1) {
     // prevent from simultaneous filling in the credentials
     activeGetLogins.push(tab.id);
-    Keywi.getLogins(tab.url).then(entry => {
+    console.log(tab);
+    Keywi.getLogins(tab.url, false, tab.cookieStoreId).then(entry => {
       browser.tabs.sendMessage(tab.id, {
         'type': type,
         'username': entry.login,
