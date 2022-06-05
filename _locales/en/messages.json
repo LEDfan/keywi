@@ -120,7 +120,7 @@
     "description": "The header of the select multiple passwords dialog"
   },
   "dialogSelectBody": {
-    "message": "Keepass found multiple passwords for this url, please select one.",
+    "message": "Please confirm which password to use.",
     "description": "The body of the select multiple passwords dialog"
   },
   "Cancel": {

@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Keywi",
-  "version": "2.0.0beta7",
+  "version": "2.0.0beta8",
   "description": "__MSG_extensionDescription__",
   "icons": {
     "48": "icons/keywi-48.png",

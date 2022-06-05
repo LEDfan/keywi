@@ -158,11 +158,6 @@ class KeepassXCBackend extends PasswordBackend {
       keys: keys
     };
 
-    if (is_basic_auth) {
-      // Inform KeepassXC that this is a basic auth request
-      messageData["httpAuth"] = "true";
-    }
-
     const request = {
       action: kpAction,
       message: this._encrypt(messageData, nonce),

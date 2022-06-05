@@ -90,7 +90,6 @@ class Keywi_ {
       }
     }
 
-
     let filteredCredentials = []
     for (let credential of resp.credentials) {
       let credentialContainerName = Keywi._getContainerNameProperty(credential);
@@ -100,7 +99,7 @@ class Keywi_ {
       }
     }
 
-    if (filteredCredentials.length === 1) {
+    if (!is_basic_auth && filteredCredentials.length === 1) {
       return filteredCredentials[0];
     }
 
