@@ -10,7 +10,7 @@
   },
   "devDependencies": {
     "eslint": "^7.22.0",
-    "web-ext": "^6.8.0"
+    "web-ext": "^7.2.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
